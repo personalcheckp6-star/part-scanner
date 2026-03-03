@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Part Scanner</title>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@400;600;700&display=swap');
+
+        :root {
+            --bg: #0f1117;
+            --card: #1a1d27;
+            --border: #2a2d3a;
+            --accent: #00e5a0;
+            --accent2: #0077ff;
+            --warn: #f59e0b;
+            --danger: #ff4757;
+            --text: #e0e4ef;
+            --muted: #6b7280;
+            --mono: 'Share Tech Mono', monospace;
+            --sans: 'Barlow', sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: var(--sans);
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 16px 16px 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            width: 100%;
+            max-width: 480px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo-dot {
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            background: var(--accent);
+            box-shadow: 0 0 8px var(--accent);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
+        }
+
+        header h1 {
+            font-family: var(--mono);
+            font-size: 15px;
+            color: var(--accent);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            width: 100%;
+            max-width: 480px;
+            margin-bottom: 12px;
+        }
+
+        .card-title {
+            font-size: 11px;
+            font-family: var(--mono);
+            color: var(--muted);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .camera-wrap {
+            position: relative;
+            width: 100%;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #000;
+            aspect-ratio: 4/3;
+        }
+
+        video, canvas {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            display: block;
+            position: absolute;
+            top: 0; left: 0;
+        }
+        canvas { display: none; }
+
+        .scan-line {
+            position: absolute;
+            left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            animation: scanMove 2s linear infinite;
+            z-index: 2; opacity: 0; transition: opacity 0.3s;
+        }
+        .scan-line.active { opacity: 1; }
+        @keyframes scanMove { 0% { top: 0%; } 100% { top: 100%; } }
+
+        .corner { position: absolute; width: 20px; height: 20px; z-index: 3; }
+        .corner.tl { top: 8px; left: 8px; border-top: 2px solid var(--accent); border-left: 2px solid var(--accent); }
+        .corner.tr { top: 8px; right: 8px; border-top: 2px solid var(--accent); border-right: 2px solid var(--accent); }
+        .corner.bl { bottom: 8px; left: 8px; border-bottom: 2px solid var(--accent); border-left: 2px solid var(--accent); }
+        .corner.br { bottom: 8px; right: 8px; border-bottom: 2px solid var(--accent); border-right: 2px solid var(--accent); }
+
+        .cam-label {
+            position: absolute;
+            top: 8px; left: 50%;
+            transform: translateX(-50%);
+            font-family: var(--mono);
+            font-size: 11px;
+            background: rgba(0,0,0,0.65);
+            color: var(--warn);
+            padding: 3px 12px;
+            border-radius: 20px;
+            z-index: 4;
+            letter-spacing: 1px;
+        }
+
+        .slider-wrap { margin-top: 12px; }
+        .slider-label {
+            display: flex; justify-content: space-between;
+            font-size: 12px; color: var(--muted); margin-bottom: 6px;
+        }
+        .slider-label span:last-child { font-family: var(--mono); color: var(--accent); }
+        input[type="range"] {
+            width: 100%; -webkit-appearance: none;
+            height: 4px; border-radius: 2px;
+            background: var(--border); outline: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px; height: 18px; border-radius: 50%;
+            background: var(--accent); cursor: pointer;
+            box-shadow: 0 0 6px var(--accent);
+        }
+
+        .scan-btn-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .form-group { margin-bottom: 12px; }
+        .form-group label {
+            display: block;
+            font-size: 11px; font-family: var(--mono);
+            color: var(--muted); letter-spacing: 1.5px;
+            text-transform: uppercase; margin-bottom: 5px;
+        }
+        .form-group input {
+            width: 100%; padding: 10px 12px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px; color: var(--text);
+            font-family: var(--mono); font-size: 15px;
+            outline: none; transition: border-color 0.2s;
+        }
+        .form-group input:focus { border-color: var(--accent2); }
+        .form-group input.ok   { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 8px rgba(0,229,160,0.15); }
+        .form-group input.warn { border-color: var(--warn);   color: var(--warn);   box-shadow: 0 0 8px rgba(245,158,11,0.15); }
+
+        .btn {
+            width: 100%; padding: 12px; border: none; border-radius: 8px;
+            font-family: var(--sans); font-weight: 700; font-size: 13px;
+            letter-spacing: 0.5px; cursor: pointer;
+            transition: all 0.2s; text-transform: uppercase;
+        }
+        .btn:disabled { background: var(--border) !important; color: var(--muted) !important; cursor: not-allowed; transform: none !important; }
+        .btn-dies   { background: var(--warn);   color: #0f1117; }
+        .btn-dies:hover:not(:disabled)   { filter: brightness(1.1); transform: translateY(-1px); }
+        .btn-lot    { background: var(--accent);  color: #0f1117; }
+        .btn-lot:hover:not(:disabled)    { filter: brightness(1.1); transform: translateY(-1px); }
+        .btn-submit { background: var(--accent2); color: #fff; margin-top: 4px; }
+        .btn-submit:hover:not(:disabled) { filter: brightness(1.15); transform: translateY(-1px); }
+
+        #status {
+            font-size: 12px; font-family: var(--mono);
+            text-align: center; padding: 8px 12px;
+            border-radius: 6px; margin-bottom: 12px;
+            background: rgba(255,255,255,0.03);
+            width: 100%; max-width: 480px;
+        }
+        #status.ok   { color: var(--accent); }
+        #status.err  { color: var(--danger); }
+        #status.info { color: var(--accent2); }
+        #status.idle { color: var(--muted); }
+        #status.warn { color: var(--warn); }
+
+        #toast {
+            position: fixed; bottom: 24px; left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            font-family: var(--mono); font-size: 13px;
+            padding: 10px 20px; border-radius: 20px;
+            transition: transform 0.3s ease;
+            z-index: 999; white-space: nowrap;
+        }
+        #toast.show       { transform: translateX(-50%) translateY(0); background: var(--accent); color: #0f1117; font-weight: 700; }
+        #toast.show.error { background: var(--danger); color: #fff; }
+
+        .divider { border: none; border-top: 1px solid var(--border); margin: 4px 0 14px; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo-dot"></div>
+    <h1>Part Scanner</h1>
+</header>
+
+<!-- KAMERA -->
+<div class="card">
+    <div class="card-title">📷 Kamera</div>
+    <div class="camera-wrap">
+        <video id="kamera" autoplay playsinline muted></video>
+        <canvas id="kanvas"></canvas>
+        <div class="scan-line" id="scanLine"></div>
+        <div class="cam-label" id="camLabel">STANDBY</div>
+        <div class="corner tl"></div><div class="corner tr"></div>
+        <div class="corner bl"></div><div class="corner br"></div>
+    </div>
+    <div class="slider-wrap">
+        <div class="slider-label">
+            <span>Kontras Teks</span>
+            <span id="valThreshold">110</span>
+        </div>
+        <input type="range" id="thresholdSlider" min="0" max="255" value="110">
+    </div>
+    <div class="scan-btn-row">
+        <button class="btn btn-dies" id="btnScanDies" disabled>⚡ Scan Dies</button>
+        <button class="btn btn-lot"  id="btnScanLot"  disabled>🔷 Scan Lot</button>
+    </div>
+</div>
+
+<!-- STATUS -->
+<div id="status" class="idle">Mengaktifkan kamera...</div>
+
+<!-- FORM -->
+<div class="card">
+    <div class="card-title">📋 Data Entry</div>
+
+    <div class="form-group">
+        <label>NRP Operator</label>
+        <input type="text" id="nrpOperator" placeholder="Masukkan NRP...">
+    </div>
+    <div class="form-group">
+        <label>Nama Part</label>
+        <input type="text" id="namaPart" placeholder="Masukkan nama part...">
+    </div>
+
+    <hr class="divider">
+
+    <div class="form-group">
+        <label>Nomor Dies — hasil scan ↓</label>
+        <input type="text" id="nomorDies" placeholder="Contoh: 18-0 atau 5B-0">
+    </div>
+    <div class="form-group">
+        <label>Nomor Lot — hasil scan ↓</label>
+        <input type="text" id="nomorLot" placeholder="Contoh: 10/01">
+    </div>
+
+    <button class="btn btn-submit" id="btnSubmit">💾 Simpan ke Google Sheet</button>
+</div>
+
+<div id="toast"></div>
+
+<script>
+    // =============================================
+    // ⚠️  GANTI URL INI DENGAN URL APPS SCRIPT ANDA
+    // =============================================
+    const APPS_SCRIPT_URL = 'GANTI_DENGAN_URL_APPS_SCRIPT_ANDA';
+
+    const video           = document.getElementById('kamera');
+    const canvas          = document.getElementById('kanvas');
+    const btnScanDies     = document.getElementById('btnScanDies');
+    const btnScanLot      = document.getElementById('btnScanLot');
+    const btnSubmit       = document.getElementById('btnSubmit');
+    const nomorDiesInput  = document.getElementById('nomorDies');
+    const nomorLotInput   = document.getElementById('nomorLot');
+    const statusDiv       = document.getElementById('status');
+    const thresholdSlider = document.getElementById('thresholdSlider');
+    const valThreshold    = document.getElementById('valThreshold');
+    const scanLine        = document.getElementById('scanLine');
+    const camLabel        = document.getElementById('camLabel');
+    const toast           = document.getElementById('toast');
+
+    thresholdSlider.addEventListener('input', function() {
+        valThreshold.innerText = this.value;
+    });
+
+    // Aktifkan kamera belakang
+    navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { ideal: 'environment' } }
+    })
+    .then(stream => {
+        video.srcObject = stream;
+        btnScanDies.disabled = false;
+        btnScanLot.disabled  = false;
+        setStatus('Kamera siap. Pilih Scan Dies atau Scan Lot.', 'ok');
+        camLabel.textContent = 'READY';
+    })
+    .catch(err => {
+        setStatus(`Error kamera: ${err.name} — ${err.message}`, 'err');
+        camLabel.textContent = 'ERROR';
+    });
+
+    function setStatus(msg, type = 'idle') {
+        statusDiv.textContent = msg;
+        statusDiv.className = type;
+    }
+
+    function showToast(msg, isError = false) {
+        toast.textContent = msg;
+        toast.className = isError ? 'show error' : 'show';
+        setTimeout(() => { toast.className = ''; }, 3000);
+    }
+
+    // ─── Ambil gambar & jalankan OCR ──────────────────────────
+    async function doScan(mode) {
+        const ctx = canvas.getContext('2d');
+        canvas.width  = video.videoWidth;
+        canvas.height = video.videoHeight;
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        // Filter hitam-putih berdasarkan threshold
+        let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        let data = imageData.data;
+        let threshold = parseInt(thresholdSlider.value);
+        for (let i = 0; i < data.length; i += 4) {
+            let avg = (data[i] + data[i+1] + data[i+2]) / 3;
+            let c = avg < threshold ? 0 : 255;
+            data[i] = data[i+1] = data[i+2] = c;
+        }
+        ctx.putImageData(imageData, 0, 0);
+
+        canvas.style.display = 'block';
+        video.style.display  = 'none';
+        scanLine.classList.add('active');
+        camLabel.textContent = 'SCANNING...';
+        btnScanDies.disabled = true;
+        btnScanLot.disabled  = true;
+        setStatus('Membaca teks... harap tunggu.', 'info');
+
+        try {
+            const result  = await Tesseract.recognize(canvas.toDataURL('image/png'), 'eng');
+            const rawText = result.data.text;
+            console.log('[OCR RAW]', rawText);
+
+            if (mode === 'dies') parseDies(rawText);
+            else                  parseLot(rawText);
+
+        } catch(e) {
+            console.error(e);
+            setStatus('Kesalahan sistem OCR.', 'err');
+        } finally {
+            btnScanDies.disabled = false;
+            btnScanLot.disabled  = false;
+            scanLine.classList.remove('active');
+            setTimeout(() => {
+                canvas.style.display = 'none';
+                video.style.display  = 'block';
+                camLabel.textContent = 'READY';
+                setStatus('Kamera siap untuk scan berikutnya.', 'ok');
+            }, 3000);
+        }
+    }
+
+    // ─── Parser Nomor Dies ─────────────────────────────────────
+    // Teks di part: "AHM18-0" atau "K1N5B-0 AHM"
+    // Yang kita inginkan: "18-0" atau "5B-0"
+    // Pola: (angka/huruf campuran) + "-" + (angka)
+    function parseDies(text) {
+        // Bersihkan — pertahankan A-Z, 0-9, tanda "-"
+        const clean = text.replace(/[^A-Z0-9\-\s]/gi, ' ').toUpperCase();
+
+        // Cari semua token yang mengandung tanda "-"
+        // Contoh match: "18-0", "5B-0", "AHM18-0", "K1N5B-0"
+        const matches = clean.match(/[A-Z0-9]{1,6}-[0-9]{1,2}/g);
+
+        if (matches && matches.length > 0) {
+            // Pilih token yang paling mungkin adalah nomor dies:
+            // yaitu yang diawali angka atau huruf+angka (bukan semua huruf)
+            let dies = null;
+            for (const m of matches) {
+                // Hapus prefix murni huruf di depan angka (AHM, K1N, dll)
+                // Pola dies: dimulai dari angka atau huruf yg langsung diikuti angka
+                const stripped = m.replace(/^[A-Z]+(?=[0-9])/, '');
+                // Valid: "18-0", "5B-0", "12A-1" — harus ada angka di awal
+                if (/^[0-9]/.test(stripped)) {
+                    dies = stripped;
+                    break;
+                }
+            }
+            if (!dies) {
+                // Fallback: strip prefix panjang (> 2 huruf berturut-turut) dari match pertama
+                dies = matches[0].replace(/^[A-Z]{2,}/, '');
+            }
+            nomorDiesInput.value     = dies;
+            nomorDiesInput.className = 'warn';
+            setStatus(`✅ Nomor Dies: ${dies}`, 'ok');
+        } else {
+            setStatus('Nomor Dies tidak terdeteksi. Coba atur kontras atau sudut kamera.', 'err');
+        }
+    }
+
+    // ─── Parser Nomor Lot ──────────────────────────────────────
+    // Di part: segi enam dengan angka "10" di atas dan "01" di bawah
+    // Disimpan sebagai: "10/01"
+    function parseLot(text) {
+        // Ambil semua angka 1-2 digit dari hasil OCR
+        const nums = text.match(/\b\d{1,2}\b/g);
+
+        if (nums && nums.length >= 2) {
+            const lot = `${nums[0]}/${nums[1]}`;
+            nomorLotInput.value     = lot;
+            nomorLotInput.className = 'ok';
+            setStatus(`✅ Nomor Lot: ${lot}`, 'ok');
+        } else if (nums && nums.length === 1) {
+            nomorLotInput.value     = nums[0];
+            nomorLotInput.className = 'warn';
+            setStatus(`⚠️ Hanya 1 angka terdeteksi: ${nums[0]}. Periksa kembali.`, 'warn');
+        } else {
+            setStatus('Nomor Lot tidak terdeteksi. Pastikan segi enam terlihat jelas & terang.', 'err');
+        }
+    }
+
+    btnScanDies.addEventListener('click', () => {
+        camLabel.textContent = 'MODE: DIES';
+        doScan('dies');
+    });
+
+    btnScanLot.addEventListener('click', () => {
+        camLabel.textContent = 'MODE: LOT';
+        doScan('lot');
+    });
+
+    // ─── Submit ke Google Sheet ────────────────────────────────
+    btnSubmit.addEventListener('click', async () => {
+        const nrp      = document.getElementById('nrpOperator').value.trim();
+        const namaPart = document.getElementById('namaPart').value.trim();
+        const dies     = nomorDiesInput.value.trim();
+        const lot      = nomorLotInput.value.trim();
+
+        if (!nrp || !namaPart || !dies || !lot) {
+            showToast('⚠️ Semua field wajib diisi!', true);
+            return;
+        }
+
+        btnSubmit.disabled = true;
+        btnSubmit.textContent = '⏳ Menyimpan...';
+
+        const payload = {
+            nrpOperator : nrp,
+            namaPart    : namaPart,
+            nomorDies   : dies,
+            nomorLot    : lot,
+            tanggal     : new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' })
+        };
+
+        try {
+            await fetch(APPS_SCRIPT_URL, {
+                method : 'POST',
+                mode   : 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body   : JSON.stringify(payload)
+            });
+            showToast('✅ Data berhasil disimpan!');
+            // Reset field hasil scan saja (NRP & Nama Part tetap)
+            nomorDiesInput.value = ''; nomorDiesInput.className = '';
+            nomorLotInput.value  = ''; nomorLotInput.className  = '';
+        } catch(e) {
+            console.error(e);
+            showToast('❌ Gagal menyimpan. Cek koneksi.', true);
+        } finally {
+            btnSubmit.disabled = false;
+            btnSubmit.textContent = '💾 Simpan ke Google Sheet';
+        }
+    });
+</script>
+</body>
+</html>
