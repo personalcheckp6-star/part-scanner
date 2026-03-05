@@ -265,7 +265,7 @@
     </div>
 
     <hr class="divider">
-    <button class="btn btn-save" id="btnSave" disabled>💾 Simpan ke Google Sheet</button>
+    <button class="btn btn-save" id="btnSave" disabled>💾 Simpan ke Excel OneDrive</button>
     <button class="btn btn-reset" id="btnReset">🔄 Reset Semua</button>
 </div>
 
@@ -285,9 +285,10 @@
 
 <script>
 // ============================================
-// ⚠️ GANTI DENGAN URL APPS SCRIPT ANDA
+// ⚠️ GANTI DENGAN URL POWER AUTOMATE ANDA
+// Lihat panduan: SETUP_POWER_AUTOMATE.md
 // ============================================
-var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwnc4WIVdwMQO9r5Yoohciw4w5N3t2HC02oD9vdn4jnpBw6rMjWKV4cvJxUoRIYxm8dwQ/exec';
+var POWER_AUTOMATE_URL = 'https://default5fa04609cf9c412eb36051a158ccf4.14.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/1d976707fe384fb5af36f1df549373b1/triggers/manual/paths/invoke?api-version=1';
 
 // ══════════════════════════════════════════
 // VALIDASI FORMAT
@@ -908,16 +909,30 @@ function doSave(){
         return{tanggal:tanggal,nrpOperator:nrp,mesin:mesin,kondisiPart:kondisi,namaPart:part,
                noKereta:state.kereta,nomorDies:state.dies,nomorLot:lot};
     });
-    fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',
-        headers:{'Content-Type':'application/json'},body:JSON.stringify({rows:rows})
-    }).then(function(){
-        showToast('✅ '+rows.length+' data tersimpan!');
-        setStatus('✅ Tersimpan! Data tetap untuk transaksi berikutnya.','ok');
-    }).catch(function(){
-        showToast('❌ Gagal. Cek koneksi.','error');
-        setStatus('Gagal menyimpan.','err');
+    // Kirim tiap row ke Power Automate (satu per satu per lot)
+    var promises = rows.map(function(row){
+        return fetch(POWER_AUTOMATE_URL, {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify(row)
+        });
+    });
+
+    Promise.all(promises).then(function(responses){
+        var allOk = responses.every(function(r){ return r.ok || r.status===0; });
+        if(allOk){
+            showToast('✅ '+rows.length+' data tersimpan ke Excel!');
+            setStatus('✅ Tersimpan di OneDrive Excel!','ok');
+        } else {
+            showToast('⚠️ Sebagian data gagal','error');
+            setStatus('Periksa koneksi dan URL Power Automate','err');
+        }
+    }).catch(function(err){
+        console.error('Save error:',err);
+        showToast('❌ Gagal kirim. Cek URL Power Automate.','error');
+        setStatus('Gagal menyimpan — cek panduan setup','err');
     }).finally(function(){
-        btnSave.disabled=false; btnSave.textContent='💾 Simpan ke Google Sheet';
+        btnSave.disabled=false; btnSave.textContent='💾 Simpan ke Excel OneDrive';
     });
 }
 
