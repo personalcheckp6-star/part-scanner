@@ -15,15 +15,41 @@
         }
         *{box-sizing:border-box;margin:0;padding:0;}
         body{font-family:var(--sans);background:var(--bg);color:var(--text);
-            min-height:100vh;padding:12px 12px 64px;
+            min-height:100vh;padding:12px 12px 80px;
             display:flex;flex-direction:column;align-items:center;}
 
-        header{width:100%;max-width:500px;display:flex;align-items:center;gap:10px;
+        header{width:100%;max-width:500px;display:flex;align-items:center;
+            justify-content:space-between;
             padding:10px 0 14px;border-bottom:1px solid var(--border);margin-bottom:14px;}
+        .header-left{display:flex;align-items:center;gap:10px;}
         .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);
             box-shadow:0 0 10px var(--accent);animation:blink 1.8s infinite;}
         @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
         header h1{font-family:var(--mono);font-size:14px;color:var(--accent);letter-spacing:3px;}
+
+        /* ── VOICE TOGGLE BUTTON ── */
+        #voiceToggle{
+            display:flex;align-items:center;gap:7px;
+            padding:8px 14px;border-radius:20px;border:1.5px solid var(--border);
+            background:var(--bg);cursor:pointer;
+            font-family:var(--mono);font-size:11px;letter-spacing:1px;
+            color:var(--muted);transition:all .25s;white-space:nowrap;
+        }
+        #voiceToggle .vicon{font-size:16px;transition:all .25s;}
+        #voiceToggle.on{
+            border-color:var(--purple);
+            background:rgba(191,151,255,.12);
+            color:var(--purple);
+            box-shadow:0 0 12px rgba(191,151,255,.25);
+        }
+        #voiceToggle.on .vdot{
+            width:8px;height:8px;border-radius:50%;
+            background:var(--danger);
+            box-shadow:0 0 6px var(--danger);
+            animation:recPulse .9s infinite;
+        }
+        .vdot{width:8px;height:8px;border-radius:50%;background:var(--muted);}
+        @keyframes recPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
 
         /* STEPS */
         .steps{width:100%;max-width:500px;display:flex;margin-bottom:14px;}
@@ -45,7 +71,7 @@
         #qr-reader video{border-radius:8px;}
         #qr-reader__dashboard{display:none!important;}
 
-        /* SCAN MODE SELECTOR */
+        /* SCAN MODE */
         .mode-btns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px;}
         .mode-btn{padding:8px 4px;border:1px solid var(--border);border-radius:6px;
             background:var(--bg);font-family:var(--mono);font-size:10px;
@@ -62,9 +88,12 @@
             letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;}
         .badge-val{font-family:var(--mono);font-size:13px;font-weight:700;
             color:var(--muted);transition:all .3s;word-break:break-all;min-height:18px;}
-        .badge.ok     .badge-val{color:var(--accent);}
-        .badge.warn   .badge-val{color:var(--warn);}
-        .badge.purple .badge-val{color:var(--purple);}
+        .badge.ok    .badge-val{color:var(--accent);}
+        .badge.warn  .badge-val{color:var(--warn);}
+        .badge.purple.badge-val{color:var(--purple);}
+        .badge.ok    {border-color:rgba(0,229,160,.3);}
+        .badge.warn  {border-color:rgba(240,180,41,.3);}
+        .badge.purple{border-color:rgba(191,151,255,.3);}
 
         /* LOT CHIPS */
         .lot-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;}
@@ -75,29 +104,35 @@
         .chip button{background:none;border:none;color:var(--danger);
             cursor:pointer;font-size:13px;padding:0;line-height:1;}
 
+        /* VOICE TRANSCRIPT BOX */
+        #voiceBox{
+            width:100%;max-width:500px;
+            display:none;
+            background:rgba(191,151,255,.08);
+            border:1px solid rgba(191,151,255,.25);
+            border-radius:10px;padding:10px 14px;margin-bottom:10px;
+        }
+        #voiceBox.show{display:block;}
+        .vb-header{display:flex;align-items:center;gap:7px;margin-bottom:6px;}
+        .vb-rec{width:7px;height:7px;border-radius:50%;background:var(--danger);
+            animation:recPulse .9s infinite;}
+        .vb-title{font-family:var(--mono);font-size:10px;color:var(--purple);letter-spacing:1.5px;}
+        #voiceTranscript{font-family:var(--mono);font-size:13px;color:var(--text);
+            min-height:18px;line-height:1.5;}
+        .vb-hint{font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:6px;line-height:1.7;}
+        .vb-hint span{color:var(--purple);}
+
         /* FORM */
         .form-group{margin-bottom:10px;}
         .form-group label{display:block;font-size:10px;font-family:var(--mono);
             color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px;}
-        .field-wrap{display:flex;gap:6px;align-items:stretch;}
-        .form-group input{flex:1;padding:10px 12px;background:var(--bg);
+        .form-group input{width:100%;padding:10px 12px;background:var(--bg);
             border:1px solid var(--border);border-radius:6px;color:var(--text);
             font-family:var(--mono);font-size:15px;outline:none;transition:border-color .2s;}
         .form-group input:focus{border-color:var(--blue);}
         .form-group input.ok    {border-color:var(--accent);color:var(--accent);}
         .form-group input.warn  {border-color:var(--warn);  color:var(--warn);}
         .form-group input.purple{border-color:var(--purple);color:var(--purple);}
-
-        /* MIC BUTTON */
-        .mic-btn{width:42px;min-width:42px;height:42px;border-radius:50%;border:1px solid var(--border);
-            background:var(--bg);cursor:pointer;font-size:18px;
-            display:flex;align-items:center;justify-content:center;
-            transition:all .2s;flex-shrink:0;}
-        .mic-btn:hover{border-color:var(--purple);background:rgba(191,151,255,.1);}
-        .mic-btn.listening{border-color:var(--danger);background:rgba(248,81,73,.15);
-            animation:micPulse .8s infinite;}
-        @keyframes micPulse{0%,100%{box-shadow:0 0 0 0 rgba(248,81,73,.4)}
-            50%{box-shadow:0 0 0 8px rgba(248,81,73,0)}}
 
         /* BUTTONS */
         .btn{width:100%;padding:13px;border:none;border-radius:8px;
@@ -115,23 +150,12 @@
         #status{width:100%;max-width:500px;font-size:12px;font-family:var(--mono);
             text-align:center;padding:8px 12px;border-radius:6px;
             margin-bottom:10px;background:rgba(255,255,255,.03);}
-        #status.ok    {color:var(--accent);}
-        #status.err   {color:var(--danger);}
-        #status.info  {color:var(--blue);}
-        #status.idle  {color:var(--muted);}
-        #status.warn  {color:var(--warn);}
-        #status.voice {color:var(--purple);}
-
-        /* VOICE INDICATOR */
-        #voiceBar{width:100%;max-width:500px;display:none;
-            background:rgba(191,151,255,.1);border:1px solid rgba(191,151,255,.3);
-            border-radius:8px;padding:10px 14px;margin-bottom:10px;
-            font-family:var(--mono);font-size:12px;color:var(--purple);
-            align-items:center;gap:8px;}
-        #voiceBar.show{display:flex;}
-        .voice-dot{width:8px;height:8px;border-radius:50%;background:var(--danger);
-            animation:micPulse .8s infinite;flex-shrink:0;}
-        #voiceTranscript{flex:1;min-height:16px;}
+        #status.ok   {color:var(--accent);}
+        #status.err  {color:var(--danger);}
+        #status.info {color:var(--blue);}
+        #status.idle {color:var(--muted);}
+        #status.warn {color:var(--warn);}
+        #status.voice{color:var(--purple);}
 
         /* TOAST */
         #toast{position:fixed;bottom:20px;left:50%;
@@ -144,19 +168,24 @@
         #toast.show.info {background:var(--purple);color:#0d1117;}
 
         .divider{border:none;border-top:1px solid var(--border);margin:6px 0 12px;}
-        .help-text{font-size:10px;color:var(--muted);font-family:var(--mono);
-            margin-top:4px;line-height:1.5;}
 
-        /* SUCCESS FLASH */
-        @keyframes flashGreen{0%{background:rgba(0,229,160,.2)}100%{background:transparent}}
-        .flash{animation:flashGreen .6s ease-out;}
+        @keyframes flashGreen{0%{background:rgba(0,229,160,.25)}100%{background:transparent}}
+        .flash{animation:flashGreen .5s ease-out;}
     </style>
 </head>
 <body>
 
 <header>
-    <div class="dot"></div>
-    <h1>PART SCANNER</h1>
+    <div class="header-left">
+        <div class="dot"></div>
+        <h1>PART SCANNER</h1>
+    </div>
+    <!-- SATU TOMBOL VOICE -->
+    <button id="voiceToggle" onclick="toggleVoice()">
+        <div class="vdot" id="vdot"></div>
+        <span class="vicon">🎤</span>
+        <span id="voiceLabel">SUARA</span>
+    </button>
 </header>
 
 <!-- STEPS -->
@@ -170,13 +199,21 @@
 <!-- STATUS -->
 <div id="status" class="warn">Pilih mode scan lalu arahkan kamera ke QR...</div>
 
-<!-- VOICE BAR -->
-<div id="voiceBar">
-    <div class="voice-dot"></div>
-    <div id="voiceTranscript">Mendengarkan...</div>
+<!-- VOICE BOX — muncul saat mic aktif -->
+<div id="voiceBox">
+    <div class="vb-header">
+        <div class="vb-rec"></div>
+        <div class="vb-title">MENDENGARKAN...</div>
+    </div>
+    <div id="voiceTranscript">—</div>
+    <div class="vb-hint">
+        Ucapkan: <span>"dies delapan belas strip nol"</span> → Dies 18-0<br>
+        Ucapkan: <span>"lot nol tiga nol tiga"</span> → Lot 03/03<br>
+        Ucapkan: <span>"kirim"</span> → Simpan ke Sheet
+    </div>
 </div>
 
-<!-- KAMERA + MODE -->
+<!-- KAMERA -->
 <div class="card">
     <div class="card-title">📷 Kamera & Mode Scan</div>
     <div class="mode-btns">
@@ -219,47 +256,15 @@
         <input type="text" id="namaPart" placeholder="Masukkan nama part...">
     </div>
     <hr class="divider">
-
-    <!-- No. Dies + mic -->
     <div class="form-group">
-        <label>Nomor Dies &nbsp;<span style="color:var(--purple);font-size:9px">← bisa isi via suara</span></label>
-        <div class="field-wrap">
-            <input type="text" id="inpDies" placeholder="Contoh: 18-0">
-            <button class="mic-btn" id="micDies" onclick="startVoice('dies')" title="Input suara Dies">🎙️</button>
-        </div>
-        <div class="help-text">Ucapkan: "dies delapan belas strip nol" → 18-0</div>
+        <label>Nomor Dies</label>
+        <input type="text" id="inpDies" placeholder="Contoh: 18-0">
     </div>
-
-    <!-- No. Lot + mic -->
     <div class="form-group">
-        <label>Nomor Lot &nbsp;<span style="color:var(--purple);font-size:9px">← bisa isi via suara</span></label>
-        <div class="field-wrap">
-            <input type="text" id="inpLot" placeholder="Contoh: 10/01">
-            <button class="mic-btn" id="micLot" onclick="startVoice('lot')" title="Input suara Lot">🎙️</button>
-        </div>
-        <div class="help-text">Ucapkan: "nol tiga nol tiga" → 03/03</div>
+        <label>Nomor Lot <span style="color:var(--muted);font-size:9px">(Enter untuk tambah)</span></label>
+        <input type="text" id="inpLot" placeholder="Contoh: 10/01">
     </div>
-
     <hr class="divider">
-
-    <!-- VOICE COMMAND INFO -->
-    <div style="background:rgba(191,151,255,.07);border:1px solid rgba(191,151,255,.2);
-                border-radius:8px;padding:10px 12px;margin-bottom:12px;">
-        <div style="font-size:10px;font-family:var(--mono);color:var(--purple);
-                    letter-spacing:1px;margin-bottom:4px;">🎤 VOICE COMMAND</div>
-        <div style="font-size:11px;font-family:var(--mono);color:var(--muted);line-height:1.8;">
-            Ucapkan <span style="color:var(--purple)">"kirim"</span> → simpan data ke Sheet<br>
-            Ucapkan <span style="color:var(--warn)">"dies ..."</span> → isi Nomor Dies<br>
-            Ucapkan <span style="color:var(--accent)">"lot ..."</span> → isi Nomor Lot
-        </div>
-        <button class="mic-btn" id="micGlobal" onclick="startVoice('global')"
-            style="width:100%;border-radius:6px;margin-top:8px;height:38px;font-size:13px;
-                   font-family:var(--mono);letter-spacing:1px;"
-            title="Voice command global">
-            🎤 &nbsp;AKTIFKAN SUARA
-        </button>
-    </div>
-
     <button class="btn btn-save" id="btnSave" disabled>💾 Simpan ke Google Sheet</button>
     <button class="btn btn-reset" id="btnReset">🔄 Reset Semua</button>
 </div>
@@ -267,480 +272,382 @@
 <div id="toast"></div>
 
 <script>
-// =============================================
-// ⚠️  GANTI URL INI DENGAN URL APPS SCRIPT ANDA
-// =============================================
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwnc4WIVdwMQO9r5Yoohciw4w5N3t2HC02oD9vdn4jnpBw6rMjWKV4cvJxUoRIYxm8dwQ/exec';
+// ============================================
+// ⚠️ GANTI DENGAN URL APPS SCRIPT ANDA
+// ============================================
+var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwnc4WIVdwMQO9r5Yoohciw4w5N3t2HC02oD9vdn4jnpBw6rMjWKV4cvJxUoRIYxm8dwQ/exec';
 
 // ── STATE ────────────────────────────────────
-var state = {
-    mode    : 'kereta',
-    kereta  : '',
-    dies    : '',
-    lots    : [],
-};
+var state = { mode:'kereta', kereta:'', dies:'', lots:[] };
+var voiceOn = false;
+var recognition = null;
 
-// ── DOM REFS ─────────────────────────────────
-var statusEl      = document.getElementById('status');
-var voiceBar      = document.getElementById('voiceBar');
-var voiceTrans    = document.getElementById('voiceTranscript');
-var valKereta     = document.getElementById('valKereta');
-var valDies       = document.getElementById('valDies');
-var valLot        = document.getElementById('valLot');
-var lotCount      = document.getElementById('lotCount');
-var lotChipsEl    = document.getElementById('lotChips');
-var badgeKereta   = document.getElementById('badgeKereta');
-var badgeDies     = document.getElementById('badgeDies');
-var badgeLot      = document.getElementById('badgeLot');
-var inpDies       = document.getElementById('inpDies');
-var inpLot        = document.getElementById('inpLot');
-var btnSave       = document.getElementById('btnSave');
-var micDies       = document.getElementById('micDies');
-var micLot        = document.getElementById('micLot');
-var micGlobal     = document.getElementById('micGlobal');
+// ── DOM ───────────────────────────────────────
+var statusEl   = document.getElementById('status');
+var voiceBox   = document.getElementById('voiceBox');
+var voiceTrans = document.getElementById('voiceTranscript');
+var voiceToggle= document.getElementById('voiceToggle');
+var voiceLabel = document.getElementById('voiceLabel');
+var vdot       = document.getElementById('vdot');
+var inpDies    = document.getElementById('inpDies');
+var inpLot     = document.getElementById('inpLot');
+var btnSave    = document.getElementById('btnSave');
 
-// ── STATUS HELPER ─────────────────────────────
-function setStatus(msg, type) { statusEl.textContent = msg; statusEl.className = type||'idle'; }
+// ── HELPERS ──────────────────────────────────
+function setStatus(msg, type){ statusEl.textContent=msg; statusEl.className=type||'idle'; }
 
-// ── TOAST ─────────────────────────────────────
 var toastTimer;
-function showToast(msg, type) {
-    var t = document.getElementById('toast');
-    t.textContent = msg;
-    t.className = 'show ' + (type||'');
+function showToast(msg, type){
+    var t=document.getElementById('toast');
+    t.textContent=msg; t.className='show '+(type||'');
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(function(){ t.className=''; }, 3000);
+    toastTimer=setTimeout(function(){ t.className=''; },3000);
 }
 
-// ── STEPS ─────────────────────────────────────
-function updateSteps() {
-    var s1 = document.getElementById('s1');
-    var s2 = document.getElementById('s2');
-    var s3 = document.getElementById('s3');
-    var s4 = document.getElementById('s4');
-    s1.className = 'step ' + (state.kereta ? 'done' : 'active');
-    s2.className = 'step ' + (!state.kereta ? '' : state.dies ? 'done' : 'active');
-    s3.className = 'step ' + (!state.dies   ? '' : state.lots.length>0 ? 'done' : 'active');
-    s4.className = 'step ' + (state.kereta && state.dies && state.lots.length>0 ? 'active' : '');
+function flashEl(id){
+    var el=document.getElementById(id);
+    el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
 }
 
-// ── RENDER BADGES ─────────────────────────────
-function renderBadges() {
-    valKereta.textContent = state.kereta || '—';
-    badgeKereta.className = 'badge' + (state.kereta ? ' purple' : '');
-    valDies.textContent   = state.dies   || '—';
-    badgeDies.className   = 'badge' + (state.dies   ? ' warn'   : '');
-    lotCount.textContent  = state.lots.length;
-    valLot.textContent    = state.lots.length > 0 ? state.lots[state.lots.length-1] : '—';
-    badgeLot.className    = 'badge' + (state.lots.length>0 ? ' ok' : '');
+// ── STEPS ────────────────────────────────────
+function updateSteps(){
+    document.getElementById('s1').className='step '+(state.kereta?'done':'active');
+    document.getElementById('s2').className='step '+(!state.kereta?'':state.dies?'done':'active');
+    document.getElementById('s3').className='step '+(!state.dies?'':state.lots.length>0?'done':'active');
+    document.getElementById('s4').className='step '+(state.kereta&&state.dies&&state.lots.length>0?'active':'');
+}
+
+// ── RENDER ────────────────────────────────────
+function render(){
+    // Badges
+    document.getElementById('valKereta').textContent = state.kereta||'—';
+    document.getElementById('badgeKereta').className = 'badge'+(state.kereta?' purple':'');
+    document.getElementById('valDies').textContent   = state.dies||'—';
+    document.getElementById('badgeDies').className   = 'badge'+(state.dies?' warn':'');
+    document.getElementById('lotCount').textContent  = state.lots.length;
+    document.getElementById('valLot').textContent    = state.lots.length>0?state.lots[state.lots.length-1]:'—';
+    document.getElementById('badgeLot').className    = 'badge'+(state.lots.length>0?' ok':'');
 
     // Chips
-    if (state.lots.length === 0) {
-        lotChipsEl.innerHTML = '';
-    } else {
-        lotChipsEl.innerHTML = state.lots.map(function(l, i){
-            return '<div class="chip">' + l +
-                '<button onclick="removeLot(' + i + ')">×</button></div>';
-        }).join('');
-    }
+    var el=document.getElementById('lotChips');
+    el.innerHTML = state.lots.map(function(l,i){
+        return '<div class="chip">'+l+'<button onclick="removeLot('+i+')">×</button></div>';
+    }).join('');
 
-    // Sync input fields juga
-    inpDies.value = state.dies;
-    inpDies.className = state.dies ? 'warn' : '';
-    inpLot.value  = state.lots.length > 0 ? state.lots[state.lots.length-1] : '';
-    inpLot.className  = state.lots.length>0 ? 'ok' : '';
+    // Sync inputs
+    inpDies.value=state.dies; inpDies.className=state.dies?'warn':'';
+    inpLot.value=state.lots.length>0?state.lots[state.lots.length-1]:'';
+    inpLot.className=state.lots.length>0?'ok':'';
 
-    // Enable/disable save
-    btnSave.disabled = !(state.kereta && state.dies && state.lots.length > 0);
+    btnSave.disabled=!(state.kereta&&state.dies&&state.lots.length>0);
     updateSteps();
 }
 
-function removeLot(i) {
-    state.lots.splice(i, 1);
-    renderBadges();
-}
+function removeLot(i){ state.lots.splice(i,1); render(); }
 
 // ── SCAN MODE ─────────────────────────────────
-function setMode(mode) {
-    state.mode = mode;
+function setMode(mode){
+    state.mode=mode;
     ['kereta','dies','lot'].forEach(function(m){
-        document.getElementById('m' + m.charAt(0).toUpperCase() + m.slice(1)).className =
-            'mode-btn' + (mode===m ? ' active-' + m : '');
+        var id='m'+m.charAt(0).toUpperCase()+m.slice(1);
+        document.getElementById(id).className='mode-btn'+(mode===m?' active-'+m:'');
     });
-    var labels = { kereta:'🚃 Scan QR Kereta...', dies:'⚙️ Scan QR Dies...', lot:'📦 Scan QR Lot...' };
-    var types  = { kereta:'warn', dies:'warn', lot:'warn' };
-    setStatus(labels[mode], types[mode]);
+    var labels={kereta:'🚃 Arahkan ke QR Kereta...',dies:'⚙️ Arahkan ke QR Dies...',lot:'📦 Arahkan ke QR Lot...'};
+    setStatus(labels[mode],'warn');
 }
 
-// ── QR SCANNER ────────────────────────────────
+// ── QR CAMERA ────────────────────────────────
 var html5QrCode = new Html5Qrcode('qr-reader');
 html5QrCode.start(
-    { facingMode: 'environment' },
-    { fps: 10, qrbox: { width: 220, height: 220 }, aspectRatio: 1.0 },
-    onQRScan,
-    function(){}
+    {facingMode:'environment'},
+    {fps:10, qrbox:{width:220,height:220}, aspectRatio:1.0},
+    onQRScan, function(){}
 ).then(function(){
-    setStatus('Kamera siap. Mode: Scan Kereta', 'warn');
+    setStatus('Kamera siap. Mode: Scan Kereta','warn');
 }).catch(function(err){
-    setStatus('Error kamera: ' + err, 'err');
+    setStatus('Error kamera: '+err,'err');
 });
 
-// debounce scan
-var lastScan = 0;
-function onQRScan(text) {
-    var now = Date.now();
-    if (now - lastScan < 1500) return;
-    lastScan = now;
-    text = text.trim();
+var lastScan=0;
+function onQRScan(text){
+    var now=Date.now();
+    if(now-lastScan<1500) return;
+    lastScan=now;
+    text=text.trim();
 
-    if (state.mode === 'kereta') {
-        // QR kereta berisi teks seperti "6E100105" langsung
-        state.kereta = text;
-        renderBadges();
-        setStatus('✅ Kereta ' + text + ' terscan! Lanjut scan Dies.', 'ok');
+    if(state.mode==='kereta'){
+        state.kereta=text;
+        render(); flashEl('badgeKereta');
+        setStatus('✅ Kereta '+text+' terscan! Lanjut scan Dies.','ok');
         setMode('dies');
-        if (navigator.vibrate) navigator.vibrate(100);
-        flashBadge('badgeKereta');
+        if(navigator.vibrate) navigator.vibrate(100);
 
-    } else if (state.mode === 'dies') {
-        // QR Dies format "DIES:18-0"
-        var dies = text.startsWith('DIES:') ? text.replace('DIES:','') : text;
-        state.dies = dies;
-        inpDies.value = dies;
-        inpDies.className = 'warn';
-        renderBadges();
-        setStatus('✅ Dies ' + dies + ' terscan! Lanjut scan Lot.', 'ok');
+    } else if(state.mode==='dies'){
+        var dies=text.startsWith('DIES:')?text.replace('DIES:',''):text;
+        state.dies=dies;
+        render(); flashEl('badgeDies');
+        setStatus('✅ Dies '+dies+' terscan! Lanjut scan Lot.','ok');
         setMode('lot');
-        if (navigator.vibrate) navigator.vibrate(100);
-        flashBadge('badgeDies');
+        if(navigator.vibrate) navigator.vibrate(100);
 
-    } else if (state.mode === 'lot') {
-        // QR Lot format "LOT:10/01"
-        var lot = text.startsWith('LOT:') ? text.replace('LOT:','') : text;
-        if (state.lots.indexOf(lot) !== -1) {
-            setStatus('⚠️ Lot ' + lot + ' sudah ada!', 'warn');
-            return;
-        }
+    } else if(state.mode==='lot'){
+        var lot=text.startsWith('LOT:')?text.replace('LOT:',''):text;
+        if(state.lots.indexOf(lot)!==-1){ setStatus('⚠️ Lot '+lot+' sudah ada!','warn'); return; }
         state.lots.push(lot);
-        renderBadges();
-        setStatus('✅ Lot ' + lot + ' ditambahkan! Scan lot lagi atau Simpan.', 'ok');
-        if (navigator.vibrate) navigator.vibrate([80,40,80]);
-        flashBadge('badgeLot');
+        render(); flashEl('badgeLot');
+        setStatus('✅ Lot '+lot+' ditambahkan! Scan lot lagi atau Simpan.','ok');
+        if(navigator.vibrate) navigator.vibrate([80,40,80]);
     }
 }
 
-function flashBadge(id) {
-    var el = document.getElementById(id);
-    el.classList.remove('flash');
-    void el.offsetWidth;
-    el.classList.add('flash');
-}
-
-// ── MANUAL INPUT SYNC ─────────────────────────
-inpDies.addEventListener('change', function(){
-    state.dies = this.value.trim().toUpperCase();
-    this.className = state.dies ? 'warn' : '';
-    renderBadges();
+// ── MANUAL INPUT ─────────────────────────────
+inpDies.addEventListener('change',function(){
+    state.dies=this.value.trim().toUpperCase();
+    this.className=state.dies?'warn':'';
+    render();
 });
-inpLot.addEventListener('keydown', function(e){
-    if (e.key === 'Enter') {
-        var v = this.value.trim();
-        if (v && state.lots.indexOf(v) === -1) {
-            state.lots.push(v);
-            renderBadges();
-        }
+inpLot.addEventListener('keydown',function(e){
+    if(e.key==='Enter'){
+        var v=this.value.trim();
+        if(v&&state.lots.indexOf(v)===-1){ state.lots.push(v); render(); }
     }
 });
 
-// ── VOICE INPUT ───────────────────────────────
-var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-var recognition = null;
-var activeVoiceTarget = null;
+// ── VOICE ─────────────────────────────────────
+var SpeechRecog = window.SpeechRecognition||window.webkitSpeechRecognition;
 
-if (SpeechRecognition) {
-    recognition = new SpeechRecognition();
-    recognition.lang = 'id-ID';
-    recognition.continuous = false;
-    recognition.interimResults = true;
+if(SpeechRecog){
+    recognition = new SpeechRecog();
+    recognition.lang='id-ID';
+    recognition.continuous=true;       // terus mendengarkan
+    recognition.interimResults=true;   // tampilkan teks sementara
 
-    recognition.onstart = function() {
-        voiceBar.classList.add('show');
-        setStatus('🎤 Mendengarkan... ucapkan perintah', 'voice');
+    recognition.onresult=function(e){
+        var interim='', final='';
+        for(var i=e.resultIndex;i<e.results.length;i++){
+            if(e.results[i].isFinal) final+=e.results[i][0].transcript;
+            else interim+=e.results[i][0].transcript;
+        }
+        voiceTrans.textContent=(final||interim||'—');
+        if(final) processVoice(final.toLowerCase().trim());
     };
 
-    recognition.onresult = function(e) {
-        var transcript = '';
-        for (var i = e.resultIndex; i < e.results.length; i++) {
-            transcript += e.results[i][0].transcript;
-        }
-        voiceTrans.textContent = transcript;
-
-        if (e.results[e.results.length-1].isFinal) {
-            processVoice(transcript.toLowerCase().trim(), activeVoiceTarget);
+    recognition.onend=function(){
+        // Jika masih voiceOn, restart otomatis (continuous kadang berhenti sendiri)
+        if(voiceOn){
+            try{ recognition.start(); }catch(e){}
         }
     };
 
-    recognition.onend = function() {
-        voiceBar.classList.remove('show');
-        [micDies, micLot, micGlobal].forEach(function(b){ b.classList.remove('listening'); });
-        activeVoiceTarget = null;
-    };
-
-    recognition.onerror = function(e) {
-        voiceBar.classList.remove('show');
-        setStatus('Error mic: ' + e.error, 'err');
+    recognition.onerror=function(e){
+        if(e.error==='no-speech') return; // abaikan jika hanya diam
+        if(e.error==='aborted')   return;
+        setStatus('Error mic: '+e.error,'err');
     };
 } else {
-    [micDies, micLot, micGlobal].forEach(function(b){
-        b.disabled = true; b.title = 'Browser tidak mendukung voice';
-    });
+    voiceToggle.disabled=true;
+    voiceToggle.title='Browser tidak mendukung voice';
 }
 
-function startVoice(target) {
-    if (!recognition) { showToast('Browser tidak support voice input', 'error'); return; }
-    activeVoiceTarget = target;
-    [micDies, micLot, micGlobal].forEach(function(b){ b.classList.remove('listening'); });
-    if (target === 'dies')   micDies.classList.add('listening');
-    if (target === 'lot')    micLot.classList.add('listening');
-    if (target === 'global') micGlobal.classList.add('listening');
-    try { recognition.stop(); } catch(e){}
-    setTimeout(function(){ recognition.start(); }, 200);
+function toggleVoice(){
+    if(!recognition){ showToast('Browser tidak support voice','error'); return; }
+    voiceOn=!voiceOn;
+    if(voiceOn){
+        try{ recognition.start(); }catch(e){}
+        voiceToggle.classList.add('on');
+        voiceLabel.textContent='ON';
+        voiceBox.classList.add('show');
+        setStatus('🎤 Mikrofon aktif — ucapkan perintah','voice');
+    } else {
+        try{ recognition.stop(); }catch(e){}
+        voiceToggle.classList.remove('on');
+        voiceLabel.textContent='SUARA';
+        vdot.style.background='';
+        voiceBox.classList.remove('show');
+        voiceTrans.textContent='—';
+        setStatus('Mikrofon dimatikan.','idle');
+    }
 }
 
 // ── VOICE PARSER ──────────────────────────────
-var ANGKA_MAP = {
-    'nol':0,'kosong':0,'zero':0,
-    'satu':1,'esa':1,'one':1,
-    'dua':2,'two':2,
-    'tiga':3,'three':3,
-    'empat':4,'four':4,
-    'lima':5,'five':5,
-    'enam':6,'six':6,
-    'tujuh':7,'seven':7,
-    'delapan':8,'eight':8,
-    'sembilan':9,'nine':9,
-    'sepuluh':10,'ten':10,
-    'sebelas':11,'eleven':11,
-    'dua belas':12,'duabelas':12,'twelve':12,
+var ANGKA={
+    'nol':0,'kosong':0,
+    'satu':1,'esa':1,
+    'dua':2,
+    'tiga':3,
+    'empat':4,
+    'lima':5,
+    'enam':6,
+    'tujuh':7,
+    'delapan':8,
+    'sembilan':9,
+    'sepuluh':10,'sepuloh':10,
+    'sebelas':11,
+    'dua belas':12,'duabelas':12,
     'tiga belas':13,'tigabelas':13,
     'empat belas':14,'empatbelas':14,
     'lima belas':15,'limabelas':15,
     'enam belas':16,'enambelas':16,
     'tujuh belas':17,'tujuhbelas':17,
-    'delapan belas':18,'delapanbelas':18,'eighteen':18,
+    'delapan belas':18,'delapanbelas':18,
     'sembilan belas':19,'sembilanbelas':19,
     'dua puluh':20,'duapuluh':20,
 };
-var HURUF_MAP = {
-    'a':'A','b':'B','c':'C','d':'D','e':'E','f':'F','g':'G','h':'H','i':'I',
-    'j':'J','k':'K','l':'L','m':'M','n':'N','o':'O','p':'P','q':'Q','r':'R',
-    's':'S','t':'T','u':'U','v':'V','w':'W','x':'X','y':'Y','z':'Z',
-    'alpha':'A','bravo':'B','charlie':'C','delta':'D','echo':'E',
-};
 
-function wordsToNumber(words) {
-    // Coba match angka kata dulu dari paling panjang
-    var sorted = Object.keys(ANGKA_MAP).sort(function(a,b){ return b.length - a.length; });
-    for (var i = 0; i < sorted.length; i++) {
-        if (words.indexOf(sorted[i]) !== -1) {
-            return { num: ANGKA_MAP[sorted[i]], rest: words.replace(sorted[i],'').trim() };
+function wordToNum(text){
+    // Coba multi-kata dulu (terpanjang)
+    var keys=Object.keys(ANGKA).sort(function(a,b){return b.length-a.length;});
+    for(var i=0;i<keys.length;i++){
+        var k=keys[i];
+        var idx=text.indexOf(k);
+        if(idx!==-1){
+            return {num:ANGKA[k], before:text.slice(0,idx).trim(), after:text.slice(idx+k.length).trim()};
         }
     }
-    // Coba angka digit langsung
-    var m = words.match(/\d+/);
-    if (m) return { num: parseInt(m[0]), rest: words.replace(m[0],'').trim() };
+    // Coba angka digit
+    var m=text.match(/(\d+)/);
+    if(m){ return {num:parseInt(m[1]), before:text.slice(0,m.index).trim(), after:text.slice(m.index+m[1].length).trim()}; }
     return null;
 }
 
-function parseDiesVoice(text) {
-    // Contoh: "dies delapan belas strip nol" → 18-0
-    // Hapus kata "dies" di depan jika ada
-    text = text.replace(/^dies?\s*/,'').trim();
-    // Pisahkan berdasarkan kata "strip", "garis", "minus", "dash", "-"
-    var parts = text.split(/\s*(?:strip|garis|minus|dash|-)\s*/);
-    if (parts.length < 2) {
-        // Coba parse 2 angka berurutan
-        var nums = [];
-        var tmp = text;
-        for (var i = 0; i < 2; i++) {
-            var r = wordsToNumber(tmp);
-            if (!r) break;
-            nums.push(r.num);
-            tmp = r.rest;
-        }
-        if (nums.length === 2) return nums[0] + '-' + nums[1];
-        return null;
+function parseDies(text){
+    // Hapus kata "dies" di awal
+    text=text.replace(/^die?s\s*/,'').trim();
+    // Pisah berdasarkan separator
+    var sep=/(strip|garis|minus|dash|titik|-)/;
+    var parts=text.split(sep);
+    if(parts.length>=3){
+        var l=wordToNum(parts[0].trim());
+        var r=wordToNum(parts[2].trim());
+        if(l&&r) return l.num+'-'+r.num;
+        if(l)    return l.num+'-0';
     }
-    var left  = wordsToNumber(parts[0].trim());
-    var right = wordsToNumber(parts[1].trim());
-    if (!left) return null;
-    var leftStr = String(left.num);
-    // Cek apakah ada huruf setelah angka di bagian kiri
-    var hurufMatch = parts[0].trim().match(/\b([a-z])\b\s*$/i);
-    if (hurufMatch && HURUF_MAP[hurufMatch[1].toLowerCase()]) {
-        leftStr = left.num + HURUF_MAP[hurufMatch[1].toLowerCase()];
-    }
-    var rightStr = right ? String(right.num) : '0';
-    return leftStr + '-' + rightStr;
+    // Tanpa separator — ambil 2 angka berurutan
+    var n1=wordToNum(text);
+    if(!n1) return null;
+    var n2=wordToNum(n1.after);
+    if(n2)  return n1.num+'-'+n2.num;
+    return n1.num+'-0';
 }
 
-function parseLotVoice(text) {
-    // Contoh: "nol tiga nol tiga" → 03/03
-    // Hapus kata "lot" di depan
-    text = text.replace(/^lots?\s*/,'').trim();
-    // Pisahkan berdasarkan "garis miring", "per", "slash"
-    var parts = text.split(/\s*(?:garis miring|slash|per|\/)\s*/);
-    var nums = [];
-    if (parts.length >= 2) {
-        var l = wordsToNumber(parts[0].trim());
-        var r = wordsToNumber(parts[1].trim());
-        if (l) nums.push(l.num);
-        if (r) nums.push(r.num);
+function parseLot(text){
+    // Hapus kata "lot" di awal
+    text=text.replace(/^lots?\s*/,'').trim();
+    // Pisah berdasarkan separator
+    var sep=/(garis miring|per|slash|\/)/;
+    var parts=text.split(sep);
+    var nums=[];
+    if(parts.length>=3){
+        var l=wordToNum(parts[0].trim());
+        var r=wordToNum(parts[2].trim());
+        if(l) nums.push(l.num);
+        if(r) nums.push(r.num);
     } else {
-        // Parse 4 digit kata berturut-turut: "nol tiga nol tiga"
-        var tmp = text;
-        var digits = [];
-        for (var i = 0; i < 4; i++) {
-            var res = wordsToNumber(tmp);
-            if (!res) break;
-            digits.push(res.num);
-            tmp = res.rest;
+        // 4 digit kata: "nol tiga nol tiga" → 03/03
+        var tmp=text, digits=[];
+        for(var i=0;i<4;i++){
+            var r2=wordToNum(tmp);
+            if(!r2) break;
+            digits.push(r2.num);
+            tmp=r2.after;
         }
-        if (digits.length === 4) {
-            nums = [digits[0]*10 + digits[1], digits[2]*10 + digits[3]];
-        } else if (digits.length === 2) {
-            nums = digits;
-        }
+        if(digits.length===4)      nums=[digits[0]*10+digits[1], digits[2]*10+digits[3]];
+        else if(digits.length===2) nums=digits;
     }
-    if (nums.length === 2) {
-        var mm = String(nums[0]).padStart(2,'0');
-        var dd = String(nums[1]).padStart(2,'0');
-        return mm + '/' + dd;
+    if(nums.length===2){
+        return String(nums[0]).padStart(2,'0')+'/'+String(nums[1]).padStart(2,'0');
     }
     return null;
 }
 
-function processVoice(text, target) {
-    console.log('[VOICE]', target, ':', text);
+function processVoice(text){
+    console.log('[VOICE]',text);
 
-    // ── GLOBAL COMMANDS ──
-    if (target === 'global' || text.indexOf('kirim') !== -1 || text.indexOf('simpan') !== -1) {
-        if (text.indexOf('kirim') !== -1 || text.indexOf('simpan') !== -1) {
-            setStatus('🎤 Perintah "kirim" terdeteksi!', 'voice');
-            setTimeout(function(){ doSave(); }, 400);
-            return;
-        }
+    // Perintah KIRIM
+    if(/\b(kirim|simpan|send)\b/.test(text)){
+        setStatus('🎤 Perintah "kirim" dideteksi!','voice');
+        showToast('🎤 Menyimpan...','info');
+        setTimeout(doSave, 500);
+        return;
     }
 
-    // Deteksi prefix untuk global mode
-    if (target === 'global') {
-        if (text.indexOf('dies') !== -1 || text.indexOf('die') !== -1) {
-            target = 'dies';
-        } else if (text.indexOf('lot') !== -1) {
-            target = 'lot';
+    // Perintah DIES
+    if(/\bdies?\b/.test(text)){
+        var result=parseDies(text);
+        if(result){
+            state.dies=result;
+            render(); flashEl('badgeDies');
+            setStatus('🎤 Dies diisi: '+result,'ok');
+            showToast('Dies: '+result,'info');
         } else {
-            setStatus('Tidak dikenali. Ucapkan "dies ...", "lot ...", atau "kirim"', 'err');
-            return;
+            setStatus('🎤 Gagal parse Dies. Coba: "dies delapan belas strip nol"','err');
         }
+        return;
     }
 
-    if (target === 'dies') {
-        var result = parseDiesVoice(text);
-        if (result) {
-            state.dies = result;
-            inpDies.value = result;
-            inpDies.className = 'warn';
-            renderBadges();
-            setStatus('✅ Dies diisi: ' + result, 'ok');
-            showToast('Dies: ' + result, 'info');
+    // Perintah LOT
+    if(/\blots?\b/.test(text)){
+        var lotRes=parseLot(text);
+        if(lotRes){
+            if(state.lots.indexOf(lotRes)===-1) state.lots.push(lotRes);
+            render(); flashEl('badgeLot');
+            setStatus('🎤 Lot ditambahkan: '+lotRes,'ok');
+            showToast('Lot: '+lotRes,'info');
         } else {
-            setStatus('Gagal parse Dies. Coba: "dies delapan belas strip nol"', 'err');
+            setStatus('🎤 Gagal parse Lot. Coba: "lot nol tiga nol tiga"','err');
         }
-    } else if (target === 'lot') {
-        var lotResult = parseLotVoice(text);
-        if (lotResult) {
-            if (state.lots.indexOf(lotResult) === -1) {
-                state.lots.push(lotResult);
-            }
-            renderBadges();
-            setStatus('✅ Lot ditambahkan: ' + lotResult, 'ok');
-            showToast('Lot: ' + lotResult, 'info');
-        } else {
-            setStatus('Gagal parse Lot. Coba: "nol tiga nol tiga"', 'err');
-        }
+        return;
     }
 }
 
-// ── SAVE ──────────────────────────────────────
-btnSave.addEventListener('click', doSave);
+// ── SAVE ─────────────────────────────────────
+btnSave.addEventListener('click',doSave);
 
-function doSave() {
-    var nrp  = document.getElementById('nrpOp').value.trim();
-    var part = document.getElementById('namaPart').value.trim();
-
-    if (!nrp || !part) {
-        showToast('⚠️ NRP dan Nama Part wajib diisi!', 'error');
-        return;
+function doSave(){
+    var nrp=document.getElementById('nrpOp').value.trim();
+    var part=document.getElementById('namaPart').value.trim();
+    if(!nrp||!part){ showToast('⚠️ NRP dan Nama Part wajib diisi!','error'); return; }
+    if(!state.kereta||!state.dies||state.lots.length===0){
+        showToast('⚠️ Lengkapi Kereta, Dies, dan Lot!','error'); return;
     }
-    if (!state.kereta || !state.dies || state.lots.length === 0) {
-        showToast('⚠️ Scan Kereta, Dies, dan minimal 1 Lot!', 'error');
-        return;
-    }
+    btnSave.disabled=true;
+    btnSave.textContent='⏳ Menyimpan...';
+    setStatus('Mengirim data...','info');
 
-    btnSave.disabled = true;
-    btnSave.textContent = '⏳ Menyimpan...';
-    setStatus('Mengirim data ke Google Sheet...', 'info');
-
-    var tanggal = new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' });
-
-    // 1 baris per lot
-    var rows = state.lots.map(function(lot) {
-        return {
-            tanggal    : tanggal,
-            nrpOperator: nrp,
-            namaPart   : part,
-            noKereta   : state.kereta,
-            nomorDies  : state.dies,
-            nomorLot   : lot
-        };
+    var tanggal=new Date().toLocaleString('id-ID',{timeZone:'Asia/Jakarta'});
+    var rows=state.lots.map(function(lot){
+        return {tanggal:tanggal, nrpOperator:nrp, namaPart:part,
+                noKereta:state.kereta, nomorDies:state.dies, nomorLot:lot};
     });
 
-    fetch(APPS_SCRIPT_URL, {
-        method : 'POST',
-        mode   : 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body   : JSON.stringify({ rows: rows })
-    }).then(function() {
-        showToast('✅ ' + rows.length + ' data tersimpan!');
-        setStatus('✅ Berhasil simpan ' + rows.length + ' baris. Data tetap ada untuk scan berikutnya.', 'ok');
-        // ── TIDAK menghapus data apapun ──
-        // Hanya reset lot agar siap untuk sesi berikutnya jika diperlukan
-        // (semua field tetap terisi)
-    }).catch(function() {
-        showToast('❌ Gagal. Cek koneksi internet.', 'error');
-        setStatus('Gagal menyimpan.', 'err');
-    }).finally(function() {
-        btnSave.disabled = false;
-        btnSave.textContent = '💾 Simpan ke Google Sheet';
+    fetch(APPS_SCRIPT_URL,{
+        method:'POST', mode:'no-cors',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({rows:rows})
+    }).then(function(){
+        showToast('✅ '+rows.length+' data tersimpan!');
+        setStatus('✅ Tersimpan! Data tetap ada untuk transaksi berikutnya.','ok');
+        // Tidak ada data yang dihapus — semua field tetap terisi
+    }).catch(function(){
+        showToast('❌ Gagal. Cek koneksi.','error');
+        setStatus('Gagal menyimpan.','err');
+    }).finally(function(){
+        btnSave.disabled=false;
+        btnSave.textContent='💾 Simpan ke Google Sheet';
     });
 }
 
 // ── RESET ─────────────────────────────────────
-document.getElementById('btnReset').addEventListener('click', function() {
-    state.kereta = '';
-    state.dies   = '';
-    state.lots   = [];
-    state.mode   = 'kereta';
-    inpDies.value = ''; inpDies.className = '';
-    inpLot.value  = ''; inpLot.className  = '';
-    setMode('kereta');
-    renderBadges();
-    setStatus('Data direset. Mulai scan kereta baru.', 'idle');
+document.getElementById('btnReset').addEventListener('click',function(){
+    state.kereta=''; state.dies=''; state.lots=[];
+    inpDies.value=''; inpDies.className='';
+    inpLot.value='';  inpLot.className='';
+    setMode('kereta'); render();
+    setStatus('Data direset. Mulai scan kereta baru.','idle');
 });
 
 // ── INIT ──────────────────────────────────────
-renderBadges();
-setMode('kereta');
+render(); setMode('kereta');
 </script>
 </body>
 </html>
