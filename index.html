@@ -217,6 +217,14 @@
         <input type="text" id="nrpOp" placeholder="Masukkan NRP...">
     </div>
     <div class="form-group">
+        <label>Mesin</label>
+        <input type="text" id="inpMesin" placeholder="Masukkan nama/nomor mesin...">
+    </div>
+    <div class="form-group">
+        <label>Kondisi Part</label>
+        <input type="text" id="inpKondisi" placeholder="Contoh: OK / NG / Rework...">
+    </div>
+    <div class="form-group">
         <label>Nama Part</label>
         <input type="text" id="namaPart" placeholder="Masukkan nama part...">
     </div>
@@ -490,14 +498,14 @@ var ANGKA_KATA=[
 
 // ── Fuzzy keyword ─────────────────────────
 var FUZZY=[
-    // DIES — semua variasi bunyi di id-ID recognition
-    [/\b(dies?|dais|dis|des|dees|ies|die|diez|gais|days|dais|daies|daies|dyes)\b/gi,'DIES'],
-    // STRIP
-    [/\b(strip|strep|stip|trip|ctrip|trib|trp|rip|ip|trik|strik)\b/gi,'STRIP'],
-    // KIRIM
-    [/\b(kirim|krim|kim|rim|kirm|kirin|kerim|kiri|kirimkan)\b/gi,'KIRIM'],
-    // LOT
-    [/\b(lots?|lat|lod|lob|lott|lot)\b/gi,'LOT'],
+    // DIES — en-US biasanya baca tepat "dies", tapi kadang "dice","dais","days"
+    [/\b(dies?|dice|dais|dis|des|dees|die|diez|gais|days|dyes|daes|dai)\b/gi,'DIES'],
+    // STRIP — en-US biasanya baca "strip" dengan benar
+    [/\b(strip|strep|stip|trip|ctrip|trib|trp|strips|stripped)\b/gi,'STRIP'],
+    // KIRIM — en-US baca "krim","cream","kirim"
+    [/\b(kirim|krim|kim|cream|crim|kirm|kirin|kerim|kiri|send|submit)\b/gi,'KIRIM'],
+    // LOT — en-US biasanya baca "lot" tepat, kadang "lott","lots"
+    [/\b(lots?|lott|lod|lob|plat|flat|slot)\b/gi,'LOT'],
 ];
 
 function toTokens(raw){
@@ -678,7 +686,7 @@ var _recRestartTimer=null;
 function startVoice(){
     if(!SR) return;
     recID = new SR();
-    recID.lang = 'id-ID';
+    recID.lang = 'en-US'; // en-US lebih akurat untuk 'dies','lot','strip'
     recID.continuous = true;
     recID.interimResults = true;
     recID.onresult = function(e){
@@ -724,6 +732,8 @@ function stopVoice(){
 btnSave.addEventListener('click',doSave);
 function doSave(){
     var nrp=document.getElementById('nrpOp').value.trim();
+    var mesin=document.getElementById('inpMesin').value.trim();
+    var kondisi=document.getElementById('inpKondisi').value.trim();
     var part=document.getElementById('namaPart').value.trim();
     if(!nrp||!part){showToast('⚠️ NRP dan Nama Part wajib diisi!','error');return;}
     if(!state.kereta||!state.dies||state.lots.length===0){
@@ -733,7 +743,7 @@ function doSave(){
     setStatus('Mengirim data...','info');
     var tanggal=new Date().toLocaleString('id-ID',{timeZone:'Asia/Jakarta'});
     var rows=state.lots.map(function(lot){
-        return{tanggal:tanggal,nrpOperator:nrp,namaPart:part,
+        return{tanggal:tanggal,nrpOperator:nrp,mesin:mesin,kondisiPart:kondisi,namaPart:part,
                noKereta:state.kereta,nomorDies:state.dies,nomorLot:lot};
     });
     fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',
@@ -756,7 +766,8 @@ document.getElementById('btnReset').addEventListener('click',function(){
     inpLot.value='';  inpLot.className='';
     hintDies.textContent='Format: 18-0 / 2A-0 / 3-1'; hintDies.className='field-hint';
     hintLot.textContent='Format: 04/03 / 13/12';       hintLot.className='field-hint';
-    render(); setStatus('Data direset.','idle');
+    // NRP, Mesin, Kondisi, Nama Part TIDAK direset — tetap terisi
+    render(); setStatus('Data scan direset. Data operator tetap ada.','idle');
 });
 
 render();
