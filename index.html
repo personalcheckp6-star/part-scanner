@@ -27,6 +27,7 @@
         @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
         header h1{font-family:var(--mono);font-size:14px;color:var(--accent);letter-spacing:3px;}
 
+        /* VOICE BUTTON */
         #voiceToggle{display:flex;align-items:center;gap:7px;padding:8px 14px;
             border-radius:20px;border:1.5px solid var(--border);background:var(--bg);
             cursor:pointer;font-family:var(--mono);font-size:11px;letter-spacing:1px;
@@ -37,6 +38,7 @@
         #voiceToggle.on .vdot{background:var(--danger);animation:recPulse .9s infinite;}
         @keyframes recPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
 
+        /* STEPS */
         .steps{width:100%;max-width:500px;display:flex;margin-bottom:14px;}
         .step{flex:1;text-align:center;padding:7px 2px;font-size:9px;
             font-family:var(--mono);letter-spacing:1px;text-transform:uppercase;
@@ -45,43 +47,41 @@
         .step.active{color:var(--warn);border-bottom-color:var(--warn);}
         .step.done{color:var(--accent);border-bottom-color:var(--accent);}
 
+        /* CARD */
         .card{background:var(--card);border:1px solid var(--border);border-radius:12px;
             padding:14px;width:100%;max-width:500px;margin-bottom:10px;}
         .card-title{font-size:10px;font-family:var(--mono);color:var(--muted);
             letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;}
 
-        /* CAMERA */
-        #camWrap{width:100%;border-radius:8px;overflow:hidden;position:relative;}
+        /* CAMERA WRAPPER */
+        #camWrap{position:relative;width:100%;border-radius:8px;overflow:hidden;}
         #qr-reader{width:100%;}
-        #qr-reader video{border-radius:8px;}
+        #qr-reader video{border-radius:8px;display:block;}
         #qr-reader__dashboard{display:none!important;}
-        #camOff{display:none;width:100%;aspect-ratio:4/3;border-radius:8px;
-            background:#0a0d13;border:1px dashed var(--border);
-            flex-direction:column;align-items:center;justify-content:center;gap:10px;}
-        #camOff.show{display:flex;}
-        #camOff .ico{font-size:36px;opacity:.35;}
-        #camOff .txt{font-family:var(--mono);font-size:11px;color:var(--muted);text-align:center;line-height:1.7;}
-
-        /* MODE BUTTONS */
-        .mode-btns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px;}
-        .mode-btn{padding:8px 4px;border:1px solid var(--border);border-radius:6px;
-            background:var(--bg);font-family:var(--mono);font-size:10px;
-            letter-spacing:1px;text-transform:uppercase;cursor:pointer;
-            color:var(--muted);transition:all .2s;text-align:center;}
-        .mode-btn.active-kereta{border-color:var(--purple);color:var(--purple);background:rgba(191,151,255,.1);}
-        .mode-btn.active-dies  {border-color:var(--warn);  color:var(--warn);  background:rgba(240,180,41,.1);}
-        .mode-btn.active-lot   {border-color:var(--accent);color:var(--accent);background:rgba(0,229,160,.1);}
-        .mode-btn:disabled     {opacity:.3;cursor:not-allowed;pointer-events:none;}
+        /* Overlay menutupi kamera saat voice ON — kamera tetap jalan tapi scan diblock via JS */
+        #camOverlay{
+            display:none;
+            position:absolute;top:0;left:0;width:100%;height:100%;
+            background:rgba(13,17,23,.93);
+            border-radius:8px;
+            flex-direction:column;align-items:center;justify-content:center;gap:10px;
+            z-index:10;
+        }
+        #camOverlay.show{display:flex;}
+        #camOverlay .ov-icon{font-size:40px;opacity:.5;}
+        #camOverlay .ov-text{font-family:var(--mono);font-size:11px;color:var(--muted);
+            text-align:center;line-height:1.8;}
 
         /* BADGES */
         .badges{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:10px;}
         .badge{padding:9px 8px;border-radius:8px;border:1px solid var(--border);background:var(--bg);transition:all .3s;}
         .badge-lbl{font-size:8px;font-family:var(--mono);color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;}
         .badge-val{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--muted);word-break:break-all;min-height:18px;}
-        .badge.ok    {border-color:rgba(0,229,160,.4);} .badge.ok     .badge-val{color:var(--accent);}
+        .badge.ok    {border-color:rgba(0,229,160,.4);}  .badge.ok     .badge-val{color:var(--accent);}
         .badge.warn  {border-color:rgba(240,180,41,.4);} .badge.warn   .badge-val{color:var(--warn);}
         .badge.purple{border-color:rgba(191,151,255,.4);}.badge.purple .badge-val{color:var(--purple);}
 
+        /* LOT CHIPS */
         .lot-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;}
         .chip{font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:12px;
             background:rgba(0,229,160,.12);border:1px solid rgba(0,229,160,.3);color:var(--accent);
@@ -102,7 +102,7 @@
             padding:6px 8px;background:rgba(0,0,0,.25);border-radius:6px;margin-bottom:8px;min-height:20px;}
         .vb-cmds{font-family:var(--mono);font-size:10px;color:var(--muted);line-height:2.1;}
         .vb-cmds b{color:var(--purple);}
-        .vb-cmds small{color:var(--muted);opacity:.7;}
+        .vb-cmds small{color:var(--muted);font-size:9px;}
 
         /* FORM */
         .form-group{margin-bottom:10px;}
@@ -117,11 +117,14 @@
         .form-group input.err {border-color:var(--danger);color:var(--danger);background:rgba(248,81,73,.05);}
         .field-hint{font-size:10px;font-family:var(--mono);color:var(--muted);margin-top:4px;}
         .field-hint.bad{color:var(--danger);}
+        .field-hint.ok {color:var(--accent);}
 
-        @keyframes flashG{0%{box-shadow:0 0 0 5px rgba(0,229,160,.55)}100%{box-shadow:none}}
-        @keyframes flashW{0%{box-shadow:0 0 0 5px rgba(240,180,41,.55)}100%{box-shadow:none}}
-        .fg{animation:flashG .7s ease-out;}
-        .fw{animation:flashW .7s ease-out;}
+        @keyframes flashG{0%{box-shadow:0 0 0 6px rgba(0,229,160,.5)}100%{box-shadow:none}}
+        @keyframes flashW{0%{box-shadow:0 0 0 6px rgba(240,180,41,.5)}100%{box-shadow:none}}
+        @keyframes flashP{0%{box-shadow:0 0 0 6px rgba(191,151,255,.5)}100%{box-shadow:none}}
+        .fg{animation:flashG .8s ease-out;}
+        .fw{animation:flashW .8s ease-out;}
+        .fp{animation:flashP .8s ease-out;}
 
         .btn{width:100%;padding:13px;border:none;border-radius:8px;font-family:var(--sans);
             font-weight:700;font-size:14px;letter-spacing:.5px;cursor:pointer;
@@ -163,11 +166,11 @@
     <div class="step"        id="s4"><span>4️⃣</span>Simpan</div>
 </div>
 
-<div id="status" class="warn">Pilih mode scan, arahkan kamera ke QR...</div>
+<div id="status" class="warn">Arahkan kamera ke QR Kereta...</div>
 
 <!-- VOICE BOX -->
 <div id="voiceBox">
-    <div class="vb-row"><div class="vb-rec"></div><div class="vb-title">MIKROFON AKTIF — KAMERA OFF</div></div>
+    <div class="vb-row"><div class="vb-rec"></div><div class="vb-title">MIKROFON AKTIF — SCAN DIBLOKIR</div></div>
     <div id="voiceRaw">mendengarkan...</div>
     <div id="voiceClean">—</div>
     <div class="vb-cmds">
@@ -175,25 +178,23 @@
         <b>"dies dua A strip nol"</b> → 2A-0<br>
         <b>"lot nol empat nol tiga"</b> → 04/03<br>
         <b>"kirim"</b> → Simpan ke Sheet<br>
-        <small>Format Dies: angka-angka / angka huruf-angka</small><br>
-        <small>Format Lot: 2digit/2digit</small>
+        <small>Format Dies: angka-angka / angkaHuruf-angka</small><br>
+        <small>Format Lot:  2digit / 2digit</small>
     </div>
 </div>
 
 <!-- KAMERA -->
 <div class="card">
-    <div class="card-title" id="camCardTitle">📷 Kamera & Mode Scan</div>
-    <div class="mode-btns">
-        <button class="mode-btn active-kereta" id="mKereta" onclick="setMode('kereta')">🚃 Kereta</button>
-        <button class="mode-btn"               id="mDies"   onclick="setMode('dies')">⚙️ Dies</button>
-        <button class="mode-btn"               id="mLot"    onclick="setMode('lot')">📦 Lot</button>
-    </div>
+    <div class="card-title">📷 Kamera — Scan Otomatis</div>
     <div id="camWrap">
         <div id="qr-reader"></div>
-        <div id="camOff">
-            <div class="ico">🎤</div>
-            <div class="txt">Kamera dimatikan saat<br>mode suara aktif.<br>Matikan suara untuk scan QR.</div>
+        <div id="camOverlay">
+            <div class="ov-icon">🎤</div>
+            <div class="ov-text">Mode Suara Aktif<br>Scan QR diblokir<br><br>Matikan suara untuk scan QR</div>
         </div>
+    </div>
+    <div style="font-size:10px;font-family:var(--mono);color:var(--muted);margin-top:8px;text-align:center;">
+        Sistem otomatis mengenali: Kereta / Dies / Lot dari format QR
     </div>
 </div>
 
@@ -221,20 +222,18 @@
     </div>
     <hr class="divider">
 
-    <!-- DIES -->
     <div class="form-group">
         <label>Nomor Dies</label>
         <input type="text" id="inpDies" placeholder="Contoh: 18-0 atau 2A-0"
-               oninput="validateDies(this)" onchange="commitDies(this)">
-        <div class="field-hint" id="hintDies">Format: angka-angka &nbsp;/&nbsp; angkaHuruf-angka</div>
+               oninput="liveValidate('dies')" onblur="commitManual('dies')">
+        <div class="field-hint" id="hintDies">Format: 18-0 &nbsp;/&nbsp; 2A-0 &nbsp;/&nbsp; 3-1</div>
     </div>
 
-    <!-- LOT -->
     <div class="form-group">
         <label>Nomor Lot &nbsp;<span style="color:var(--muted);font-size:9px">(Enter untuk tambah)</span></label>
         <input type="text" id="inpLot" placeholder="Contoh: 04/03"
-               oninput="validateLot(this)" onkeydown="onLotEnter(event)">
-        <div class="field-hint" id="hintLot">Format: 2digit/2digit &nbsp;contoh: 04/03</div>
+               oninput="liveValidate('lot')" onkeydown="lotEnter(event)">
+        <div class="field-hint" id="hintLot">Format: 04/03 &nbsp;/&nbsp; 13/12</div>
     </div>
 
     <hr class="divider">
@@ -250,14 +249,51 @@
 // ============================================
 var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwnc4WIVdwMQO9r5Yoohciw4w5N3t2HC02oD9vdn4jnpBw6rMjWKV4cvJxUoRIYxm8dwQ/exec';
 
-// ── STATE ─────────────────────────────────────────────────
-var state    = { mode:'kereta', kereta:'', dies:'', lots:[] };
-var voiceOn  = false;
-var camOn    = false;   // apakah QR reader sedang running
-var recID    = null;
-var recEN    = null;
+// ══════════════════════════════════════════
+// VALIDASI FORMAT
+// ══════════════════════════════════════════
 
-// ── DOM ───────────────────────────────────────────────────
+// Dies:
+//   \d{1,2}-\d+        → 18-0, 3-1, 19-0
+//   \d{1,2}[A-Z]-\d+   → 2A-0, 11A-1
+var RE_DIES = /^\d{1,2}[A-Z]?-\d+$/i;
+
+// Lot: tepat 2digit / 2digit
+var RE_LOT  = /^\d{2}\/\d{2}$/;
+
+// Kereta: format seperti 6E100105 — alphanumeric >= 5 karakter, bukan format dies/lot
+// Kereta TIDAK cocok dengan RE_DIES dan RE_LOT
+function looksLikeKereta(v){
+    return v.length >= 4 && !RE_DIES.test(v) && !RE_LOT.test(v) && /^[A-Z0-9]+$/i.test(v);
+}
+
+// ══════════════════════════════════════════
+// AUTO-DETECT FORMAT dari QR
+// Prioritas:
+//   1. Jika ada prefix "DIES:" → Dies
+//   2. Jika ada prefix "LOT:"  → Lot
+//   3. Jika cocok RE_DIES      → Dies
+//   4. Jika cocok RE_LOT       → Lot
+//   5. Sisanya                 → Kereta
+// ══════════════════════════════════════════
+function detectFormat(raw){
+    var v = raw.trim();
+    if(v.toUpperCase().startsWith('DIES:')) return {type:'dies', val:v.slice(5).trim().toUpperCase()};
+    if(v.toUpperCase().startsWith('LOT:'))  return {type:'lot',  val:v.slice(4).trim()};
+    if(RE_DIES.test(v.toUpperCase()))        return {type:'dies', val:v.toUpperCase()};
+    if(RE_LOT.test(v))                       return {type:'lot',  val:v};
+    return {type:'kereta', val:v};
+}
+
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+var state   = { kereta:'', dies:'', lots:[] };
+var voiceOn = false;
+var recID   = null;
+var recEN   = null;
+
+// DOM
 var statusEl   = document.getElementById('status');
 var voiceBox   = document.getElementById('voiceBox');
 var voiceRaw   = document.getElementById('voiceRaw');
@@ -267,111 +303,29 @@ var inpLot     = document.getElementById('inpLot');
 var hintDies   = document.getElementById('hintDies');
 var hintLot    = document.getElementById('hintLot');
 var btnSave    = document.getElementById('btnSave');
-var camOff     = document.getElementById('camOff');
-var qrReader   = document.getElementById('qr-reader');
+var camOverlay = document.getElementById('camOverlay');
 
-// ── VALIDASI FORMAT ───────────────────────────────────────
-// Dies valid:
-//   \d{1,2}-\d       → 18-0 / 3-1
-//   \d[A-Z]-\d       → 2A-0
-//   \d{1,2}[A-Z]?-\d → semua kombinasi
-var RE_DIES = /^\d{1,2}[A-Z]?-\d+$/i;
-
-// Lot valid: 2digit/2digit → 01/03, 13/12
-var RE_LOT  = /^\d{2}\/\d{2}$/;
-
-function isValidDies(v){ return RE_DIES.test(v.trim()); }
-function isValidLot(v) { return RE_LOT.test(v.trim()); }
-
-// Validasi realtime input Dies (highlight merah/hijau)
-function validateDies(el){
-    var v = el.value.trim().toUpperCase();
-    if(v === ''){ el.className=''; hintDies.className='field-hint'; return; }
-    if(isValidDies(v)){
-        el.className='warn';
-        hintDies.className='field-hint';
-        hintDies.textContent='✅ Format valid';
-    } else {
-        el.className='err';
-        hintDies.className='field-hint bad';
-        hintDies.textContent='⚠️ Format salah — contoh: 18-0 / 2A-0 / 3-1';
-    }
-}
-
-// Commit Dies ke state saat field blur/change
-function commitDies(el){
-    var v = el.value.trim().toUpperCase();
-    if(isValidDies(v)){
-        state.dies = v;
-        el.value   = v;
-        el.className='warn';
-        hintDies.className='field-hint';
-        hintDies.textContent='✅ Format valid';
-        render();
-    } else if(v !== ''){
-        hintDies.className='field-hint bad';
-        hintDies.textContent='⚠️ Format salah — contoh: 18-0 / 2A-0';
-    }
-}
-
-// Validasi realtime input Lot
-function validateLot(el){
-    var v = el.value.trim();
-    if(v === ''){ el.className=''; hintLot.className='field-hint'; return; }
-    if(isValidLot(v)){
-        el.className='ok';
-        hintLot.className='field-hint';
-        hintLot.textContent='✅ Format valid — tekan Enter untuk tambah';
-    } else {
-        el.className='err';
-        hintLot.className='field-hint bad';
-        hintLot.textContent='⚠️ Format salah — contoh: 04/03 / 13/12';
-    }
-}
-
-// Enter → tambah lot jika valid
-function onLotEnter(e){
-    if(e.key!=='Enter') return;
-    var v = inpLot.value.trim();
-    if(!isValidLot(v)){
-        hintLot.className='field-hint bad';
-        hintLot.textContent='⚠️ Harus format 2digit/2digit — contoh: 04/03';
-        return;
-    }
-    if(state.lots.indexOf(v)===-1){
-        state.lots.push(v);
-        render();
-        inpLot.value='';
-        inpLot.className='';
-        hintLot.className='field-hint';
-        hintLot.textContent='Format: 2digit/2digit  contoh: 04/03';
-    } else {
-        hintLot.className='field-hint bad';
-        hintLot.textContent='⚠️ Lot '+v+' sudah ada!';
-    }
-}
-
-// ── HELPERS ───────────────────────────────────────────────
+// ══════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════
 function setStatus(msg,type){ statusEl.textContent=msg; statusEl.className=type||'idle'; }
 var _tt;
 function showToast(msg,type){
     var t=document.getElementById('toast');
     t.textContent=msg; t.className='show '+(type||'');
-    clearTimeout(_tt); _tt=setTimeout(function(){ t.className=''; },3200);
+    clearTimeout(_tt); _tt=setTimeout(function(){ t.className=''; },3000);
 }
-function flashBadge(id){
+function flash(id,cls){
     var el=document.getElementById(id);
-    el.style.transform='scale(1.06)';
-    setTimeout(function(){ el.style.transform=''; },300);
+    el.classList.remove('fg','fw','fp'); void el.offsetWidth; el.classList.add(cls);
+    setTimeout(function(){ el.classList.remove('fg','fw','fp'); },800);
 }
-function flashInp(el,type){
-    el.classList.remove('fg','fw');
-    void el.offsetWidth;
-    el.classList.add(type==='warn'?'fw':'fg');
-    setTimeout(function(){ el.classList.remove('fg','fw'); },700);
+function flashInp(el,cls){
+    el.classList.remove('fg','fw','fp'); void el.offsetWidth; el.classList.add(cls);
+    setTimeout(function(){ el.classList.remove('fg','fw','fp'); },800);
 }
 
-// ── STEPS ─────────────────────────────────────────────────
+// ── STEPS ─────────────────────────────────
 function updateSteps(){
     document.getElementById('s1').className='step '+(state.kereta?'done':'active');
     document.getElementById('s2').className='step '+(!state.kereta?'':state.dies?'done':'active');
@@ -379,7 +333,7 @@ function updateSteps(){
     document.getElementById('s4').className='step '+(state.kereta&&state.dies&&state.lots.length>0?'active':'');
 }
 
-// ── RENDER ────────────────────────────────────────────────
+// ── RENDER ────────────────────────────────
 function render(){
     document.getElementById('valKereta').textContent = state.kereta||'—';
     document.getElementById('badgeKereta').className = 'badge'+(state.kereta?' purple':'');
@@ -391,139 +345,111 @@ function render(){
     document.getElementById('lotChips').innerHTML    = state.lots.map(function(l,i){
         return '<div class="chip">'+l+'<button onclick="removeLot('+i+')">×</button></div>';
     }).join('');
-    // Sync Dies field hanya jika valid (tidak override input yang sedang diketik)
-    if(state.dies && document.activeElement!==inpDies){
-        inpDies.value     = state.dies;
-        inpDies.className = 'warn';
+    if(document.activeElement!==inpDies){
+        inpDies.value=state.dies; inpDies.className=state.dies?'warn':'';
     }
-    btnSave.disabled = !(state.kereta && state.dies && state.lots.length>0);
+    btnSave.disabled=!(state.kereta&&state.dies&&state.lots.length>0);
     updateSteps();
 }
 function removeLot(i){ state.lots.splice(i,1); render(); }
 
-// ── MODE ──────────────────────────────────────────────────
-function setMode(mode){
-    if(voiceOn) return; // mode QR tidak bisa diubah saat voice aktif
-    state.mode=mode;
-    ['kereta','dies','lot'].forEach(function(m){
-        var btn=document.getElementById('m'+m.charAt(0).toUpperCase()+m.slice(1));
-        btn.className='mode-btn'+(mode===m?' active-'+m:'');
-    });
-    setStatus({kereta:'🚃 Arahkan ke QR Kereta...',dies:'⚙️ Arahkan ke QR Dies...',lot:'📦 Arahkan ke QR Lot...'}[mode],'warn');
+// ── LIVE VALIDATE ─────────────────────────
+function liveValidate(type){
+    if(type==='dies'){
+        var v=inpDies.value.trim().toUpperCase();
+        if(!v){inpDies.className='';hintDies.className='field-hint';hintDies.textContent='Format: 18-0 / 2A-0 / 3-1';return;}
+        if(RE_DIES.test(v)){inpDies.className='warn';hintDies.className='field-hint ok';hintDies.textContent='✅ Format valid';}
+        else              {inpDies.className='err'; hintDies.className='field-hint bad';hintDies.textContent='⚠️ Contoh: 18-0 / 2A-0 / 3-1';}
+    } else {
+        var v2=inpLot.value.trim();
+        if(!v2){inpLot.className='';hintLot.className='field-hint';hintLot.textContent='Format: 04/03 / 13/12';return;}
+        if(RE_LOT.test(v2)){inpLot.className='ok'; hintLot.className='field-hint ok'; hintLot.textContent='✅ Format valid — tekan Enter';}
+        else               {inpLot.className='err';hintLot.className='field-hint bad';hintLot.textContent='⚠️ Harus 2digit/2digit — contoh: 04/03';}
+    }
 }
 
-// ── QR CAMERA ─────────────────────────────────────────────
+// ── COMMIT MANUAL INPUT ───────────────────
+function commitManual(type){
+    if(type==='dies'){
+        var v=inpDies.value.trim().toUpperCase();
+        if(RE_DIES.test(v)){ state.dies=v; render(); }
+    }
+}
+function lotEnter(e){
+    if(e.key!=='Enter') return;
+    var v=inpLot.value.trim();
+    if(!RE_LOT.test(v)){
+        hintLot.className='field-hint bad';
+        hintLot.textContent='⚠️ Format salah — harus 04/03 atau 13/12';
+        return;
+    }
+    if(state.lots.indexOf(v)===-1){ state.lots.push(v); }
+    render();
+    inpLot.value=''; inpLot.className='';
+    hintLot.className='field-hint'; hintLot.textContent='Format: 04/03 / 13/12';
+}
+
+// ══════════════════════════════════════════
+// QR SCAN — AUTO DETECT
+// ══════════════════════════════════════════
 var html5QrCode = new Html5Qrcode('qr-reader');
+html5QrCode.start(
+    {facingMode:'environment'},
+    {fps:10, qrbox:{width:220,height:220}, aspectRatio:1.0},
+    onQRScan, function(){}
+).catch(function(e){ setStatus('Error kamera: '+e,'err'); });
 
-function startCam(){
-    if(camOn) return;
-    html5QrCode.start(
-        {facingMode:'environment'},
-        {fps:10,qrbox:{width:220,height:220},aspectRatio:1.0},
-        onQRScan, function(){}
-    ).then(function(){
-        camOn=true;
-        camOff.classList.remove('show');
-        qrReader.style.display='block';
-        setStatus('Kamera siap. Mode: '+state.mode.toUpperCase(),'warn');
-    }).catch(function(e){ setStatus('Error kamera: '+e,'err'); });
-}
-
-function stopCam(){
-    if(!camOn) return;
-    html5QrCode.stop().then(function(){
-        camOn=false;
-        qrReader.style.display='none';
-        camOff.classList.add('show');
-    }).catch(function(){
-        camOn=false;
-        qrReader.style.display='none';
-        camOff.classList.add('show');
-    });
-}
-
-// ── SCAN HANDLER — STRICT MODE ────────────────────────────
-// QR hanya mengisi field sesuai mode aktif, TIDAK auto-pindah mode
 var _lastScan=0;
-function onQRScan(text){
-    var now=Date.now(); if(now-_lastScan<1800)return; _lastScan=now;
-    text=text.trim();
+function onQRScan(raw){
+    // Blokir scan saat voice aktif
+    if(voiceOn) return;
 
-    if(state.mode==='kereta'){
-        // Kereta: terima semua format QR
-        state.kereta=text;
-        render(); flashBadge('badgeKereta');
-        setStatus('✅ Kereta: '+text+' | Pindah mode → Dies','ok');
+    var now=Date.now();
+    if(now-_lastScan<1800) return;
+    _lastScan=now;
+
+    var det = detectFormat(raw);
+
+    if(det.type==='kereta'){
+        // Terima sebagai kereta
+        state.kereta=det.val;
+        render(); flash('badgeKereta','fp');
+        setStatus('✅ Kereta: '+det.val,'ok');
         if(navigator.vibrate) navigator.vibrate(100);
 
-    } else if(state.mode==='dies'){
-        // Dies: QR format "DIES:18-0" → ambil setelah "DIES:"
-        var rawDies = text.startsWith('DIES:') ? text.replace('DIES:','') : text;
-        rawDies = rawDies.trim().toUpperCase();
-        if(isValidDies(rawDies)){
-            state.dies      = rawDies;
-            inpDies.value   = rawDies;
-            inpDies.className='warn';
-            hintDies.textContent='✅ Format valid';
-            hintDies.className='field-hint';
-            render(); flashBadge('badgeDies'); flashInp(inpDies,'warn');
-            setStatus('✅ Dies: '+rawDies+' | Pindah mode → Lot','ok');
-            if(navigator.vibrate) navigator.vibrate(100);
-        } else {
-            setStatus('⚠️ QR terbaca tapi format Dies tidak valid: '+rawDies,'err');
+    } else if(det.type==='dies'){
+        var dv = det.val.toUpperCase();
+        if(!RE_DIES.test(dv)){
+            setStatus('⚠️ Format Dies tidak valid: '+dv,'err'); return;
         }
+        state.dies=dv;
+        inpDies.value=dv; inpDies.className='warn';
+        hintDies.className='field-hint ok'; hintDies.textContent='✅ Dari scan QR';
+        render(); flash('badgeDies','fw'); flashInp(inpDies,'fw');
+        setStatus('✅ Dies: '+dv,'ok');
+        if(navigator.vibrate) navigator.vibrate(100);
 
-    } else if(state.mode==='lot'){
-        // Lot: QR format "LOT:04/03" → ambil setelah "LOT:"
-        var rawLot = text.startsWith('LOT:') ? text.replace('LOT:','') : text;
-        rawLot = rawLot.trim();
-        if(isValidLot(rawLot)){
-            if(state.lots.indexOf(rawLot)===-1){
-                state.lots.push(rawLot);
-                render(); flashBadge('badgeLot');
-                setStatus('✅ Lot '+rawLot+' ditambahkan!','ok');
-                if(navigator.vibrate) navigator.vibrate([80,40,80]);
-            } else {
-                setStatus('⚠️ Lot '+rawLot+' sudah ada!','warn');
-            }
+    } else if(det.type==='lot'){
+        var lv = det.val;
+        if(!RE_LOT.test(lv)){
+            setStatus('⚠️ Format Lot tidak valid: '+lv,'err'); return;
+        }
+        if(state.lots.indexOf(lv)===-1){
+            state.lots.push(lv);
+            render(); flash('badgeLot','fg');
+            setStatus('✅ Lot '+lv+' ditambahkan!','ok');
+            if(navigator.vibrate) navigator.vibrate([80,40,80]);
         } else {
-            setStatus('⚠️ QR terbaca tapi format Lot tidak valid: '+rawLot,'err');
+            setStatus('⚠️ Lot '+lv+' sudah ada!','warn');
         }
     }
 }
 
-// ── VOICE ENGINE ──────────────────────────────────────────
-var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+// ══════════════════════════════════════════
+// VOICE ENGINE
+// ══════════════════════════════════════════
 
-function toggleVoice(){
-    if(!SR){ showToast('Browser tidak mendukung voice','error'); return; }
-    voiceOn=!voiceOn;
-    if(voiceOn){
-        // Matikan kamera dulu
-        stopCam();
-        // Disable mode buttons
-        ['mKereta','mDies','mLot'].forEach(function(id){ document.getElementById(id).disabled=true; });
-        startVoice();
-        document.getElementById('voiceToggle').classList.add('on');
-        document.getElementById('voiceLabel').textContent='ON';
-        voiceBox.classList.add('show');
-        setStatus('🎤 Mikrofon aktif — kamera dimatikan','voice');
-    } else {
-        stopVoice();
-        // Enable mode buttons
-        ['mKereta','mDies','mLot'].forEach(function(id){ document.getElementById(id).disabled=false; });
-        document.getElementById('voiceToggle').classList.remove('on');
-        document.getElementById('voiceLabel').textContent='SUARA';
-        voiceBox.classList.remove('show');
-        voiceRaw.textContent='mendengarkan...';
-        voiceClean.textContent='—';
-        // Nyalakan kamera kembali
-        startCam();
-        setStatus('Kamera aktif kembali.','idle');
-    }
-}
-
-// ── ANGKA KATA → DIGIT ────────────────────────────────────
+// ── Angka kata → digit ────────────────────
 var ANGKA_KATA=[
     ['dua puluh',20],['duapuluh',20],
     ['sembilan belas',19],['sembilanbelas',19],
@@ -548,233 +474,215 @@ var ANGKA_KATA=[
     ['nol',0],['kosong',0],
 ];
 
-// ── FUZZY KEYWORD ─────────────────────────────────────────
+// ── Fuzzy keyword ─────────────────────────
 var FUZZY=[
-    [/\b(dies?|dais|dis|des|dees|diez|ies|die)\b/gi,'DIES'],
+    [/\b(dies?|dais|dis|des|dees|ies|die|diez)\b/gi,'DIES'],
     [/\b(strip|strep|stip|trip|ctrip|trib|trp|rip|ip)\b/gi,'STRIP'],
     [/\b(kirim|krim|kim|rim|kirm|kirin|kerim|kiri)\b/gi,'KIRIM'],
     [/\b(lots?|lat|lod|lob|lott)\b/gi,'LOT'],
 ];
 
-function prepareText(raw){
+function toTokens(raw){
     var t=raw.toLowerCase();
-    // 1. Ganti angka kata → digit (terpanjang dulu)
+    // 1. ganti angka kata → digit (terpanjang dulu)
     ANGKA_KATA.forEach(function(p){
         t=t.replace(new RegExp('\\b'+p[0]+'\\b','gi'),' '+p[1]+' ');
     });
-    // 2. Fuzzy normalize
+    // 2. fuzzy normalize
     FUZZY.forEach(function(p){ t=t.replace(p[0],p[1]); });
-    // 3. Uppercase & tokenize
+    // 3. tokenize
     return t.toUpperCase().replace(/\s+/g,' ').trim().split(' ').filter(function(x){return x.length>0;});
 }
 
-// ── PARSER DIES (token-based) ──────────────────────────────
-// Logic: cari DIES → ambil 1-2 token sebelum STRIP → angka kiri (+ opsional 1 huruf)
-//        ambil 1 token setelah STRIP → angka kanan
-// Hasil: angka-angka / angkaHuruf-angka
+// ── Parse DIES dari token ─────────────────
+// Logic: token antara DIES...STRIP = angka kiri (+ opsional 1 huruf A-Z)
+//        token setelah STRIP = angka kanan
 // Validasi akhir dengan RE_DIES
-function parseDiesTokens(tokens){
-    var iDies  = tokens.indexOf('DIES');
-    if(iDies===-1) return null;
+function parseDies(tokens){
+    var iD=tokens.indexOf('DIES'); if(iD===-1) return null;
 
-    var iStrip = -1;
-    for(var i=iDies+1;i<tokens.length;i++){
-        if(tokens[i]==='STRIP'){iStrip=i;break;}
+    // Cari STRIP setelah DIES
+    var iS=-1;
+    for(var i=iD+1;i<tokens.length;i++){
+        if(tokens[i]==='STRIP'){iS=i;break;}
     }
 
-    var angkaKiri='', huruf='', angkaKanan='';
+    var numKiri='', huruf='', numKanan='';
 
-    if(iStrip!==-1){
-        // Token antara DIES...STRIP = angka kiri + opsional huruf
-        var between=tokens.slice(iDies+1,iStrip);
-        for(var b=0;b<between.length;b++){
-            var tb=between[b];
-            if(tb==='LOT'||tb==='KIRIM') break;
-            var nb=parseInt(tb);
-            if(!isNaN(nb) && angkaKiri===''){
-                angkaKiri=String(nb);
-            } else if(angkaKiri!=='' && /^[A-Z]$/.test(tb)){
-                huruf=tb;
-            }
+    if(iS!==-1){
+        // Antara DIES dan STRIP → angka kiri + opsional huruf
+        var mid=tokens.slice(iD+1,iS);
+        for(var m=0;m<mid.length;m++){
+            var tm=mid[m];
+            if(tm==='LOT'||tm==='KIRIM') break;
+            var nm=parseInt(tm);
+            if(!isNaN(nm) && numKiri==='')  numKiri=String(nm);
+            else if(numKiri!=='' && /^[A-Z]$/.test(tm)) huruf=tm;
         }
-        // Token setelah STRIP = angka kanan (ambil yang pertama valid)
-        var after=tokens.slice(iStrip+1);
-        for(var a=0;a<Math.min(3,after.length);a++){
-            var na=parseInt(after[a]);
-            if(!isNaN(na)){ angkaKanan=String(na); break; }
+        // Setelah STRIP → angka kanan
+        var aft=tokens.slice(iS+1);
+        for(var a=0;a<Math.min(3,aft.length);a++){
+            var na=parseInt(aft[a]);
+            if(!isNaN(na)){numKanan=String(na);break;}
         }
-        if(angkaKanan==='') angkaKanan='0';
+        if(numKanan==='') numKanan='0';
     } else {
-        // Tidak ada STRIP → format "angka huruf" saja (misal 11A)
-        var rest=tokens.slice(iDies+1);
+        // Tanpa STRIP → hanya angka + opsional huruf (format: 11A)
+        var rest=tokens.slice(iD+1);
         for(var r=0;r<rest.length;r++){
             var tr=rest[r];
             if(tr==='LOT'||tr==='KIRIM'||tr==='STRIP') break;
             var nr=parseInt(tr);
-            if(!isNaN(nr) && angkaKiri===''){
-                angkaKiri=String(nr);
-            } else if(angkaKiri!=='' && /^[A-Z]$/.test(tr)){
-                huruf=tr;
-            }
+            if(!isNaN(nr) && numKiri==='') numKiri=String(nr);
+            else if(numKiri!=='' && /^[A-Z]$/.test(tr)) huruf=tr;
         }
     }
 
-    if(angkaKiri==='') return null;
-
-    var result = angkaKiri+huruf+(angkaKanan!==''?'-'+angkaKanan:'');
-    // Validasi format akhir
-    return isValidDies(result) ? result : null;
+    if(numKiri==='') return null;
+    var result=numKiri+huruf+(numKanan!==''?'-'+numKanan:'');
+    return RE_DIES.test(result)?result:null;
 }
 
-// ── PARSER LOT (token-based) ───────────────────────────────
-// Logic: setelah LOT → ambil 2 token untuk kiri (misal nol empat = 04)
-//        lalu ambil 2 token berikutnya untuk kanan (misal nol tiga = 03)
-// Hasil selalu: 2digit/2digit
-function parseLotTokens(tokens){
-    var iLot=tokens.indexOf('LOT');
-    if(iLot===-1) return null;
-
-    // Kumpulkan semua angka setelah LOT (sampai keyword berikutnya)
+// ── Parse LOT dari token ──────────────────
+// Logic: 4 digit setelah LOT → kiri=digit[0]*10+digit[1], kanan=digit[2]*10+digit[3]
+//        Atau 2 angka multi-digit → kiri=num[0], kanan=num[1]
+// Validasi akhir dengan RE_LOT
+function parseLot(tokens){
+    var iL=tokens.indexOf('LOT'); if(iL===-1) return null;
     var nums=[];
-    for(var i=iLot+1;i<tokens.length;i++){
+    for(var i=iL+1;i<tokens.length;i++){
         var t=tokens[i];
         if(t==='DIES'||t==='STRIP'||t==='KIRIM') break;
         var n=parseInt(t);
         if(!isNaN(n)) nums.push(n);
     }
+    if(nums.length===0) return null;
 
-    var kiri, kanan;
-
+    var kiri,kanan;
     if(nums.length>=4){
-        // 4 digit tunggal: 0,4,0,3 → 04/03
-        kiri  = nums[0]*10 + nums[1];
-        kanan = nums[2]*10 + nums[3];
+        kiri  = nums[0]*10+nums[1];
+        kanan = nums[2]*10+nums[3];
     } else if(nums.length===3){
-        // Ambiguous — coba interpretasi terbaik
-        // Misal: 0,4,3 → kiri=04, kanan=03
-        if(nums[0]===0){
-            kiri  = nums[0]*10 + nums[1];
-            kanan = nums[2];
-        } else {
-            kiri  = nums[0];
-            kanan = nums[1]*10 + nums[2];
-        }
+        if(nums[0]<10){ kiri=nums[0]*10+nums[1]; kanan=nums[2]; }
+        else           { kiri=nums[0];             kanan=nums[1]*10+nums[2]; }
     } else if(nums.length===2){
-        // Sudah multi-digit: 13,4 → 13/04
-        kiri  = nums[0];
-        kanan = nums[1];
-    } else if(nums.length===1){
-        kiri=nums[0]; kanan=0;
+        kiri=nums[0]; kanan=nums[1];
     } else {
-        return null;
+        kiri=nums[0]; kanan=0;
     }
 
-    // Pastikan 2 digit dengan padStart
-    var result = String(kiri).padStart(2,'0') + '/' + String(kanan).padStart(2,'0');
-    // Validasi format akhir
-    return isValidLot(result) ? result : null;
+    var result=String(kiri).padStart(2,'0')+'/'+String(kanan).padStart(2,'0');
+    return RE_LOT.test(result)?result:null;
 }
 
-// ── PROCESS VOICE ─────────────────────────────────────────
-var _lastRaw='', _lastTime=0;
+// ── Process Voice ─────────────────────────
+var _lRaw='',_lTime=0;
 function processVoice(raw){
     var now=Date.now();
-    if(raw===_lastRaw && now-_lastTime<1200) return;
-    _lastRaw=raw; _lastTime=now;
+    if(raw===_lRaw && now-_lTime<1200) return;
+    _lRaw=raw; _lTime=now;
 
-    var tokens=prepareText(raw);
-
+    var tokens=toTokens(raw);
     voiceRaw.textContent   = '📥 '+raw;
     voiceClean.textContent = '🔤 '+tokens.join(' | ');
-    console.log('[VOICE] raw:',raw,'tokens:',tokens);
+    console.log('[VOICE] raw:',raw,'| tokens:',tokens.join(' | '));
 
     // KIRIM
     if(tokens.indexOf('KIRIM')!==-1){
-        setStatus('🎤 Perintah kirim!','voice');
+        setStatus('🎤 Kirim!','voice');
         showToast('🎤 Menyimpan...','info');
-        setTimeout(doSave,400);
-        return;
+        setTimeout(doSave,400); return;
     }
 
     // DIES
     if(tokens.indexOf('DIES')!==-1){
-        var diesResult=parseDiesTokens(tokens);
-        if(diesResult){
-            // Langsung isi state dan field
-            state.dies        = diesResult;
-            inpDies.value     = diesResult;
-            inpDies.className = 'warn';
-            hintDies.textContent='✅ Format valid';
-            hintDies.className='field-hint';
-            flashInp(inpDies,'warn');
-            flashBadge('badgeDies');
+        var dr=parseDies(tokens);
+        if(dr){
+            state.dies=dr;
+            inpDies.value=dr; inpDies.className='warn';
+            hintDies.className='field-hint ok'; hintDies.textContent='✅ Dies: '+dr;
+            flashInp(inpDies,'fw'); flash('badgeDies','fw');
             render();
-            setStatus('🎤 Dies: '+diesResult,'ok');
-            showToast('✅ Dies: '+diesResult,'info');
+            setStatus('🎤 Dies: '+dr,'ok');
+            showToast('✅ Dies: '+dr,'info');
         } else {
-            setStatus('🎤 Format Dies tidak valid. Coba: "dies delapan belas strip nol"','err');
+            setStatus('🎤 Gagal — coba: "dies delapan belas strip nol"','err');
         }
         return;
     }
 
     // LOT
     if(tokens.indexOf('LOT')!==-1){
-        var lotResult=parseLotTokens(tokens);
-        if(lotResult){
-            if(state.lots.indexOf(lotResult)===-1){
-                state.lots.push(lotResult);
-            }
-            // Langsung isi field
-            inpLot.value     = lotResult;
-            inpLot.className = 'ok';
-            hintLot.textContent='✅ Lot ditambahkan';
-            hintLot.className='field-hint';
-            flashInp(inpLot,'green');
-            flashBadge('badgeLot');
+        var lr=parseLot(tokens);
+        if(lr){
+            if(state.lots.indexOf(lr)===-1) state.lots.push(lr);
+            inpLot.value=lr; inpLot.className='ok';
+            hintLot.className='field-hint ok'; hintLot.textContent='✅ Lot: '+lr;
+            flashInp(inpLot,'fg'); flash('badgeLot','fg');
             render();
-            setStatus('🎤 Lot: '+lotResult,'ok');
-            showToast('✅ Lot: '+lotResult,'info');
+            setStatus('🎤 Lot: '+lr,'ok');
+            showToast('✅ Lot: '+lr,'info');
         } else {
-            setStatus('🎤 Format Lot tidak valid. Coba: "lot nol empat nol tiga"','err');
+            setStatus('🎤 Gagal — coba: "lot nol empat nol tiga"','err');
         }
         return;
     }
 }
 
-// ── START / STOP VOICE RECOGNITION ────────────────────────
+// ── Toggle Voice ──────────────────────────
+var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+function toggleVoice(){
+    if(!SR){showToast('Browser tidak mendukung voice','error');return;}
+    voiceOn=!voiceOn;
+    var btn=document.getElementById('voiceToggle');
+    var lbl=document.getElementById('voiceLabel');
+    if(voiceOn){
+        // Tampilkan overlay (blokir scan via JS, kamera tetap running)
+        camOverlay.classList.add('show');
+        btn.classList.add('on'); lbl.textContent='ON';
+        voiceBox.classList.add('show');
+        startVoice();
+        setStatus('🎤 Mikrofon aktif — scan QR diblokir','voice');
+    } else {
+        camOverlay.classList.remove('show');
+        btn.classList.remove('on'); lbl.textContent='SUARA';
+        voiceBox.classList.remove('show');
+        voiceRaw.textContent='mendengarkan...';
+        voiceClean.textContent='—';
+        stopVoice();
+        setStatus('Kamera aktif — arahkan ke QR','idle');
+    }
+}
+
 function makeRec(lang){
     if(!SR) return null;
     var r=new SR();
     r.lang=lang; r.continuous=true; r.interimResults=true;
     r.onresult=function(e){
-        var interim='',final='';
+        var interim='',final_='';
         for(var i=e.resultIndex;i<e.results.length;i++){
-            if(e.results[i].isFinal) final+=e.results[i][0].transcript;
+            if(e.results[i].isFinal) final_+=e.results[i][0].transcript;
             else interim+=e.results[i][0].transcript;
         }
         if(interim) voiceRaw.textContent='📥 '+interim+'...';
-        if(final)   processVoice(final);
+        if(final_)  processVoice(final_);
     };
-    r.onend=function(){ if(voiceOn){ try{r.start();}catch(e){} } };
-    r.onerror=function(e){
-        if(e.error!=='no-speech'&&e.error!=='aborted') console.warn(lang,e.error);
-    };
+    r.onend=function(){ if(voiceOn){try{r.start();}catch(e){}} };
+    r.onerror=function(e){ if(e.error!=='no-speech'&&e.error!=='aborted') console.warn(lang,e.error); };
     return r;
 }
-
 function startVoice(){
-    recID=makeRec('id-ID'); if(recID) try{recID.start();}catch(e){}
-    setTimeout(function(){
-        recEN=makeRec('en-US'); if(recEN) try{recEN.start();}catch(e){};
-    },400);
+    recID=makeRec('id-ID'); if(recID)try{recID.start();}catch(e){}
+    setTimeout(function(){ recEN=makeRec('en-US'); if(recEN)try{recEN.start();}catch(e){}; },400);
 }
-
 function stopVoice(){
     if(recID){try{recID.stop();}catch(e){} recID=null;}
     if(recEN){try{recEN.stop();}catch(e){} recEN=null;}
 }
 
-// ── SAVE ──────────────────────────────────────────────────
+// ══════════════════════════════════════════
+// SAVE
+// ══════════════════════════════════════════
 btnSave.addEventListener('click',doSave);
 function doSave(){
     var nrp=document.getElementById('nrpOp').value.trim();
@@ -794,33 +702,26 @@ function doSave(){
         headers:{'Content-Type':'application/json'},body:JSON.stringify({rows:rows})
     }).then(function(){
         showToast('✅ '+rows.length+' data tersimpan!');
-        setStatus('✅ Tersimpan! Data tetap ada untuk transaksi berikutnya.','ok');
+        setStatus('✅ Tersimpan! Data tetap untuk transaksi berikutnya.','ok');
     }).catch(function(){
         showToast('❌ Gagal. Cek koneksi.','error');
         setStatus('Gagal menyimpan.','err');
     }).finally(function(){
-        btnSave.disabled=false;
-        btnSave.textContent='💾 Simpan ke Google Sheet';
+        btnSave.disabled=false; btnSave.textContent='💾 Simpan ke Google Sheet';
     });
 }
 
-// ── RESET ─────────────────────────────────────────────────
+// RESET
 document.getElementById('btnReset').addEventListener('click',function(){
     state.kereta=''; state.dies=''; state.lots=[];
     inpDies.value=''; inpDies.className='';
     inpLot.value='';  inpLot.className='';
-    hintDies.textContent='Format: angka-angka / angkaHuruf-angka';
-    hintDies.className='field-hint';
-    hintLot.textContent='Format: 2digit/2digit  contoh: 04/03';
-    hintLot.className='field-hint';
-    setMode('kereta'); render();
-    setStatus('Data direset.','idle');
+    hintDies.textContent='Format: 18-0 / 2A-0 / 3-1'; hintDies.className='field-hint';
+    hintLot.textContent='Format: 04/03 / 13/12';       hintLot.className='field-hint';
+    render(); setStatus('Data direset.','idle');
 });
 
-// ── INIT ──────────────────────────────────────────────────
 render();
-setMode('kereta');
-startCam();
 </script>
 </body>
 </html>
