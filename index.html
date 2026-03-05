@@ -27,15 +27,13 @@
         @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
         header h1{font-family:var(--mono);font-size:14px;color:var(--accent);letter-spacing:3px;}
 
-        #voiceToggle{
-            display:flex;align-items:center;gap:7px;
-            padding:8px 14px;border-radius:20px;border:1.5px solid var(--border);
-            background:var(--bg);cursor:pointer;
-            font-family:var(--mono);font-size:11px;letter-spacing:1px;
-            color:var(--muted);transition:all .25s;white-space:nowrap;
-        }
+        #voiceToggle{display:flex;align-items:center;gap:7px;padding:8px 14px;
+            border-radius:20px;border:1.5px solid var(--border);background:var(--bg);
+            cursor:pointer;font-family:var(--mono);font-size:11px;letter-spacing:1px;
+            color:var(--muted);transition:all .25s;white-space:nowrap;}
         .vdot{width:8px;height:8px;border-radius:50%;background:var(--muted);transition:all .3s;}
-        #voiceToggle.on{border-color:var(--purple);background:rgba(191,151,255,.12);color:var(--purple);box-shadow:0 0 12px rgba(191,151,255,.25);}
+        #voiceToggle.on{border-color:var(--purple);background:rgba(191,151,255,.12);
+            color:var(--purple);box-shadow:0 0 12px rgba(191,151,255,.25);}
         #voiceToggle.on .vdot{background:var(--danger);animation:recPulse .9s infinite;}
         @keyframes recPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
 
@@ -62,16 +60,16 @@
             letter-spacing:1px;text-transform:uppercase;cursor:pointer;
             color:var(--muted);transition:all .2s;text-align:center;}
         .mode-btn.active-kereta{border-color:var(--purple);color:var(--purple);background:rgba(191,151,255,.1);}
-        .mode-btn.active-dies  {border-color:var(--warn);  color:var(--warn);  background:rgba(240,180,41,.1);}
-        .mode-btn.active-lot   {border-color:var(--accent);color:var(--accent);background:rgba(0,229,160,.1);}
+        .mode-btn.active-dies{border-color:var(--warn);color:var(--warn);background:rgba(240,180,41,.1);}
+        .mode-btn.active-lot{border-color:var(--accent);color:var(--accent);background:rgba(0,229,160,.1);}
 
         .badges{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:10px;}
-        .badge{padding:9px 8px;border-radius:8px;border:1px solid var(--border);background:var(--bg);transition:border-color .3s;}
+        .badge{padding:9px 8px;border-radius:8px;border:1px solid var(--border);background:var(--bg);transition:all .3s;}
         .badge-lbl{font-size:8px;font-family:var(--mono);color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;}
         .badge-val{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--muted);transition:all .3s;word-break:break-all;min-height:18px;}
-        .badge.ok    {border-color:rgba(0,229,160,.3);}   .badge.ok     .badge-val{color:var(--accent);}
-        .badge.warn  {border-color:rgba(240,180,41,.3);}  .badge.warn   .badge-val{color:var(--warn);}
-        .badge.purple{border-color:rgba(191,151,255,.3);} .badge.purple .badge-val{color:var(--purple);}
+        .badge.ok{border-color:rgba(0,229,160,.4);}.badge.ok .badge-val{color:var(--accent);}
+        .badge.warn{border-color:rgba(240,180,41,.4);}.badge.warn .badge-val{color:var(--warn);}
+        .badge.purple{border-color:rgba(191,151,255,.4);}.badge.purple .badge-val{color:var(--purple);}
 
         .lot-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;}
         .chip{font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:12px;
@@ -85,11 +83,12 @@
             border-radius:10px;padding:12px 14px;margin-bottom:10px;}
         #voiceBox.show{display:block;}
         .vb-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
-        .vb-rec{width:7px;height:7px;border-radius:50%;background:var(--danger);animation:recPulse .9s infinite;flex-shrink:0;}
+        .vb-rec{width:7px;height:7px;border-radius:50%;background:var(--danger);animation:recPulse .9s infinite;}
         .vb-title{font-family:var(--mono);font-size:10px;color:var(--purple);letter-spacing:1.5px;}
-        #voiceTranscript{font-family:var(--mono);font-size:13px;color:var(--text);
-            min-height:20px;line-height:1.5;padding:6px 8px;
-            background:rgba(0,0,0,.2);border-radius:6px;margin-bottom:8px;}
+        #voiceRaw{font-family:var(--mono);font-size:11px;color:var(--muted);
+            padding:4px 8px;background:rgba(0,0,0,.2);border-radius:4px;margin-bottom:4px;min-height:16px;}
+        #voiceClean{font-family:var(--mono);font-size:13px;color:var(--text);
+            padding:6px 8px;background:rgba(0,0,0,.2);border-radius:6px;margin-bottom:8px;min-height:20px;}
         .vb-cmds{font-family:var(--mono);font-size:10px;color:var(--muted);line-height:1.9;}
         .vb-cmds b{color:var(--purple);}
 
@@ -98,21 +97,19 @@
             color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px;}
         .form-group input{width:100%;padding:10px 12px;background:var(--bg);
             border:1px solid var(--border);border-radius:6px;color:var(--text);
-            font-family:var(--mono);font-size:15px;outline:none;transition:all .2s;}
+            font-family:var(--mono);font-size:15px;outline:none;transition:all .25s;}
         .form-group input:focus{border-color:var(--blue);}
-        .form-group input.ok    {border-color:var(--accent);color:var(--accent);background:rgba(0,229,160,.05);}
-        .form-group input.warn  {border-color:var(--warn);  color:var(--warn);  background:rgba(240,180,41,.05);}
-        .form-group input.purple{border-color:var(--purple);color:var(--purple);background:rgba(191,151,255,.05);}
+        .form-group input.ok  {border-color:var(--accent);color:var(--accent);background:rgba(0,229,160,.05);}
+        .form-group input.warn{border-color:var(--warn);  color:var(--warn);  background:rgba(240,180,41,.05);}
 
-        /* highlight flash on fill */
-        @keyframes inputFlash{0%{box-shadow:0 0 0 4px rgba(0,229,160,.4)}100%{box-shadow:none}}
-        .input-flash{animation:inputFlash .6s ease-out;}
-        @keyframes inputFlashWarn{0%{box-shadow:0 0 0 4px rgba(240,180,41,.4)}100%{box-shadow:none}}
-        .input-flash-warn{animation:inputFlashWarn .6s ease-out;}
+        @keyframes flashGreen{0%{box-shadow:0 0 0 4px rgba(0,229,160,.5)}100%{box-shadow:none}}
+        @keyframes flashWarn {0%{box-shadow:0 0 0 4px rgba(240,180,41,.5)}100%{box-shadow:none}}
+        .flash-green{animation:flashGreen .7s ease-out;}
+        .flash-warn {animation:flashWarn  .7s ease-out;}
 
-        .btn{width:100%;padding:13px;border:none;border-radius:8px;
-            font-family:var(--sans);font-weight:700;font-size:14px;
-            letter-spacing:.5px;cursor:pointer;transition:all .2s;text-transform:uppercase;margin-bottom:8px;}
+        .btn{width:100%;padding:13px;border:none;border-radius:8px;font-family:var(--sans);
+            font-weight:700;font-size:14px;letter-spacing:.5px;cursor:pointer;
+            transition:all .2s;text-transform:uppercase;margin-bottom:8px;}
         .btn:disabled{background:var(--border)!important;color:var(--muted)!important;cursor:not-allowed;}
         .btn-save{background:var(--blue);color:#fff;}
         .btn-save:hover:not(:disabled){filter:brightness(1.15);transform:translateY(-1px);}
@@ -138,8 +135,6 @@
         #toast.show.info {background:var(--purple);color:#0d1117;}
 
         .divider{border:none;border-top:1px solid var(--border);margin:6px 0 12px;}
-        @keyframes flashBadge{0%{transform:scale(1.05);opacity:.7}100%{transform:scale(1);opacity:1}}
-        .flash{animation:flashBadge .4s ease-out;}
     </style>
 </head>
 <body>
@@ -150,7 +145,7 @@
         <h1>PART SCANNER</h1>
     </div>
     <button id="voiceToggle" onclick="toggleVoice()">
-        <div class="vdot" id="vdot"></div>
+        <div class="vdot"></div>
         <span>🎤</span>
         <span id="voiceLabel">SUARA</span>
     </button>
@@ -167,11 +162,9 @@
 
 <!-- VOICE BOX -->
 <div id="voiceBox">
-    <div class="vb-row">
-        <div class="vb-rec"></div>
-        <div class="vb-title">MIKROFON AKTIF — MENDENGARKAN</div>
-    </div>
-    <div id="voiceTranscript">—</div>
+    <div class="vb-row"><div class="vb-rec"></div><div class="vb-title">MIKROFON AKTIF</div></div>
+    <div id="voiceRaw">mendengarkan...</div>
+    <div id="voiceClean">—</div>
     <div class="vb-cmds">
         <b>"dies delapan belas strip nol"</b> → Dies: 18-0<br>
         <b>"lot nol tiga nol tiga"</b> → Lot: 03/03<br>
@@ -204,19 +197,10 @@
 <!-- FORM -->
 <div class="card">
     <div class="card-title">👤 Data Operator</div>
-    <div class="form-group">
-        <label>NRP Operator</label>
-        <input type="text" id="nrpOp" placeholder="Masukkan NRP...">
-    </div>
-    <div class="form-group">
-        <label>Nama Part</label>
-        <input type="text" id="namaPart" placeholder="Masukkan nama part...">
-    </div>
+    <div class="form-group"><label>NRP Operator</label><input type="text" id="nrpOp" placeholder="Masukkan NRP..."></div>
+    <div class="form-group"><label>Nama Part</label><input type="text" id="namaPart" placeholder="Masukkan nama part..."></div>
     <hr class="divider">
-    <div class="form-group">
-        <label>Nomor Dies</label>
-        <input type="text" id="inpDies" placeholder="Contoh: 18-0">
-    </div>
+    <div class="form-group"><label>Nomor Dies</label><input type="text" id="inpDies" placeholder="Contoh: 18-0"></div>
     <div class="form-group">
         <label>Nomor Lot <span style="color:var(--muted);font-size:9px">(Enter untuk tambah)</span></label>
         <input type="text" id="inpLot" placeholder="Contoh: 10/01">
@@ -234,43 +218,41 @@
 // ============================================
 var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwnc4WIVdwMQO9r5Yoohciw4w5N3t2HC02oD9vdn4jnpBw6rMjWKV4cvJxUoRIYxm8dwQ/exec';
 
-// ── STATE ────────────────────────────────────
+// ── STATE ─────────────────────────────────────────────────
 var state = { mode:'kereta', kereta:'', dies:'', lots:[] };
 var voiceOn = false;
 
-// ── DOM ──────────────────────────────────────
-var statusEl    = document.getElementById('status');
-var voiceBox    = document.getElementById('voiceBox');
-var voiceTrans  = document.getElementById('voiceTranscript');
-var voiceToggle = document.getElementById('voiceToggle');
-var voiceLabel  = document.getElementById('voiceLabel');
-var inpDies     = document.getElementById('inpDies');
-var inpLot      = document.getElementById('inpLot');
-var btnSave     = document.getElementById('btnSave');
+// ── DOM ───────────────────────────────────────────────────
+var statusEl   = document.getElementById('status');
+var voiceBox   = document.getElementById('voiceBox');
+var voiceRaw   = document.getElementById('voiceRaw');
+var voiceClean = document.getElementById('voiceClean');
+var inpDies    = document.getElementById('inpDies');
+var inpLot     = document.getElementById('inpLot');
+var btnSave    = document.getElementById('btnSave');
 
-// ── HELPERS ──────────────────────────────────
+// ── HELPERS ───────────────────────────────────────────────
 function setStatus(msg,type){ statusEl.textContent=msg; statusEl.className=type||'idle'; }
-
-var _toastTimer;
+var _tt;
 function showToast(msg,type){
     var t=document.getElementById('toast');
     t.textContent=msg; t.className='show '+(type||'');
-    clearTimeout(_toastTimer);
-    _toastTimer=setTimeout(function(){ t.className=''; },3000);
+    clearTimeout(_tt); _tt=setTimeout(function(){ t.className=''; },3200);
 }
-
-function flashEl(id){
+function flashBadge(id){
     var el=document.getElementById(id);
-    el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
+    el.style.transform='scale(1.06)'; el.style.opacity='.7';
+    setTimeout(function(){ el.style.transform=''; el.style.opacity=''; },300);
 }
-
-function flashInput(el, cls){
-    el.classList.remove('input-flash','input-flash-warn');
+function flashInput(el, type){
+    var cls = type==='warn' ? 'flash-warn' : 'flash-green';
+    el.classList.remove('flash-green','flash-warn');
     void el.offsetWidth;
     el.classList.add(cls);
+    setTimeout(function(){ el.classList.remove(cls); },700);
 }
 
-// ── STEPS ────────────────────────────────────
+// ── STEPS ─────────────────────────────────────────────────
 function updateSteps(){
     document.getElementById('s1').className='step '+(state.kereta?'done':'active');
     document.getElementById('s2').className='step '+(!state.kereta?'':state.dies?'done':'active');
@@ -278,7 +260,7 @@ function updateSteps(){
     document.getElementById('s4').className='step '+(state.kereta&&state.dies&&state.lots.length>0?'active':'');
 }
 
-// ── RENDER ────────────────────────────────────
+// ── RENDER ────────────────────────────────────────────────
 function render(){
     document.getElementById('valKereta').textContent = state.kereta||'—';
     document.getElementById('badgeKereta').className = 'badge'+(state.kereta?' purple':'');
@@ -292,25 +274,29 @@ function render(){
         return '<div class="chip">'+l+'<button onclick="removeLot('+i+')">×</button></div>';
     }).join('');
 
-    inpDies.value=state.dies; inpDies.className=state.dies?'warn':'';
-    inpLot.value=state.lots.length>0?state.lots[state.lots.length-1]:''; inpLot.className=state.lots.length>0?'ok':'';
-    btnSave.disabled=!(state.kereta&&state.dies&&state.lots.length>0);
+    // Sync input fields
+    inpDies.value     = state.dies;
+    inpDies.className = state.dies ? 'warn' : '';
+    inpLot.value      = state.lots.length>0 ? state.lots[state.lots.length-1] : '';
+    inpLot.className  = state.lots.length>0 ? 'ok' : '';
+
+    btnSave.disabled  = !(state.kereta && state.dies && state.lots.length>0);
     updateSteps();
 }
-
 function removeLot(i){ state.lots.splice(i,1); render(); }
 
-// ── MODE ─────────────────────────────────────
+// ── MODE ──────────────────────────────────────────────────
 function setMode(mode){
     state.mode=mode;
     ['kereta','dies','lot'].forEach(function(m){
         document.getElementById('m'+m.charAt(0).toUpperCase()+m.slice(1)).className=
             'mode-btn'+(mode===m?' active-'+m:'');
     });
-    setStatus({kereta:'🚃 Arahkan ke QR Kereta...',dies:'⚙️ Arahkan ke QR Dies...',lot:'📦 Arahkan ke QR Lot...'}[mode],'warn');
+    var labels={kereta:'🚃 Arahkan ke QR Kereta...',dies:'⚙️ Arahkan ke QR Dies...',lot:'📦 Arahkan ke QR Lot...'};
+    setStatus(labels[mode],'warn');
 }
 
-// ── QR CAMERA ─────────────────────────────────
+// ── QR CAMERA ────────────────────────────────────────────
 var html5QrCode = new Html5Qrcode('qr-reader');
 html5QrCode.start(
     {facingMode:'environment'},
@@ -323,24 +309,24 @@ function onQRScan(text){
     var now=Date.now(); if(now-_lastScan<1500)return; _lastScan=now;
     text=text.trim();
     if(state.mode==='kereta'){
-        state.kereta=text; render(); flashEl('badgeKereta');
+        state.kereta=text; render(); flashBadge('badgeKereta');
         setStatus('✅ Kereta '+text+' terscan! Lanjut scan Dies.','ok');
         setMode('dies'); if(navigator.vibrate)navigator.vibrate(100);
     } else if(state.mode==='dies'){
         var d=text.startsWith('DIES:')?text.replace('DIES:',''):text;
-        state.dies=d; render(); flashEl('badgeDies');
+        state.dies=d; render(); flashBadge('badgeDies');
         setStatus('✅ Dies '+d+' terscan! Lanjut scan Lot.','ok');
         setMode('lot'); if(navigator.vibrate)navigator.vibrate(100);
     } else if(state.mode==='lot'){
         var l=text.startsWith('LOT:')?text.replace('LOT:',''):text;
         if(state.lots.indexOf(l)!==-1){setStatus('⚠️ Lot '+l+' sudah ada!','warn');return;}
-        state.lots.push(l); render(); flashEl('badgeLot');
+        state.lots.push(l); render(); flashBadge('badgeLot');
         setStatus('✅ Lot '+l+' ditambahkan!','ok');
         if(navigator.vibrate)navigator.vibrate([80,40,80]);
     }
 }
 
-// ── MANUAL INPUT ─────────────────────────────
+// ── MANUAL INPUT ─────────────────────────────────────────
 inpDies.addEventListener('change',function(){
     state.dies=this.value.trim().toUpperCase();
     this.className=state.dies?'warn':''; render();
@@ -353,209 +339,141 @@ inpLot.addEventListener('keydown',function(e){
 });
 
 // ═══════════════════════════════════════════════════════════
-// VOICE — DUAL LANGUAGE ENGINE
-// Satu recognition id-ID untuk angka/kata Indonesia,
-// satu recognition en-US khusus mendeteksi kata kunci "dies"
+// VOICE ENGINE
 // ═══════════════════════════════════════════════════════════
 var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-var recID = null;   // Bahasa Indonesia — untuk semua angka & perintah
-var recEN = null;   // Bahasa Inggris  — khusus deteksi kata "dies"
+var recID = null;
+var recEN = null;
 
-var _lastText = '';          // teks terakhir yang diproses (cegah duplikat)
-var _lastProcessTime = 0;    // timestamp proses terakhir
-
-if(SR){
-    // ── Recognition INDONESIA ─────────────────────────────
-    recID = new SR();
-    recID.lang = 'id-ID';
-    recID.continuous = true;
-    recID.interimResults = true;
-
-    recID.onresult = function(e){
-        var interim='', final='';
-        for(var i=e.resultIndex;i<e.results.length;i++){
-            if(e.results[i].isFinal) final += e.results[i][0].transcript;
-            else interim += e.results[i][0].transcript;
-        }
-        var display = final || interim;
-        if(display) voiceTrans.textContent = '🇮🇩 ' + display;
-        if(final) handleFinal(final.toLowerCase().trim(), 'id');
-    };
-
-    recID.onend = function(){ if(voiceOn){ try{recID.start();}catch(e){} } };
-    recID.onerror = function(e){ if(e.error==='no-speech'||e.error==='aborted')return; };
-
-    // ── Recognition ENGLISH ──────────────────────────────
-    // Khusus menangkap kata "dies" yang sering tidak dikenali oleh id-ID
-    recEN = new SR();
-    recEN.lang = 'en-US';
-    recEN.continuous = true;
-    recEN.interimResults = false; // hanya final untuk EN
-
-    recEN.onresult = function(e){
-        var final='';
-        for(var i=e.resultIndex;i<e.results.length;i++){
-            if(e.results[i].isFinal) final += e.results[i][0].transcript;
-        }
-        if(final){
-            var t = final.toLowerCase().trim();
-            voiceTrans.textContent = '🇬🇧 ' + t;
-            // EN hanya digunakan untuk trigger kata "dies" atau "send/kirim"
-            if(/\bdies?\b/.test(t) || /\b(send|save|submit)\b/.test(t)){
-                handleFinal(t, 'en');
-            }
-        }
-    };
-
-    recEN.onend = function(){ if(voiceOn){ try{recEN.start();}catch(e){} } };
-    recEN.onerror = function(e){ if(e.error==='no-speech'||e.error==='aborted')return; };
-
-} else {
-    voiceToggle.disabled=true;
-    voiceToggle.title='Browser tidak mendukung voice input';
-}
-
-// ── TOGGLE VOICE ──────────────────────────────
-function toggleVoice(){
-    if(!SR){ showToast('Browser tidak mendukung voice','error'); return; }
-    voiceOn = !voiceOn;
-    if(voiceOn){
-        try{ recID.start(); }catch(e){}
-        setTimeout(function(){ try{ recEN.start(); }catch(e){} }, 300);
-        voiceToggle.classList.add('on');
-        voiceLabel.textContent='ON';
-        voiceBox.classList.add('show');
-        setStatus('🎤 Mikrofon aktif. Ucapkan perintah...','voice');
-    } else {
-        try{ recID.stop(); }catch(e){}
-        try{ recEN.stop(); }catch(e){}
-        voiceToggle.classList.remove('on');
-        voiceLabel.textContent='SUARA';
-        voiceBox.classList.remove('show');
-        voiceTrans.textContent='—';
-        setStatus('Mikrofon dimatikan.','idle');
-    }
-}
-
-// ═══════════════════════════════════════════════════════════
-// ANGKA MAP — Indonesia
-// ═══════════════════════════════════════════════════════════
-var NUMS = [
-    // Dua kata dulu (lebih spesifik)
-    ['dua puluh',20],['duapuluh',20],
-    ['sembilan belas',19],['sembilanbelas',19],
-    ['delapan belas',18],['delapanbelas',18],['eighteen',18],
-    ['tujuh belas',17],['tujuhbelas',17],['seventeen',17],
-    ['enam belas',16],['enambelas',16],['sixteen',16],
-    ['lima belas',15],['limabelas',15],['fifteen',15],
-    ['empat belas',14],['empatbelas',14],['fourteen',14],
-    ['tiga belas',13],['tigabelas',13],['thirteen',13],
-    ['dua belas',12],['duabelas',12],['twelve',12],
-    ['sebelas',11],['eleven',11],
-    ['sepuluh',10],['ten',10],
-    ['sembilan',9],['nine',9],
-    ['delapan',8],['eight',8],
-    ['tujuh',7],['seven',7],
-    ['enam',6],['six',6],
-    ['lima',5],['five',5],
-    ['empat',4],['four',4],
-    ['tiga',3],['three',3],
-    ['dua',2],['two',2],
-    ['satu',1],['esa',1],['one',1],
-    ['nol',0],['kosong',0],['zero',0],
+// ── FUZZY NORMALIZER ──────────────────────────────────────
+// Sebelum diproses, teks raw dinormalisasi dulu:
+// variasi kata → kata kanonik
+var FUZZY_MAP = [
+    // DIES — semua variasi yang terdengar mirip
+    [/\b(dies?|dis|dais|die|dis|des|is|dees)\b/gi, 'dies'],
+    // STRIP — semua variasi
+    [/\b(strip|trip|ctrip|strep|stip|trib|ip|rip|s?trip)\b/gi, 'strip'],
+    // KIRIM — semua variasi
+    [/\b(kirim|krim|kim|rim|kirm|kirin|kerim|kiri)\b/gi, 'kirim'],
+    // LOT
+    [/\b(lots?|lat|lod|lob)\b/gi, 'lot'],
 ];
 
-// Cari angka pertama dalam teks, return {num, rest} atau null
-function extractNum(text){
-    text = text.trim();
-    // Coba kata-kata dulu
-    for(var i=0;i<NUMS.length;i++){
-        var word = NUMS[i][0];
-        var val  = NUMS[i][1];
-        if(text.indexOf(word)===0 || text===word){
-            return { num:val, rest:text.slice(word.length).trim() };
-        }
+// Angka kata → digit, termasuk "nol satu" → "01" dsb
+var WORD_NUMS = [
+    ['dua puluh',20],['duapuluh',20],
+    ['sembilan belas',19],['sembilanbelas',19],
+    ['delapan belas',18],['delapanbelas',18],
+    ['tujuh belas',17],['tujuhbelas',17],
+    ['enam belas',16],['enambelas',16],
+    ['lima belas',15],['limabelas',15],
+    ['empat belas',14],['empatbelas',14],
+    ['tiga belas',13],['tigabelas',13],
+    ['dua belas',12],['duabelas',12],
+    ['sebelas',11],
+    ['sepuluh',10],['sepuloh',10],
+    ['sembilan',9],
+    ['delapan',8],
+    ['tujuh',7],
+    ['enam',6],
+    ['lima',5],
+    ['empat',4],
+    ['tiga',3],
+    ['dua',2],
+    ['satu',1],['esa',1],
+    ['nol',0],['kosong',0],
+];
+
+// Huruf alfabet yang bisa disebut
+var WORD_LETTERS = {
+    'alpha':'A','alfa':'A','a':'A',
+    'bravo':'B','b':'B','be':'B',
+    'charlie':'C','c':'C','ce':'C',
+    'delta':'D','d':'D','de':'D',
+    'echo':'E','e':'E',
+    'foxtrot':'F','f':'F','ef':'F',
+    'golf':'G','g':'G','ge':'G',
+    'hotel':'H','h':'H','ha':'H',
+    'india':'I','i':'I','ai':'I',
+    'juliet':'J','j':'J','je':'J',
+    'kilo':'K','k':'K','ka':'K',
+    'lima_letter':'L','l':'L','el':'L',
+    'mike':'M','m':'M','em':'M',
+    'november':'N','n':'N','en':'N',
+    'oscar':'O','o':'O',
+    'papa':'P','p':'P','pe':'P',
+};
+
+// Normalisasi fuzzy dulu, lalu replace kata angka
+function normalize(raw){
+    var text = raw.toLowerCase().trim();
+
+    // 1. Fuzzy kata kunci
+    FUZZY_MAP.forEach(function(pair){ text = text.replace(pair[0], pair[1]); });
+
+    // 2. Ganti kata angka multi-kata dulu (dari yang terpanjang)
+    WORD_NUMS.forEach(function(pair){
+        var re = new RegExp('\\b'+pair[0]+'\\b','gi');
+        text = text.replace(re, ' '+pair[1]+' ');
+    });
+
+    // 3. Bersihkan spasi ganda
+    text = text.replace(/\s+/g,' ').trim();
+
+    return text;
+}
+
+// ── PARSER DIES ───────────────────────────────────────────
+// Input setelah normalize: "dies 18 strip 0" atau "dies 5 a strip 0"
+// Output: "18-0" atau "5A-0"
+function parseDies(text){
+    // Hapus kata "dies" di awal
+    text = text.replace(/^dies\s*/,'').trim();
+
+    // Cari pola: angka (opsional huruf) strip angka
+    // Contoh: "18 strip 0", "5 a strip 0", "18strip0"
+    var m = text.match(/^(\d+)\s*([a-z])?\s*(?:strip|-)\s*(\d+)/i);
+    if(m){
+        var left  = m[1];
+        var huruf = m[2] ? m[2].toUpperCase() : '';
+        var right = m[3];
+        return left + huruf + '-' + right;
     }
-    // Coba angka digit
-    var m = text.match(/^(\d+)/);
-    if(m) return { num:parseInt(m[1]), rest:text.slice(m[1].length).trim() };
+
+    // Fallback: 2 angka berurutan tanpa strip → pakai dash
+    var nums = text.match(/\d+/g);
+    if(nums && nums.length >= 2) return nums[0] + '-' + nums[1];
+    if(nums && nums.length === 1) return nums[0] + '-0';
+
     return null;
 }
 
-// ── PARSER DIES ──────────────────────────────
-// Input: "dies delapan belas strip nol" atau "dies 18 strip 0"
-// Output: "18-0"
-function parseDies(text){
-    // Bersihkan prefix dies/die
-    text = text.replace(/^die?s?\s*/,'').trim();
-
-    // Pisah berdasarkan kata separator strip/garis/minus/dash
-    var sepRe = /\b(strip|garis|minus|dash|hyphen|-)\b/;
-    var parts  = text.split(sepRe);
-
-    var leftText  = parts[0].trim();
-    var rightText = parts.length >= 3 ? parts[2].trim() : '';
-
-    // Ambil angka dari sisi kiri
-    var leftNum = extractNum(leftText);
-    if(!leftNum) return null;
-
-    // Cek ada huruf setelah angka kiri (misal "5B" → angka=5, huruf=B)
-    var leftStr = String(leftNum.num);
-    // Sisa setelah angka kiri — cek 1 huruf
-    var afterLeft = leftNum.rest.trim();
-    var letterMatch = afterLeft.match(/^([a-zA-Z])\b/);
-    if(letterMatch){
-        leftStr = leftNum.num + letterMatch[1].toUpperCase();
-        afterLeft = afterLeft.slice(1).trim();
-    }
-
-    // Ambil angka kanan
-    var rightSrc  = rightText || afterLeft;
-    var rightNum  = extractNum(rightSrc);
-    var rightStr  = rightNum ? String(rightNum.num) : '0';
-
-    return leftStr + '-' + rightStr;
-}
-
-// ── PARSER LOT ───────────────────────────────
-// Input: "lot nol tiga nol tiga" → "03/03"
-// Input: "lot tiga per lima"     → "03/05"
+// ── PARSER LOT ────────────────────────────────────────────
+// Input setelah normalize: "lot 0 3 0 3" atau "lot 3 per 5"
+// Output: "03/03"
 function parseLot(text){
-    // Bersihkan prefix lot
-    text = text.replace(/^lots?\s*/,'').trim();
+    // Hapus kata "lot"
+    text = text.replace(/^lot\s*/,'').trim();
 
-    // Pisah berdasarkan separator garis miring / per / slash
-    var sepRe = /\b(garis miring|per|slash|\/)\b/;
-    var parts  = text.split(sepRe);
+    // Pisah berdasarkan "per" atau "/"
+    var parts = text.split(/\s*(?:per|\/)\s*/);
+    var nums  = [];
 
-    var nums = [];
-
-    if(parts.length >= 3){
-        // Ada separator jelas: "tiga per lima"
-        var l = extractNum(parts[0].trim());
-        var r = extractNum(parts[2].trim());
-        if(l) nums.push(l.num);
-        if(r) nums.push(r.num);
+    if(parts.length >= 2){
+        var l = parts[0].match(/\d+/g);
+        var r = parts[1].match(/\d+/g);
+        if(l) nums.push(parseInt(l.join('')));
+        if(r) nums.push(parseInt(r.join('')));
     } else {
-        // Tanpa separator — baca 4 digit: "nol tiga nol tiga" → 03/03
-        // Atau 2 angka: "tiga lima" → 03/05
-        var tmp = text;
-        var digits = [];
-        for(var i=0;i<4;i++){
-            var r2 = extractNum(tmp);
-            if(!r2) break;
-            digits.push(r2.num);
-            tmp = r2.rest;
-        }
-        if(digits.length === 4){
-            // 4 digit tunggal: 0,3,0,3 → 03/03
-            nums = [digits[0]*10 + digits[1], digits[2]*10 + digits[3]];
-        } else if(digits.length === 2){
-            // 2 angka langsung: 3,3 → 03/03
-            nums = [digits[0], digits[1]];
-        } else if(digits.length === 1){
-            nums = [digits[0], 0];
+        // Ambil semua angka berurutan
+        var all = text.match(/\d+/g) || [];
+        if(all.length >= 4){
+            // 4 digit tunggal: 0 3 0 3 → 03/03
+            nums = [parseInt(all[0])*10+parseInt(all[1]), parseInt(all[2])*10+parseInt(all[3])];
+        } else if(all.length === 2){
+            nums = [parseInt(all[0]), parseInt(all[1])];
+        } else if(all.length === 1){
+            nums = [parseInt(all[0]), 0];
         }
     }
 
@@ -565,67 +483,157 @@ function parseLot(text){
     return null;
 }
 
-// ── HANDLE FINAL TRANSCRIPT ──────────────────
-function handleFinal(text, lang){
-    // Cegah proses duplikat dalam 1 detik
+// ── PROCESS VOICE ─────────────────────────────────────────
+var _lastProcessed = '';
+var _lastProcessTime = 0;
+
+function processVoice(raw){
     var now = Date.now();
-    if(text === _lastText && now - _lastProcessTime < 1000) return;
-    _lastText = text;
+    // Cegah duplikat dalam 1.2 detik
+    if(raw === _lastProcessed && now - _lastProcessTime < 1200) return;
+    _lastProcessed = raw;
     _lastProcessTime = now;
 
-    console.log('[VOICE]['+lang+']', text);
+    var clean = normalize(raw);
 
-    // ── PERINTAH KIRIM ──
-    if(/\b(kirim|simpan|send|save|submit)\b/.test(text)){
-        setStatus('🎤 Perintah kirim dideteksi!','voice');
+    // Tampilkan di UI
+    voiceRaw.textContent   = '📥 raw: ' + raw;
+    voiceClean.textContent = '✨ ' + clean;
+
+    console.log('[VOICE] raw:', raw, '| clean:', clean);
+
+    // ── KIRIM ──
+    if(/\bkirim\b/.test(clean)){
+        setStatus('🎤 "Kirim" dideteksi — menyimpan...','voice');
         showToast('🎤 Menyimpan...','info');
-        setTimeout(doSave, 500);
+        setTimeout(doSave, 400);
         return;
     }
 
-    // ── PERINTAH DIES ──
-    // Deteksi kata "dies" dalam bahasa apapun
-    if(/\bdie?s?\b/.test(text)){
-        // Jika dari EN recognition, mungkin angkanya tidak ada
-        // Coba cari angka digit atau minta ulang
-        var result = parseDies(text);
-        if(result){
-            state.dies = result;
+    // ── DIES ──
+    if(/\bdies\b/.test(clean)){
+        var diesResult = parseDies(clean);
+        if(diesResult){
+            // ── UPDATE STATE & FIELD LANGSUNG ──
+            state.dies        = diesResult;
+            inpDies.value     = diesResult;
+            inpDies.className = 'warn';
+            flashInput(inpDies, 'warn');
+            flashBadge('badgeDies');
             render();
-            flashEl('badgeDies');
-            flashInput(inpDies, 'input-flash-warn');
-            setStatus('🎤 Dies terisi: ' + result,'ok');
-            showToast('Dies: ' + result,'info');
+            setStatus('🎤 Dies terisi: ' + diesResult,'ok');
+            showToast('Dies: ' + diesResult,'info');
         } else {
-            setStatus('🎤 Gagal baca Dies. Coba: "dies delapan belas strip nol"','err');
+            setStatus('🎤 Gagal parse Dies. Coba: "dies delapan belas strip nol"','err');
         }
         return;
     }
 
-    // ── PERINTAH LOT ──
-    if(/\blots?\b/.test(text)){
-        var lotResult = parseLot(text);
+    // ── LOT ──
+    if(/\blot\b/.test(clean)){
+        var lotResult = parseLot(clean);
         if(lotResult){
-            if(state.lots.indexOf(lotResult)===-1) state.lots.push(lotResult);
+            // ── UPDATE STATE & FIELD LANGSUNG ──
+            if(state.lots.indexOf(lotResult) === -1){
+                state.lots.push(lotResult);
+            }
+            inpLot.value     = lotResult;
+            inpLot.className = 'ok';
+            flashInput(inpLot, 'green');
+            flashBadge('badgeLot');
             render();
-            flashEl('badgeLot');
-            flashInput(inpLot, 'input-flash');
             setStatus('🎤 Lot ditambahkan: ' + lotResult,'ok');
             showToast('Lot: ' + lotResult,'info');
         } else {
-            setStatus('🎤 Gagal baca Lot. Coba: "lot nol tiga nol tiga"','err');
+            setStatus('🎤 Gagal parse Lot. Coba: "lot nol tiga nol tiga"','err');
         }
         return;
     }
 }
 
-// ── SAVE ─────────────────────────────────────
+// ── VOICE TOGGLE ──────────────────────────────────────────
+function toggleVoice(){
+    if(!SR){ showToast('Browser tidak mendukung voice','error'); return; }
+    voiceOn = !voiceOn;
+
+    if(voiceOn){
+        startRecognition();
+        document.getElementById('voiceToggle').classList.add('on');
+        document.getElementById('voiceLabel').textContent = 'ON';
+        voiceBox.classList.add('show');
+        setStatus('🎤 Mikrofon aktif. Ucapkan perintah...','voice');
+    } else {
+        stopRecognition();
+        document.getElementById('voiceToggle').classList.remove('on');
+        document.getElementById('voiceLabel').textContent = 'SUARA';
+        voiceBox.classList.remove('show');
+        voiceRaw.textContent   = 'mendengarkan...';
+        voiceClean.textContent = '—';
+        setStatus('Mikrofon dimatikan.','idle');
+    }
+}
+
+function startRecognition(){
+    // ── ID recognition ──
+    if(!recID){
+        recID = new SR();
+        recID.lang = 'id-ID';
+        recID.continuous = true;
+        recID.interimResults = true;
+        recID.onresult = function(e){
+            var interim='', final='';
+            for(var i=e.resultIndex;i<e.results.length;i++){
+                if(e.results[i].isFinal) final += e.results[i][0].transcript;
+                else interim += e.results[i][0].transcript;
+            }
+            if(interim) voiceRaw.textContent = '📥 ' + interim + '...';
+            if(final)   processVoice(final);
+        };
+        recID.onend = function(){ if(voiceOn){ try{recID.start();}catch(e){} } };
+        recID.onerror = function(e){ if(e.error!=='no-speech'&&e.error!=='aborted') console.warn('recID err:',e.error); };
+    }
+
+    // ── EN recognition (khusus tangkap "dies") ──
+    if(!recEN){
+        recEN = new SR();
+        recEN.lang = 'en-US';
+        recEN.continuous = true;
+        recEN.interimResults = false;
+        recEN.onresult = function(e){
+            var final='';
+            for(var i=e.resultIndex;i<e.results.length;i++){
+                if(e.results[i].isFinal) final += e.results[i][0].transcript;
+            }
+            if(final){
+                var t = final.toLowerCase();
+                // EN hanya tangani jika ada kata kunci dies/kirim
+                if(/\b(dies?|dis|send|submit)\b/.test(t)){
+                    processVoice(final);
+                }
+            }
+        };
+        recEN.onend = function(){ if(voiceOn){ try{recEN.start();}catch(e){} } };
+        recEN.onerror = function(e){ if(e.error!=='no-speech'&&e.error!=='aborted') console.warn('recEN err:',e.error); };
+    }
+
+    try{ recID.start(); }catch(e){}
+    setTimeout(function(){ try{ recEN.start(); }catch(e){} }, 400);
+}
+
+function stopRecognition(){
+    if(recID){ try{recID.stop();}catch(e){} recID=null; }
+    if(recEN){ try{recEN.stop();}catch(e){} recEN=null; }
+}
+
+// ── SAVE ──────────────────────────────────────────────────
 btnSave.addEventListener('click', doSave);
 function doSave(){
     var nrp  = document.getElementById('nrpOp').value.trim();
     var part = document.getElementById('namaPart').value.trim();
     if(!nrp||!part){ showToast('⚠️ NRP dan Nama Part wajib diisi!','error'); return; }
-    if(!state.kereta||!state.dies||state.lots.length===0){ showToast('⚠️ Lengkapi Kereta, Dies, dan Lot!','error'); return; }
+    if(!state.kereta||!state.dies||state.lots.length===0){
+        showToast('⚠️ Lengkapi Kereta, Dies, dan Lot!','error'); return;
+    }
 
     btnSave.disabled=true; btnSave.textContent='⏳ Menyimpan...';
     setStatus('Mengirim data ke Google Sheet...','info');
@@ -643,7 +651,6 @@ function doSave(){
     }).then(function(){
         showToast('✅ '+rows.length+' data tersimpan!');
         setStatus('✅ Tersimpan! Data tetap ada untuk transaksi berikutnya.','ok');
-        // Tidak ada field yang dihapus setelah simpan
     }).catch(function(){
         showToast('❌ Gagal. Cek koneksi.','error');
         setStatus('Gagal menyimpan.','err');
@@ -653,16 +660,16 @@ function doSave(){
     });
 }
 
-// ── RESET ─────────────────────────────────────
+// ── RESET ─────────────────────────────────────────────────
 document.getElementById('btnReset').addEventListener('click',function(){
     state.kereta=''; state.dies=''; state.lots=[];
     inpDies.value=''; inpDies.className='';
     inpLot.value='';  inpLot.className='';
     setMode('kereta'); render();
-    setStatus('Data direset. Mulai scan kereta baru.','idle');
+    setStatus('Data direset.','idle');
 });
 
-// ── INIT ──────────────────────────────────────
+// ── INIT ──────────────────────────────────────────────────
 render(); setMode('kereta');
 </script>
 </body>
