@@ -345,8 +345,22 @@ function render(){
     document.getElementById('lotChips').innerHTML    = state.lots.map(function(l,i){
         return '<div class="chip">'+l+'<button onclick="removeLot('+i+')">×</button></div>';
     }).join('');
+    // Sync Dies field
     if(document.activeElement!==inpDies){
         inpDies.value=state.dies; inpDies.className=state.dies?'warn':'';
+        if(state.dies){ hintDies.className='field-hint ok'; hintDies.textContent='✅ '+state.dies; }
+    }
+    // Sync Lot field — tampilkan lot terakhir
+    if(document.activeElement!==inpLot){
+        if(state.lots.length>0){
+            inpLot.value=state.lots[state.lots.length-1];
+            inpLot.className='ok';
+            hintLot.className='field-hint ok';
+            hintLot.textContent='✅ '+state.lots.length+' lot — Enter untuk tambah lagi';
+        } else {
+            inpLot.value=''; inpLot.className='';
+            hintLot.className='field-hint'; hintLot.textContent='Format: 04/03 / 13/12';
+        }
     }
     btnSave.disabled=!(state.kereta&&state.dies&&state.lots.length>0);
     updateSteps();
@@ -476,10 +490,14 @@ var ANGKA_KATA=[
 
 // ── Fuzzy keyword ─────────────────────────
 var FUZZY=[
-    [/\b(dies?|dais|dis|des|dees|ies|die|diez)\b/gi,'DIES'],
-    [/\b(strip|strep|stip|trip|ctrip|trib|trp|rip|ip)\b/gi,'STRIP'],
-    [/\b(kirim|krim|kim|rim|kirm|kirin|kerim|kiri)\b/gi,'KIRIM'],
-    [/\b(lots?|lat|lod|lob|lott)\b/gi,'LOT'],
+    // DIES — semua variasi bunyi di id-ID recognition
+    [/\b(dies?|dais|dis|des|dees|ies|die|diez|gais|days|dais|daies|daies|dyes)\b/gi,'DIES'],
+    // STRIP
+    [/\b(strip|strep|stip|trip|ctrip|trib|trp|rip|ip|trik|strik)\b/gi,'STRIP'],
+    // KIRIM
+    [/\b(kirim|krim|kim|rim|kirm|kirin|kerim|kiri|kirimkan)\b/gi,'KIRIM'],
+    // LOT
+    [/\b(lots?|lat|lod|lob|lott|lot)\b/gi,'LOT'],
 ];
 
 function toTokens(raw){
@@ -583,8 +601,8 @@ function processVoice(raw){
     _lRaw=raw; _lTime=now;
 
     var tokens=toTokens(raw);
-    voiceRaw.textContent   = '📥 '+raw;
-    voiceClean.textContent = '🔤 '+tokens.join(' | ');
+    voiceRaw.textContent   = '📥 Raw: '+raw;
+    voiceClean.textContent = '🔤 Token: '+tokens.join(' › ');
     console.log('[VOICE] raw:',raw,'| tokens:',tokens.join(' | '));
 
     // KIRIM
@@ -654,30 +672,50 @@ function toggleVoice(){
     }
 }
 
-function makeRec(lang){
-    if(!SR) return null;
-    var r=new SR();
-    r.lang=lang; r.continuous=true; r.interimResults=true;
-    r.onresult=function(e){
-        var interim='',final_='';
+// Satu recognition id-ID — lebih stabil di Android Chrome
+// en-US menyebabkan konflik di mobile, cukup 1
+var _recRestartTimer=null;
+function startVoice(){
+    if(!SR) return;
+    recID = new SR();
+    recID.lang = 'id-ID';
+    recID.continuous = true;
+    recID.interimResults = true;
+    recID.onresult = function(e){
+        var interim='', final_='';
         for(var i=e.resultIndex;i<e.results.length;i++){
-            if(e.results[i].isFinal) final_+=e.results[i][0].transcript;
-            else interim+=e.results[i][0].transcript;
+            if(e.results[i].isFinal) final_ += e.results[i][0].transcript;
+            else                     interim += e.results[i][0].transcript;
         }
-        if(interim) voiceRaw.textContent='📥 '+interim+'...';
+        if(interim) voiceRaw.textContent = '📥 '+interim+'...';
         if(final_)  processVoice(final_);
     };
-    r.onend=function(){ if(voiceOn){try{r.start();}catch(e){}} };
-    r.onerror=function(e){ if(e.error!=='no-speech'&&e.error!=='aborted') console.warn(lang,e.error); };
-    return r;
-}
-function startVoice(){
-    recID=makeRec('id-ID'); if(recID)try{recID.start();}catch(e){}
-    setTimeout(function(){ recEN=makeRec('en-US'); if(recEN)try{recEN.start();}catch(e){}; },400);
+    recID.onend = function(){
+        // Restart otomatis jika masih voiceOn, dengan jeda kecil
+        if(voiceOn){
+            clearTimeout(_recRestartTimer);
+            _recRestartTimer = setTimeout(function(){
+                if(voiceOn && recID){
+                    try{ recID.start(); }catch(e){}
+                }
+            }, 300);
+        }
+    };
+    recID.onerror = function(e){
+        if(e.error==='not-allowed'){
+            showToast('Izin mikrofon ditolak!','error');
+            voiceOn=false;
+        }
+        if(e.error!=='no-speech' && e.error!=='aborted'){
+            console.warn('Voice err:',e.error);
+        }
+    };
+    try{ recID.start(); }catch(e){ console.warn('start err:',e); }
 }
 function stopVoice(){
-    if(recID){try{recID.stop();}catch(e){} recID=null;}
-    if(recEN){try{recEN.stop();}catch(e){} recEN=null;}
+    clearTimeout(_recRestartTimer);
+    if(recID){ try{recID.stop();}catch(e){} recID=null; }
+    if(recEN){ try{recEN.stop();}catch(e){} recEN=null; }
 }
 
 // ══════════════════════════════════════════
