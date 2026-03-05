@@ -27,7 +27,6 @@
         @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
         header h1{font-family:var(--mono);font-size:14px;color:var(--accent);letter-spacing:3px;}
 
-        /* ── VOICE TOGGLE BUTTON ── */
         #voiceToggle{
             display:flex;align-items:center;gap:7px;
             padding:8px 14px;border-radius:20px;border:1.5px solid var(--border);
@@ -35,23 +34,11 @@
             font-family:var(--mono);font-size:11px;letter-spacing:1px;
             color:var(--muted);transition:all .25s;white-space:nowrap;
         }
-        #voiceToggle .vicon{font-size:16px;transition:all .25s;}
-        #voiceToggle.on{
-            border-color:var(--purple);
-            background:rgba(191,151,255,.12);
-            color:var(--purple);
-            box-shadow:0 0 12px rgba(191,151,255,.25);
-        }
-        #voiceToggle.on .vdot{
-            width:8px;height:8px;border-radius:50%;
-            background:var(--danger);
-            box-shadow:0 0 6px var(--danger);
-            animation:recPulse .9s infinite;
-        }
-        .vdot{width:8px;height:8px;border-radius:50%;background:var(--muted);}
+        .vdot{width:8px;height:8px;border-radius:50%;background:var(--muted);transition:all .3s;}
+        #voiceToggle.on{border-color:var(--purple);background:rgba(191,151,255,.12);color:var(--purple);box-shadow:0 0 12px rgba(191,151,255,.25);}
+        #voiceToggle.on .vdot{background:var(--danger);animation:recPulse .9s infinite;}
         @keyframes recPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
 
-        /* STEPS */
         .steps{width:100%;max-width:500px;display:flex;margin-bottom:14px;}
         .step{flex:1;text-align:center;padding:7px 2px;font-size:9px;
             font-family:var(--mono);letter-spacing:1px;text-transform:uppercase;
@@ -60,18 +47,15 @@
         .step.active{color:var(--warn);border-bottom-color:var(--warn);}
         .step.done{color:var(--accent);border-bottom-color:var(--accent);}
 
-        /* CARD */
         .card{background:var(--card);border:1px solid var(--border);border-radius:12px;
             padding:14px;width:100%;max-width:500px;margin-bottom:10px;}
         .card-title{font-size:10px;font-family:var(--mono);color:var(--muted);
             letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;}
 
-        /* CAMERA */
         #qr-reader{width:100%;border-radius:8px;overflow:hidden;background:#000;}
         #qr-reader video{border-radius:8px;}
         #qr-reader__dashboard{display:none!important;}
 
-        /* SCAN MODE */
         .mode-btns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px;}
         .mode-btn{padding:8px 4px;border:1px solid var(--border);border-radius:6px;
             background:var(--bg);font-family:var(--mono);font-size:10px;
@@ -81,72 +65,60 @@
         .mode-btn.active-dies  {border-color:var(--warn);  color:var(--warn);  background:rgba(240,180,41,.1);}
         .mode-btn.active-lot   {border-color:var(--accent);color:var(--accent);background:rgba(0,229,160,.1);}
 
-        /* BADGES */
         .badges{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:10px;}
-        .badge{padding:9px 8px;border-radius:8px;border:1px solid var(--border);background:var(--bg);}
-        .badge-lbl{font-size:8px;font-family:var(--mono);color:var(--muted);
-            letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;}
-        .badge-val{font-family:var(--mono);font-size:13px;font-weight:700;
-            color:var(--muted);transition:all .3s;word-break:break-all;min-height:18px;}
-        .badge.ok    .badge-val{color:var(--accent);}
-        .badge.warn  .badge-val{color:var(--warn);}
-        .badge.purple.badge-val{color:var(--purple);}
-        .badge.ok    {border-color:rgba(0,229,160,.3);}
-        .badge.warn  {border-color:rgba(240,180,41,.3);}
-        .badge.purple{border-color:rgba(191,151,255,.3);}
+        .badge{padding:9px 8px;border-radius:8px;border:1px solid var(--border);background:var(--bg);transition:border-color .3s;}
+        .badge-lbl{font-size:8px;font-family:var(--mono);color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;}
+        .badge-val{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--muted);transition:all .3s;word-break:break-all;min-height:18px;}
+        .badge.ok    {border-color:rgba(0,229,160,.3);}   .badge.ok     .badge-val{color:var(--accent);}
+        .badge.warn  {border-color:rgba(240,180,41,.3);}  .badge.warn   .badge-val{color:var(--warn);}
+        .badge.purple{border-color:rgba(191,151,255,.3);} .badge.purple .badge-val{color:var(--purple);}
 
-        /* LOT CHIPS */
         .lot-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;}
-        .chip{font-family:var(--mono);font-size:11px;padding:3px 8px;
-            border-radius:12px;background:rgba(0,229,160,.12);
-            border:1px solid rgba(0,229,160,.3);color:var(--accent);
+        .chip{font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:12px;
+            background:rgba(0,229,160,.12);border:1px solid rgba(0,229,160,.3);color:var(--accent);
             display:flex;align-items:center;gap:4px;}
-        .chip button{background:none;border:none;color:var(--danger);
-            cursor:pointer;font-size:13px;padding:0;line-height:1;}
+        .chip button{background:none;border:none;color:var(--danger);cursor:pointer;font-size:13px;padding:0;line-height:1;}
 
-        /* VOICE TRANSCRIPT BOX */
-        #voiceBox{
-            width:100%;max-width:500px;
-            display:none;
-            background:rgba(191,151,255,.08);
-            border:1px solid rgba(191,151,255,.25);
-            border-radius:10px;padding:10px 14px;margin-bottom:10px;
-        }
+        /* VOICE BOX */
+        #voiceBox{width:100%;max-width:500px;display:none;
+            background:rgba(191,151,255,.07);border:1px solid rgba(191,151,255,.25);
+            border-radius:10px;padding:12px 14px;margin-bottom:10px;}
         #voiceBox.show{display:block;}
-        .vb-header{display:flex;align-items:center;gap:7px;margin-bottom:6px;}
-        .vb-rec{width:7px;height:7px;border-radius:50%;background:var(--danger);
-            animation:recPulse .9s infinite;}
+        .vb-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+        .vb-rec{width:7px;height:7px;border-radius:50%;background:var(--danger);animation:recPulse .9s infinite;flex-shrink:0;}
         .vb-title{font-family:var(--mono);font-size:10px;color:var(--purple);letter-spacing:1.5px;}
         #voiceTranscript{font-family:var(--mono);font-size:13px;color:var(--text);
-            min-height:18px;line-height:1.5;}
-        .vb-hint{font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:6px;line-height:1.7;}
-        .vb-hint span{color:var(--purple);}
+            min-height:20px;line-height:1.5;padding:6px 8px;
+            background:rgba(0,0,0,.2);border-radius:6px;margin-bottom:8px;}
+        .vb-cmds{font-family:var(--mono);font-size:10px;color:var(--muted);line-height:1.9;}
+        .vb-cmds b{color:var(--purple);}
 
-        /* FORM */
         .form-group{margin-bottom:10px;}
         .form-group label{display:block;font-size:10px;font-family:var(--mono);
             color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px;}
         .form-group input{width:100%;padding:10px 12px;background:var(--bg);
             border:1px solid var(--border);border-radius:6px;color:var(--text);
-            font-family:var(--mono);font-size:15px;outline:none;transition:border-color .2s;}
+            font-family:var(--mono);font-size:15px;outline:none;transition:all .2s;}
         .form-group input:focus{border-color:var(--blue);}
-        .form-group input.ok    {border-color:var(--accent);color:var(--accent);}
-        .form-group input.warn  {border-color:var(--warn);  color:var(--warn);}
-        .form-group input.purple{border-color:var(--purple);color:var(--purple);}
+        .form-group input.ok    {border-color:var(--accent);color:var(--accent);background:rgba(0,229,160,.05);}
+        .form-group input.warn  {border-color:var(--warn);  color:var(--warn);  background:rgba(240,180,41,.05);}
+        .form-group input.purple{border-color:var(--purple);color:var(--purple);background:rgba(191,151,255,.05);}
 
-        /* BUTTONS */
+        /* highlight flash on fill */
+        @keyframes inputFlash{0%{box-shadow:0 0 0 4px rgba(0,229,160,.4)}100%{box-shadow:none}}
+        .input-flash{animation:inputFlash .6s ease-out;}
+        @keyframes inputFlashWarn{0%{box-shadow:0 0 0 4px rgba(240,180,41,.4)}100%{box-shadow:none}}
+        .input-flash-warn{animation:inputFlashWarn .6s ease-out;}
+
         .btn{width:100%;padding:13px;border:none;border-radius:8px;
             font-family:var(--sans);font-weight:700;font-size:14px;
-            letter-spacing:.5px;cursor:pointer;transition:all .2s;
-            text-transform:uppercase;margin-bottom:8px;}
+            letter-spacing:.5px;cursor:pointer;transition:all .2s;text-transform:uppercase;margin-bottom:8px;}
         .btn:disabled{background:var(--border)!important;color:var(--muted)!important;cursor:not-allowed;}
         .btn-save{background:var(--blue);color:#fff;}
         .btn-save:hover:not(:disabled){filter:brightness(1.15);transform:translateY(-1px);}
-        .btn-reset{background:transparent;color:var(--muted);border:1px solid var(--border);
-            padding:9px;font-size:12px;margin-bottom:0;}
+        .btn-reset{background:transparent;color:var(--muted);border:1px solid var(--border);padding:9px;font-size:12px;margin-bottom:0;}
         .btn-reset:hover{color:var(--text);border-color:var(--text);}
 
-        /* STATUS */
         #status{width:100%;max-width:500px;font-size:12px;font-family:var(--mono);
             text-align:center;padding:8px 12px;border-radius:6px;
             margin-bottom:10px;background:rgba(255,255,255,.03);}
@@ -157,20 +129,17 @@
         #status.warn {color:var(--warn);}
         #status.voice{color:var(--purple);}
 
-        /* TOAST */
         #toast{position:fixed;bottom:20px;left:50%;
             transform:translateX(-50%) translateY(80px);
             font-family:var(--mono);font-size:13px;font-weight:700;
-            padding:10px 20px;border-radius:20px;
-            transition:transform .3s;z-index:999;white-space:nowrap;}
+            padding:10px 20px;border-radius:20px;transition:transform .3s;z-index:999;white-space:nowrap;}
         #toast.show      {transform:translateX(-50%) translateY(0);background:var(--accent);color:#0d1117;}
         #toast.show.error{background:var(--danger);color:#fff;}
         #toast.show.info {background:var(--purple);color:#0d1117;}
 
         .divider{border:none;border-top:1px solid var(--border);margin:6px 0 12px;}
-
-        @keyframes flashGreen{0%{background:rgba(0,229,160,.25)}100%{background:transparent}}
-        .flash{animation:flashGreen .5s ease-out;}
+        @keyframes flashBadge{0%{transform:scale(1.05);opacity:.7}100%{transform:scale(1);opacity:1}}
+        .flash{animation:flashBadge .4s ease-out;}
     </style>
 </head>
 <body>
@@ -180,15 +149,13 @@
         <div class="dot"></div>
         <h1>PART SCANNER</h1>
     </div>
-    <!-- SATU TOMBOL VOICE -->
     <button id="voiceToggle" onclick="toggleVoice()">
         <div class="vdot" id="vdot"></div>
-        <span class="vicon">🎤</span>
+        <span>🎤</span>
         <span id="voiceLabel">SUARA</span>
     </button>
 </header>
 
-<!-- STEPS -->
 <div class="steps">
     <div class="step active" id="s1"><span>1️⃣</span>Kereta</div>
     <div class="step"        id="s2"><span>2️⃣</span>Dies</div>
@@ -196,20 +163,19 @@
     <div class="step"        id="s4"><span>4️⃣</span>Simpan</div>
 </div>
 
-<!-- STATUS -->
-<div id="status" class="warn">Pilih mode scan lalu arahkan kamera ke QR...</div>
+<div id="status" class="warn">Pilih mode scan, arahkan kamera ke QR...</div>
 
-<!-- VOICE BOX — muncul saat mic aktif -->
+<!-- VOICE BOX -->
 <div id="voiceBox">
-    <div class="vb-header">
+    <div class="vb-row">
         <div class="vb-rec"></div>
-        <div class="vb-title">MENDENGARKAN...</div>
+        <div class="vb-title">MIKROFON AKTIF — MENDENGARKAN</div>
     </div>
     <div id="voiceTranscript">—</div>
-    <div class="vb-hint">
-        Ucapkan: <span>"dies delapan belas strip nol"</span> → Dies 18-0<br>
-        Ucapkan: <span>"lot nol tiga nol tiga"</span> → Lot 03/03<br>
-        Ucapkan: <span>"kirim"</span> → Simpan ke Sheet
+    <div class="vb-cmds">
+        <b>"dies delapan belas strip nol"</b> → Dies: 18-0<br>
+        <b>"lot nol tiga nol tiga"</b> → Lot: 03/03<br>
+        <b>"kirim"</b> → Simpan ke Google Sheet
     </div>
 </div>
 
@@ -224,22 +190,13 @@
     <div id="qr-reader"></div>
 </div>
 
-<!-- HASIL SCAN -->
+<!-- HASIL -->
 <div class="card">
     <div class="card-title">📊 Hasil Scan</div>
     <div class="badges">
-        <div class="badge" id="badgeKereta">
-            <div class="badge-lbl">No. Kereta</div>
-            <div class="badge-val" id="valKereta">—</div>
-        </div>
-        <div class="badge" id="badgeDies">
-            <div class="badge-lbl">No. Dies</div>
-            <div class="badge-val" id="valDies">—</div>
-        </div>
-        <div class="badge" id="badgeLot">
-            <div class="badge-lbl">Lot (<span id="lotCount">0</span>)</div>
-            <div class="badge-val" id="valLot">—</div>
-        </div>
+        <div class="badge" id="badgeKereta"><div class="badge-lbl">No. Kereta</div><div class="badge-val" id="valKereta">—</div></div>
+        <div class="badge" id="badgeDies">  <div class="badge-lbl">No. Dies</div>  <div class="badge-val" id="valDies">—</div></div>
+        <div class="badge" id="badgeLot">   <div class="badge-lbl">Lot (<span id="lotCount">0</span>)</div><div class="badge-val" id="valLot">—</div></div>
     </div>
     <div class="lot-chips" id="lotChips"></div>
 </div>
@@ -275,38 +232,42 @@
 // ============================================
 // ⚠️ GANTI DENGAN URL APPS SCRIPT ANDA
 // ============================================
-var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwnc4WIVdwMQO9r5Yoohciw4w5N3t2HC02oD9vdn4jnpBw6rMjWKV4cvJxUoRIYxm8dwQ/exec';
+var APPS_SCRIPT_URL = 'GANTI_DENGAN_URL_APPS_SCRIPT_ANDA';
 
 // ── STATE ────────────────────────────────────
 var state = { mode:'kereta', kereta:'', dies:'', lots:[] };
 var voiceOn = false;
-var recognition = null;
 
-// ── DOM ───────────────────────────────────────
-var statusEl   = document.getElementById('status');
-var voiceBox   = document.getElementById('voiceBox');
-var voiceTrans = document.getElementById('voiceTranscript');
-var voiceToggle= document.getElementById('voiceToggle');
-var voiceLabel = document.getElementById('voiceLabel');
-var vdot       = document.getElementById('vdot');
-var inpDies    = document.getElementById('inpDies');
-var inpLot     = document.getElementById('inpLot');
-var btnSave    = document.getElementById('btnSave');
+// ── DOM ──────────────────────────────────────
+var statusEl    = document.getElementById('status');
+var voiceBox    = document.getElementById('voiceBox');
+var voiceTrans  = document.getElementById('voiceTranscript');
+var voiceToggle = document.getElementById('voiceToggle');
+var voiceLabel  = document.getElementById('voiceLabel');
+var inpDies     = document.getElementById('inpDies');
+var inpLot      = document.getElementById('inpLot');
+var btnSave     = document.getElementById('btnSave');
 
 // ── HELPERS ──────────────────────────────────
-function setStatus(msg, type){ statusEl.textContent=msg; statusEl.className=type||'idle'; }
+function setStatus(msg,type){ statusEl.textContent=msg; statusEl.className=type||'idle'; }
 
-var toastTimer;
-function showToast(msg, type){
+var _toastTimer;
+function showToast(msg,type){
     var t=document.getElementById('toast');
     t.textContent=msg; t.className='show '+(type||'');
-    clearTimeout(toastTimer);
-    toastTimer=setTimeout(function(){ t.className=''; },3000);
+    clearTimeout(_toastTimer);
+    _toastTimer=setTimeout(function(){ t.className=''; },3000);
 }
 
 function flashEl(id){
     var el=document.getElementById(id);
     el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
+}
+
+function flashInput(el, cls){
+    el.classList.remove('input-flash','input-flash-warn');
+    void el.offsetWidth;
+    el.classList.add(cls);
 }
 
 // ── STEPS ────────────────────────────────────
@@ -319,7 +280,6 @@ function updateSteps(){
 
 // ── RENDER ────────────────────────────────────
 function render(){
-    // Badges
     document.getElementById('valKereta').textContent = state.kereta||'—';
     document.getElementById('badgeKereta').className = 'badge'+(state.kereta?' purple':'');
     document.getElementById('valDies').textContent   = state.dies||'—';
@@ -328,83 +288,62 @@ function render(){
     document.getElementById('valLot').textContent    = state.lots.length>0?state.lots[state.lots.length-1]:'—';
     document.getElementById('badgeLot').className    = 'badge'+(state.lots.length>0?' ok':'');
 
-    // Chips
-    var el=document.getElementById('lotChips');
-    el.innerHTML = state.lots.map(function(l,i){
+    document.getElementById('lotChips').innerHTML = state.lots.map(function(l,i){
         return '<div class="chip">'+l+'<button onclick="removeLot('+i+')">×</button></div>';
     }).join('');
 
-    // Sync inputs
     inpDies.value=state.dies; inpDies.className=state.dies?'warn':'';
-    inpLot.value=state.lots.length>0?state.lots[state.lots.length-1]:'';
-    inpLot.className=state.lots.length>0?'ok':'';
-
+    inpLot.value=state.lots.length>0?state.lots[state.lots.length-1]:''; inpLot.className=state.lots.length>0?'ok':'';
     btnSave.disabled=!(state.kereta&&state.dies&&state.lots.length>0);
     updateSteps();
 }
 
 function removeLot(i){ state.lots.splice(i,1); render(); }
 
-// ── SCAN MODE ─────────────────────────────────
+// ── MODE ─────────────────────────────────────
 function setMode(mode){
     state.mode=mode;
     ['kereta','dies','lot'].forEach(function(m){
-        var id='m'+m.charAt(0).toUpperCase()+m.slice(1);
-        document.getElementById(id).className='mode-btn'+(mode===m?' active-'+m:'');
+        document.getElementById('m'+m.charAt(0).toUpperCase()+m.slice(1)).className=
+            'mode-btn'+(mode===m?' active-'+m:'');
     });
-    var labels={kereta:'🚃 Arahkan ke QR Kereta...',dies:'⚙️ Arahkan ke QR Dies...',lot:'📦 Arahkan ke QR Lot...'};
-    setStatus(labels[mode],'warn');
+    setStatus({kereta:'🚃 Arahkan ke QR Kereta...',dies:'⚙️ Arahkan ke QR Dies...',lot:'📦 Arahkan ke QR Lot...'}[mode],'warn');
 }
 
-// ── QR CAMERA ────────────────────────────────
+// ── QR CAMERA ─────────────────────────────────
 var html5QrCode = new Html5Qrcode('qr-reader');
 html5QrCode.start(
     {facingMode:'environment'},
-    {fps:10, qrbox:{width:220,height:220}, aspectRatio:1.0},
+    {fps:10,qrbox:{width:220,height:220},aspectRatio:1.0},
     onQRScan, function(){}
-).then(function(){
-    setStatus('Kamera siap. Mode: Scan Kereta','warn');
-}).catch(function(err){
-    setStatus('Error kamera: '+err,'err');
-});
+).catch(function(e){ setStatus('Error kamera: '+e,'err'); });
 
-var lastScan=0;
+var _lastScan=0;
 function onQRScan(text){
-    var now=Date.now();
-    if(now-lastScan<1500) return;
-    lastScan=now;
+    var now=Date.now(); if(now-_lastScan<1500)return; _lastScan=now;
     text=text.trim();
-
     if(state.mode==='kereta'){
-        state.kereta=text;
-        render(); flashEl('badgeKereta');
+        state.kereta=text; render(); flashEl('badgeKereta');
         setStatus('✅ Kereta '+text+' terscan! Lanjut scan Dies.','ok');
-        setMode('dies');
-        if(navigator.vibrate) navigator.vibrate(100);
-
+        setMode('dies'); if(navigator.vibrate)navigator.vibrate(100);
     } else if(state.mode==='dies'){
-        var dies=text.startsWith('DIES:')?text.replace('DIES:',''):text;
-        state.dies=dies;
-        render(); flashEl('badgeDies');
-        setStatus('✅ Dies '+dies+' terscan! Lanjut scan Lot.','ok');
-        setMode('lot');
-        if(navigator.vibrate) navigator.vibrate(100);
-
+        var d=text.startsWith('DIES:')?text.replace('DIES:',''):text;
+        state.dies=d; render(); flashEl('badgeDies');
+        setStatus('✅ Dies '+d+' terscan! Lanjut scan Lot.','ok');
+        setMode('lot'); if(navigator.vibrate)navigator.vibrate(100);
     } else if(state.mode==='lot'){
-        var lot=text.startsWith('LOT:')?text.replace('LOT:',''):text;
-        if(state.lots.indexOf(lot)!==-1){ setStatus('⚠️ Lot '+lot+' sudah ada!','warn'); return; }
-        state.lots.push(lot);
-        render(); flashEl('badgeLot');
-        setStatus('✅ Lot '+lot+' ditambahkan! Scan lot lagi atau Simpan.','ok');
-        if(navigator.vibrate) navigator.vibrate([80,40,80]);
+        var l=text.startsWith('LOT:')?text.replace('LOT:',''):text;
+        if(state.lots.indexOf(l)!==-1){setStatus('⚠️ Lot '+l+' sudah ada!','warn');return;}
+        state.lots.push(l); render(); flashEl('badgeLot');
+        setStatus('✅ Lot '+l+' ditambahkan!','ok');
+        if(navigator.vibrate)navigator.vibrate([80,40,80]);
     }
 }
 
 // ── MANUAL INPUT ─────────────────────────────
 inpDies.addEventListener('change',function(){
     state.dies=this.value.trim().toUpperCase();
-    this.className=state.dies?'warn':'';
-    render();
+    this.className=state.dies?'warn':''; render();
 });
 inpLot.addEventListener('keydown',function(e){
     if(e.key==='Enter'){
@@ -413,221 +352,298 @@ inpLot.addEventListener('keydown',function(e){
     }
 });
 
-// ── VOICE ─────────────────────────────────────
-var SpeechRecog = window.SpeechRecognition||window.webkitSpeechRecognition;
+// ═══════════════════════════════════════════════════════════
+// VOICE — DUAL LANGUAGE ENGINE
+// Satu recognition id-ID untuk angka/kata Indonesia,
+// satu recognition en-US khusus mendeteksi kata kunci "dies"
+// ═══════════════════════════════════════════════════════════
+var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+var recID = null;   // Bahasa Indonesia — untuk semua angka & perintah
+var recEN = null;   // Bahasa Inggris  — khusus deteksi kata "dies"
 
-if(SpeechRecog){
-    recognition = new SpeechRecog();
-    recognition.lang='id-ID';
-    recognition.continuous=true;       // terus mendengarkan
-    recognition.interimResults=true;   // tampilkan teks sementara
+var _lastText = '';          // teks terakhir yang diproses (cegah duplikat)
+var _lastProcessTime = 0;    // timestamp proses terakhir
 
-    recognition.onresult=function(e){
+if(SR){
+    // ── Recognition INDONESIA ─────────────────────────────
+    recID = new SR();
+    recID.lang = 'id-ID';
+    recID.continuous = true;
+    recID.interimResults = true;
+
+    recID.onresult = function(e){
         var interim='', final='';
         for(var i=e.resultIndex;i<e.results.length;i++){
-            if(e.results[i].isFinal) final+=e.results[i][0].transcript;
-            else interim+=e.results[i][0].transcript;
+            if(e.results[i].isFinal) final += e.results[i][0].transcript;
+            else interim += e.results[i][0].transcript;
         }
-        voiceTrans.textContent=(final||interim||'—');
-        if(final) processVoice(final.toLowerCase().trim());
+        var display = final || interim;
+        if(display) voiceTrans.textContent = '🇮🇩 ' + display;
+        if(final) handleFinal(final.toLowerCase().trim(), 'id');
     };
 
-    recognition.onend=function(){
-        // Jika masih voiceOn, restart otomatis (continuous kadang berhenti sendiri)
-        if(voiceOn){
-            try{ recognition.start(); }catch(e){}
+    recID.onend = function(){ if(voiceOn){ try{recID.start();}catch(e){} } };
+    recID.onerror = function(e){ if(e.error==='no-speech'||e.error==='aborted')return; };
+
+    // ── Recognition ENGLISH ──────────────────────────────
+    // Khusus menangkap kata "dies" yang sering tidak dikenali oleh id-ID
+    recEN = new SR();
+    recEN.lang = 'en-US';
+    recEN.continuous = true;
+    recEN.interimResults = false; // hanya final untuk EN
+
+    recEN.onresult = function(e){
+        var final='';
+        for(var i=e.resultIndex;i<e.results.length;i++){
+            if(e.results[i].isFinal) final += e.results[i][0].transcript;
+        }
+        if(final){
+            var t = final.toLowerCase().trim();
+            voiceTrans.textContent = '🇬🇧 ' + t;
+            // EN hanya digunakan untuk trigger kata "dies" atau "send/kirim"
+            if(/\bdies?\b/.test(t) || /\b(send|save|submit)\b/.test(t)){
+                handleFinal(t, 'en');
+            }
         }
     };
 
-    recognition.onerror=function(e){
-        if(e.error==='no-speech') return; // abaikan jika hanya diam
-        if(e.error==='aborted')   return;
-        setStatus('Error mic: '+e.error,'err');
-    };
+    recEN.onend = function(){ if(voiceOn){ try{recEN.start();}catch(e){} } };
+    recEN.onerror = function(e){ if(e.error==='no-speech'||e.error==='aborted')return; };
+
 } else {
     voiceToggle.disabled=true;
-    voiceToggle.title='Browser tidak mendukung voice';
+    voiceToggle.title='Browser tidak mendukung voice input';
 }
 
+// ── TOGGLE VOICE ──────────────────────────────
 function toggleVoice(){
-    if(!recognition){ showToast('Browser tidak support voice','error'); return; }
-    voiceOn=!voiceOn;
+    if(!SR){ showToast('Browser tidak mendukung voice','error'); return; }
+    voiceOn = !voiceOn;
     if(voiceOn){
-        try{ recognition.start(); }catch(e){}
+        try{ recID.start(); }catch(e){}
+        setTimeout(function(){ try{ recEN.start(); }catch(e){} }, 300);
         voiceToggle.classList.add('on');
         voiceLabel.textContent='ON';
         voiceBox.classList.add('show');
-        setStatus('🎤 Mikrofon aktif — ucapkan perintah','voice');
+        setStatus('🎤 Mikrofon aktif. Ucapkan perintah...','voice');
     } else {
-        try{ recognition.stop(); }catch(e){}
+        try{ recID.stop(); }catch(e){}
+        try{ recEN.stop(); }catch(e){}
         voiceToggle.classList.remove('on');
         voiceLabel.textContent='SUARA';
-        vdot.style.background='';
         voiceBox.classList.remove('show');
         voiceTrans.textContent='—';
         setStatus('Mikrofon dimatikan.','idle');
     }
 }
 
-// ── VOICE PARSER ──────────────────────────────
-var ANGKA={
-    'nol':0,'kosong':0,
-    'satu':1,'esa':1,
-    'dua':2,
-    'tiga':3,
-    'empat':4,
-    'lima':5,
-    'enam':6,
-    'tujuh':7,
-    'delapan':8,
-    'sembilan':9,
-    'sepuluh':10,'sepuloh':10,
-    'sebelas':11,
-    'dua belas':12,'duabelas':12,
-    'tiga belas':13,'tigabelas':13,
-    'empat belas':14,'empatbelas':14,
-    'lima belas':15,'limabelas':15,
-    'enam belas':16,'enambelas':16,
-    'tujuh belas':17,'tujuhbelas':17,
-    'delapan belas':18,'delapanbelas':18,
-    'sembilan belas':19,'sembilanbelas':19,
-    'dua puluh':20,'duapuluh':20,
-};
+// ═══════════════════════════════════════════════════════════
+// ANGKA MAP — Indonesia
+// ═══════════════════════════════════════════════════════════
+var NUMS = [
+    // Dua kata dulu (lebih spesifik)
+    ['dua puluh',20],['duapuluh',20],
+    ['sembilan belas',19],['sembilanbelas',19],
+    ['delapan belas',18],['delapanbelas',18],['eighteen',18],
+    ['tujuh belas',17],['tujuhbelas',17],['seventeen',17],
+    ['enam belas',16],['enambelas',16],['sixteen',16],
+    ['lima belas',15],['limabelas',15],['fifteen',15],
+    ['empat belas',14],['empatbelas',14],['fourteen',14],
+    ['tiga belas',13],['tigabelas',13],['thirteen',13],
+    ['dua belas',12],['duabelas',12],['twelve',12],
+    ['sebelas',11],['eleven',11],
+    ['sepuluh',10],['ten',10],
+    ['sembilan',9],['nine',9],
+    ['delapan',8],['eight',8],
+    ['tujuh',7],['seven',7],
+    ['enam',6],['six',6],
+    ['lima',5],['five',5],
+    ['empat',4],['four',4],
+    ['tiga',3],['three',3],
+    ['dua',2],['two',2],
+    ['satu',1],['esa',1],['one',1],
+    ['nol',0],['kosong',0],['zero',0],
+];
 
-function wordToNum(text){
-    // Coba multi-kata dulu (terpanjang)
-    var keys=Object.keys(ANGKA).sort(function(a,b){return b.length-a.length;});
-    for(var i=0;i<keys.length;i++){
-        var k=keys[i];
-        var idx=text.indexOf(k);
-        if(idx!==-1){
-            return {num:ANGKA[k], before:text.slice(0,idx).trim(), after:text.slice(idx+k.length).trim()};
+// Cari angka pertama dalam teks, return {num, rest} atau null
+function extractNum(text){
+    text = text.trim();
+    // Coba kata-kata dulu
+    for(var i=0;i<NUMS.length;i++){
+        var word = NUMS[i][0];
+        var val  = NUMS[i][1];
+        if(text.indexOf(word)===0 || text===word){
+            return { num:val, rest:text.slice(word.length).trim() };
         }
     }
     // Coba angka digit
-    var m=text.match(/(\d+)/);
-    if(m){ return {num:parseInt(m[1]), before:text.slice(0,m.index).trim(), after:text.slice(m.index+m[1].length).trim()}; }
+    var m = text.match(/^(\d+)/);
+    if(m) return { num:parseInt(m[1]), rest:text.slice(m[1].length).trim() };
     return null;
 }
 
+// ── PARSER DIES ──────────────────────────────
+// Input: "dies delapan belas strip nol" atau "dies 18 strip 0"
+// Output: "18-0"
 function parseDies(text){
-    // Hapus kata "dies" di awal
-    text=text.replace(/^die?s\s*/,'').trim();
-    // Pisah berdasarkan separator
-    var sep=/(strip|garis|minus|dash|titik|-)/;
-    var parts=text.split(sep);
-    if(parts.length>=3){
-        var l=wordToNum(parts[0].trim());
-        var r=wordToNum(parts[2].trim());
-        if(l&&r) return l.num+'-'+r.num;
-        if(l)    return l.num+'-0';
+    // Bersihkan prefix dies/die
+    text = text.replace(/^die?s?\s*/,'').trim();
+
+    // Pisah berdasarkan kata separator strip/garis/minus/dash
+    var sepRe = /\b(strip|garis|minus|dash|hyphen|-)\b/;
+    var parts  = text.split(sepRe);
+
+    var leftText  = parts[0].trim();
+    var rightText = parts.length >= 3 ? parts[2].trim() : '';
+
+    // Ambil angka dari sisi kiri
+    var leftNum = extractNum(leftText);
+    if(!leftNum) return null;
+
+    // Cek ada huruf setelah angka kiri (misal "5B" → angka=5, huruf=B)
+    var leftStr = String(leftNum.num);
+    // Sisa setelah angka kiri — cek 1 huruf
+    var afterLeft = leftNum.rest.trim();
+    var letterMatch = afterLeft.match(/^([a-zA-Z])\b/);
+    if(letterMatch){
+        leftStr = leftNum.num + letterMatch[1].toUpperCase();
+        afterLeft = afterLeft.slice(1).trim();
     }
-    // Tanpa separator — ambil 2 angka berurutan
-    var n1=wordToNum(text);
-    if(!n1) return null;
-    var n2=wordToNum(n1.after);
-    if(n2)  return n1.num+'-'+n2.num;
-    return n1.num+'-0';
+
+    // Ambil angka kanan
+    var rightSrc  = rightText || afterLeft;
+    var rightNum  = extractNum(rightSrc);
+    var rightStr  = rightNum ? String(rightNum.num) : '0';
+
+    return leftStr + '-' + rightStr;
 }
 
+// ── PARSER LOT ───────────────────────────────
+// Input: "lot nol tiga nol tiga" → "03/03"
+// Input: "lot tiga per lima"     → "03/05"
 function parseLot(text){
-    // Hapus kata "lot" di awal
-    text=text.replace(/^lots?\s*/,'').trim();
-    // Pisah berdasarkan separator
-    var sep=/(garis miring|per|slash|\/)/;
-    var parts=text.split(sep);
-    var nums=[];
-    if(parts.length>=3){
-        var l=wordToNum(parts[0].trim());
-        var r=wordToNum(parts[2].trim());
+    // Bersihkan prefix lot
+    text = text.replace(/^lots?\s*/,'').trim();
+
+    // Pisah berdasarkan separator garis miring / per / slash
+    var sepRe = /\b(garis miring|per|slash|\/)\b/;
+    var parts  = text.split(sepRe);
+
+    var nums = [];
+
+    if(parts.length >= 3){
+        // Ada separator jelas: "tiga per lima"
+        var l = extractNum(parts[0].trim());
+        var r = extractNum(parts[2].trim());
         if(l) nums.push(l.num);
         if(r) nums.push(r.num);
     } else {
-        // 4 digit kata: "nol tiga nol tiga" → 03/03
-        var tmp=text, digits=[];
+        // Tanpa separator — baca 4 digit: "nol tiga nol tiga" → 03/03
+        // Atau 2 angka: "tiga lima" → 03/05
+        var tmp = text;
+        var digits = [];
         for(var i=0;i<4;i++){
-            var r2=wordToNum(tmp);
+            var r2 = extractNum(tmp);
             if(!r2) break;
             digits.push(r2.num);
-            tmp=r2.after;
+            tmp = r2.rest;
         }
-        if(digits.length===4)      nums=[digits[0]*10+digits[1], digits[2]*10+digits[3]];
-        else if(digits.length===2) nums=digits;
+        if(digits.length === 4){
+            // 4 digit tunggal: 0,3,0,3 → 03/03
+            nums = [digits[0]*10 + digits[1], digits[2]*10 + digits[3]];
+        } else if(digits.length === 2){
+            // 2 angka langsung: 3,3 → 03/03
+            nums = [digits[0], digits[1]];
+        } else if(digits.length === 1){
+            nums = [digits[0], 0];
+        }
     }
-    if(nums.length===2){
-        return String(nums[0]).padStart(2,'0')+'/'+String(nums[1]).padStart(2,'0');
+
+    if(nums.length >= 2){
+        return String(nums[0]).padStart(2,'0') + '/' + String(nums[1]).padStart(2,'0');
     }
     return null;
 }
 
-function processVoice(text){
-    console.log('[VOICE]',text);
+// ── HANDLE FINAL TRANSCRIPT ──────────────────
+function handleFinal(text, lang){
+    // Cegah proses duplikat dalam 1 detik
+    var now = Date.now();
+    if(text === _lastText && now - _lastProcessTime < 1000) return;
+    _lastText = text;
+    _lastProcessTime = now;
 
-    // Perintah KIRIM
-    if(/\b(kirim|simpan|send)\b/.test(text)){
-        setStatus('🎤 Perintah "kirim" dideteksi!','voice');
+    console.log('[VOICE]['+lang+']', text);
+
+    // ── PERINTAH KIRIM ──
+    if(/\b(kirim|simpan|send|save|submit)\b/.test(text)){
+        setStatus('🎤 Perintah kirim dideteksi!','voice');
         showToast('🎤 Menyimpan...','info');
         setTimeout(doSave, 500);
         return;
     }
 
-    // Perintah DIES
-    if(/\bdies?\b/.test(text)){
-        var result=parseDies(text);
+    // ── PERINTAH DIES ──
+    // Deteksi kata "dies" dalam bahasa apapun
+    if(/\bdie?s?\b/.test(text)){
+        // Jika dari EN recognition, mungkin angkanya tidak ada
+        // Coba cari angka digit atau minta ulang
+        var result = parseDies(text);
         if(result){
-            state.dies=result;
-            render(); flashEl('badgeDies');
-            setStatus('🎤 Dies diisi: '+result,'ok');
-            showToast('Dies: '+result,'info');
+            state.dies = result;
+            render();
+            flashEl('badgeDies');
+            flashInput(inpDies, 'input-flash-warn');
+            setStatus('🎤 Dies terisi: ' + result,'ok');
+            showToast('Dies: ' + result,'info');
         } else {
-            setStatus('🎤 Gagal parse Dies. Coba: "dies delapan belas strip nol"','err');
+            setStatus('🎤 Gagal baca Dies. Coba: "dies delapan belas strip nol"','err');
         }
         return;
     }
 
-    // Perintah LOT
+    // ── PERINTAH LOT ──
     if(/\blots?\b/.test(text)){
-        var lotRes=parseLot(text);
-        if(lotRes){
-            if(state.lots.indexOf(lotRes)===-1) state.lots.push(lotRes);
-            render(); flashEl('badgeLot');
-            setStatus('🎤 Lot ditambahkan: '+lotRes,'ok');
-            showToast('Lot: '+lotRes,'info');
+        var lotResult = parseLot(text);
+        if(lotResult){
+            if(state.lots.indexOf(lotResult)===-1) state.lots.push(lotResult);
+            render();
+            flashEl('badgeLot');
+            flashInput(inpLot, 'input-flash');
+            setStatus('🎤 Lot ditambahkan: ' + lotResult,'ok');
+            showToast('Lot: ' + lotResult,'info');
         } else {
-            setStatus('🎤 Gagal parse Lot. Coba: "lot nol tiga nol tiga"','err');
+            setStatus('🎤 Gagal baca Lot. Coba: "lot nol tiga nol tiga"','err');
         }
         return;
     }
 }
 
 // ── SAVE ─────────────────────────────────────
-btnSave.addEventListener('click',doSave);
-
+btnSave.addEventListener('click', doSave);
 function doSave(){
-    var nrp=document.getElementById('nrpOp').value.trim();
-    var part=document.getElementById('namaPart').value.trim();
+    var nrp  = document.getElementById('nrpOp').value.trim();
+    var part = document.getElementById('namaPart').value.trim();
     if(!nrp||!part){ showToast('⚠️ NRP dan Nama Part wajib diisi!','error'); return; }
-    if(!state.kereta||!state.dies||state.lots.length===0){
-        showToast('⚠️ Lengkapi Kereta, Dies, dan Lot!','error'); return;
-    }
-    btnSave.disabled=true;
-    btnSave.textContent='⏳ Menyimpan...';
-    setStatus('Mengirim data...','info');
+    if(!state.kereta||!state.dies||state.lots.length===0){ showToast('⚠️ Lengkapi Kereta, Dies, dan Lot!','error'); return; }
 
-    var tanggal=new Date().toLocaleString('id-ID',{timeZone:'Asia/Jakarta'});
-    var rows=state.lots.map(function(lot){
-        return {tanggal:tanggal, nrpOperator:nrp, namaPart:part,
-                noKereta:state.kereta, nomorDies:state.dies, nomorLot:lot};
+    btnSave.disabled=true; btnSave.textContent='⏳ Menyimpan...';
+    setStatus('Mengirim data ke Google Sheet...','info');
+
+    var tanggal = new Date().toLocaleString('id-ID',{timeZone:'Asia/Jakarta'});
+    var rows = state.lots.map(function(lot){
+        return {tanggal:tanggal,nrpOperator:nrp,namaPart:part,
+                noKereta:state.kereta,nomorDies:state.dies,nomorLot:lot};
     });
 
     fetch(APPS_SCRIPT_URL,{
-        method:'POST', mode:'no-cors',
+        method:'POST',mode:'no-cors',
         headers:{'Content-Type':'application/json'},
         body:JSON.stringify({rows:rows})
     }).then(function(){
         showToast('✅ '+rows.length+' data tersimpan!');
         setStatus('✅ Tersimpan! Data tetap ada untuk transaksi berikutnya.','ok');
-        // Tidak ada data yang dihapus — semua field tetap terisi
+        // Tidak ada field yang dihapus setelah simpan
     }).catch(function(){
         showToast('❌ Gagal. Cek koneksi.','error');
         setStatus('Gagal menyimpan.','err');
