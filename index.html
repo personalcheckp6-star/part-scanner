@@ -4,496 +4,743 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Part Scanner</title>
-    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@400;600;700&display=swap');
-
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@400;600;700;800&display=swap');
         :root {
-            --bg: #0f1117;
-            --card: #1a1d27;
-            --border: #2a2d3a;
-            --accent: #00e5a0;
-            --accent2: #0077ff;
-            --warn: #f59e0b;
-            --danger: #ff4757;
-            --text: #e0e4ef;
-            --muted: #6b7280;
-            --mono: 'Share Tech Mono', monospace;
-            --sans: 'Barlow', sans-serif;
+            --bg:#0d1117; --card:#161b22; --border:#30363d;
+            --accent:#00e5a0; --blue:#58a6ff; --warn:#f0b429;
+            --purple:#bf97ff; --danger:#f85149; --text:#c9d1d9; --muted:#8b949e;
+            --mono:'Share Tech Mono',monospace; --sans:'Barlow',sans-serif;
         }
+        *{box-sizing:border-box;margin:0;padding:0;}
+        body{font-family:var(--sans);background:var(--bg);color:var(--text);
+            min-height:100vh;padding:12px 12px 64px;
+            display:flex;flex-direction:column;align-items:center;}
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        header{width:100%;max-width:500px;display:flex;align-items:center;gap:10px;
+            padding:10px 0 14px;border-bottom:1px solid var(--border);margin-bottom:14px;}
+        .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);
+            box-shadow:0 0 10px var(--accent);animation:blink 1.8s infinite;}
+        @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+        header h1{font-family:var(--mono);font-size:14px;color:var(--accent);letter-spacing:3px;}
 
-        body {
-            font-family: var(--sans);
-            background-color: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            padding: 16px 16px 40px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+        /* STEPS */
+        .steps{width:100%;max-width:500px;display:flex;margin-bottom:14px;}
+        .step{flex:1;text-align:center;padding:7px 2px;font-size:9px;
+            font-family:var(--mono);letter-spacing:1px;text-transform:uppercase;
+            color:var(--muted);border-bottom:2px solid var(--border);transition:all .3s;}
+        .step span{display:block;font-size:14px;margin-bottom:2px;}
+        .step.active{color:var(--warn);border-bottom-color:var(--warn);}
+        .step.done{color:var(--accent);border-bottom-color:var(--accent);}
 
-        header {
-            width: 100%;
-            max-width: 480px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 16px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid var(--border);
-        }
+        /* CARD */
+        .card{background:var(--card);border:1px solid var(--border);border-radius:12px;
+            padding:14px;width:100%;max-width:500px;margin-bottom:10px;}
+        .card-title{font-size:10px;font-family:var(--mono);color:var(--muted);
+            letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;}
 
-        .logo-dot {
-            width: 10px; height: 10px;
-            border-radius: 50%;
-            background: var(--accent);
-            box-shadow: 0 0 8px var(--accent);
-            animation: pulse 1.5s infinite;
-        }
+        /* CAMERA */
+        #qr-reader{width:100%;border-radius:8px;overflow:hidden;background:#000;}
+        #qr-reader video{border-radius:8px;}
+        #qr-reader__dashboard{display:none!important;}
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(0.8); }
-        }
+        /* SCAN MODE SELECTOR */
+        .mode-btns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px;}
+        .mode-btn{padding:8px 4px;border:1px solid var(--border);border-radius:6px;
+            background:var(--bg);font-family:var(--mono);font-size:10px;
+            letter-spacing:1px;text-transform:uppercase;cursor:pointer;
+            color:var(--muted);transition:all .2s;text-align:center;}
+        .mode-btn.active-kereta{border-color:var(--purple);color:var(--purple);background:rgba(191,151,255,.1);}
+        .mode-btn.active-dies  {border-color:var(--warn);  color:var(--warn);  background:rgba(240,180,41,.1);}
+        .mode-btn.active-lot   {border-color:var(--accent);color:var(--accent);background:rgba(0,229,160,.1);}
 
-        header h1 {
-            font-family: var(--mono);
-            font-size: 15px;
-            color: var(--accent);
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
+        /* BADGES */
+        .badges{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:10px;}
+        .badge{padding:9px 8px;border-radius:8px;border:1px solid var(--border);background:var(--bg);}
+        .badge-lbl{font-size:8px;font-family:var(--mono);color:var(--muted);
+            letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;}
+        .badge-val{font-family:var(--mono);font-size:13px;font-weight:700;
+            color:var(--muted);transition:all .3s;word-break:break-all;min-height:18px;}
+        .badge.ok     .badge-val{color:var(--accent);}
+        .badge.warn   .badge-val{color:var(--warn);}
+        .badge.purple .badge-val{color:var(--purple);}
 
-        .card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 16px;
-            width: 100%;
-            max-width: 480px;
-            margin-bottom: 12px;
-        }
+        /* LOT CHIPS */
+        .lot-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;}
+        .chip{font-family:var(--mono);font-size:11px;padding:3px 8px;
+            border-radius:12px;background:rgba(0,229,160,.12);
+            border:1px solid rgba(0,229,160,.3);color:var(--accent);
+            display:flex;align-items:center;gap:4px;}
+        .chip button{background:none;border:none;color:var(--danger);
+            cursor:pointer;font-size:13px;padding:0;line-height:1;}
 
-        .card-title {
-            font-size: 11px;
-            font-family: var(--mono);
-            color: var(--muted);
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-bottom: 12px;
-        }
+        /* FORM */
+        .form-group{margin-bottom:10px;}
+        .form-group label{display:block;font-size:10px;font-family:var(--mono);
+            color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px;}
+        .field-wrap{display:flex;gap:6px;align-items:stretch;}
+        .form-group input{flex:1;padding:10px 12px;background:var(--bg);
+            border:1px solid var(--border);border-radius:6px;color:var(--text);
+            font-family:var(--mono);font-size:15px;outline:none;transition:border-color .2s;}
+        .form-group input:focus{border-color:var(--blue);}
+        .form-group input.ok    {border-color:var(--accent);color:var(--accent);}
+        .form-group input.warn  {border-color:var(--warn);  color:var(--warn);}
+        .form-group input.purple{border-color:var(--purple);color:var(--purple);}
 
-        .camera-wrap {
-            position: relative;
-            width: 100%;
-            border-radius: 8px;
-            overflow: hidden;
-            background: #000;
-            aspect-ratio: 4/3;
-        }
+        /* MIC BUTTON */
+        .mic-btn{width:42px;min-width:42px;height:42px;border-radius:50%;border:1px solid var(--border);
+            background:var(--bg);cursor:pointer;font-size:18px;
+            display:flex;align-items:center;justify-content:center;
+            transition:all .2s;flex-shrink:0;}
+        .mic-btn:hover{border-color:var(--purple);background:rgba(191,151,255,.1);}
+        .mic-btn.listening{border-color:var(--danger);background:rgba(248,81,73,.15);
+            animation:micPulse .8s infinite;}
+        @keyframes micPulse{0%,100%{box-shadow:0 0 0 0 rgba(248,81,73,.4)}
+            50%{box-shadow:0 0 0 8px rgba(248,81,73,0)}}
 
-        video, canvas {
-            width: 100%; height: 100%;
-            object-fit: cover;
-            display: block;
-            position: absolute;
-            top: 0; left: 0;
-        }
-        canvas { display: none; }
+        /* BUTTONS */
+        .btn{width:100%;padding:13px;border:none;border-radius:8px;
+            font-family:var(--sans);font-weight:700;font-size:14px;
+            letter-spacing:.5px;cursor:pointer;transition:all .2s;
+            text-transform:uppercase;margin-bottom:8px;}
+        .btn:disabled{background:var(--border)!important;color:var(--muted)!important;cursor:not-allowed;}
+        .btn-save{background:var(--blue);color:#fff;}
+        .btn-save:hover:not(:disabled){filter:brightness(1.15);transform:translateY(-1px);}
+        .btn-reset{background:transparent;color:var(--muted);border:1px solid var(--border);
+            padding:9px;font-size:12px;margin-bottom:0;}
+        .btn-reset:hover{color:var(--text);border-color:var(--text);}
 
-        .scan-line {
-            position: absolute;
-            left: 0; right: 0; height: 2px;
-            background: linear-gradient(90deg, transparent, var(--accent), transparent);
-            animation: scanMove 2s linear infinite;
-            z-index: 2; opacity: 0; transition: opacity 0.3s;
-        }
-        .scan-line.active { opacity: 1; }
-        @keyframes scanMove { 0% { top: 0%; } 100% { top: 100%; } }
+        /* STATUS */
+        #status{width:100%;max-width:500px;font-size:12px;font-family:var(--mono);
+            text-align:center;padding:8px 12px;border-radius:6px;
+            margin-bottom:10px;background:rgba(255,255,255,.03);}
+        #status.ok    {color:var(--accent);}
+        #status.err   {color:var(--danger);}
+        #status.info  {color:var(--blue);}
+        #status.idle  {color:var(--muted);}
+        #status.warn  {color:var(--warn);}
+        #status.voice {color:var(--purple);}
 
-        .corner { position: absolute; width: 20px; height: 20px; z-index: 3; }
-        .corner.tl { top: 8px; left: 8px; border-top: 2px solid var(--accent); border-left: 2px solid var(--accent); }
-        .corner.tr { top: 8px; right: 8px; border-top: 2px solid var(--accent); border-right: 2px solid var(--accent); }
-        .corner.bl { bottom: 8px; left: 8px; border-bottom: 2px solid var(--accent); border-left: 2px solid var(--accent); }
-        .corner.br { bottom: 8px; right: 8px; border-bottom: 2px solid var(--accent); border-right: 2px solid var(--accent); }
+        /* VOICE INDICATOR */
+        #voiceBar{width:100%;max-width:500px;display:none;
+            background:rgba(191,151,255,.1);border:1px solid rgba(191,151,255,.3);
+            border-radius:8px;padding:10px 14px;margin-bottom:10px;
+            font-family:var(--mono);font-size:12px;color:var(--purple);
+            align-items:center;gap:8px;}
+        #voiceBar.show{display:flex;}
+        .voice-dot{width:8px;height:8px;border-radius:50%;background:var(--danger);
+            animation:micPulse .8s infinite;flex-shrink:0;}
+        #voiceTranscript{flex:1;min-height:16px;}
 
-        .cam-label {
-            position: absolute;
-            top: 8px; left: 50%;
-            transform: translateX(-50%);
-            font-family: var(--mono);
-            font-size: 11px;
-            background: rgba(0,0,0,0.65);
-            color: var(--warn);
-            padding: 3px 12px;
-            border-radius: 20px;
-            z-index: 4;
-            letter-spacing: 1px;
-        }
+        /* TOAST */
+        #toast{position:fixed;bottom:20px;left:50%;
+            transform:translateX(-50%) translateY(80px);
+            font-family:var(--mono);font-size:13px;font-weight:700;
+            padding:10px 20px;border-radius:20px;
+            transition:transform .3s;z-index:999;white-space:nowrap;}
+        #toast.show      {transform:translateX(-50%) translateY(0);background:var(--accent);color:#0d1117;}
+        #toast.show.error{background:var(--danger);color:#fff;}
+        #toast.show.info {background:var(--purple);color:#0d1117;}
 
-        .slider-wrap { margin-top: 12px; }
-        .slider-label {
-            display: flex; justify-content: space-between;
-            font-size: 12px; color: var(--muted); margin-bottom: 6px;
-        }
-        .slider-label span:last-child { font-family: var(--mono); color: var(--accent); }
-        input[type="range"] {
-            width: 100%; -webkit-appearance: none;
-            height: 4px; border-radius: 2px;
-            background: var(--border); outline: none;
-        }
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 18px; height: 18px; border-radius: 50%;
-            background: var(--accent); cursor: pointer;
-            box-shadow: 0 0 6px var(--accent);
-        }
+        .divider{border:none;border-top:1px solid var(--border);margin:6px 0 12px;}
+        .help-text{font-size:10px;color:var(--muted);font-family:var(--mono);
+            margin-top:4px;line-height:1.5;}
 
-        .scan-btn-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-top: 12px;
-        }
-
-        .form-group { margin-bottom: 12px; }
-        .form-group label {
-            display: block;
-            font-size: 11px; font-family: var(--mono);
-            color: var(--muted); letter-spacing: 1.5px;
-            text-transform: uppercase; margin-bottom: 5px;
-        }
-        .form-group input {
-            width: 100%; padding: 10px 12px;
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 6px; color: var(--text);
-            font-family: var(--mono); font-size: 15px;
-            outline: none; transition: border-color 0.2s;
-        }
-        .form-group input:focus { border-color: var(--accent2); }
-        .form-group input.ok   { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 8px rgba(0,229,160,0.15); }
-        .form-group input.warn { border-color: var(--warn);   color: var(--warn);   box-shadow: 0 0 8px rgba(245,158,11,0.15); }
-
-        .btn {
-            width: 100%; padding: 12px; border: none; border-radius: 8px;
-            font-family: var(--sans); font-weight: 700; font-size: 13px;
-            letter-spacing: 0.5px; cursor: pointer;
-            transition: all 0.2s; text-transform: uppercase;
-        }
-        .btn:disabled { background: var(--border) !important; color: var(--muted) !important; cursor: not-allowed; transform: none !important; }
-        .btn-dies   { background: var(--warn);   color: #0f1117; }
-        .btn-dies:hover:not(:disabled)   { filter: brightness(1.1); transform: translateY(-1px); }
-        .btn-lot    { background: var(--accent);  color: #0f1117; }
-        .btn-lot:hover:not(:disabled)    { filter: brightness(1.1); transform: translateY(-1px); }
-        .btn-submit { background: var(--accent2); color: #fff; margin-top: 4px; }
-        .btn-submit:hover:not(:disabled) { filter: brightness(1.15); transform: translateY(-1px); }
-
-        #status {
-            font-size: 12px; font-family: var(--mono);
-            text-align: center; padding: 8px 12px;
-            border-radius: 6px; margin-bottom: 12px;
-            background: rgba(255,255,255,0.03);
-            width: 100%; max-width: 480px;
-        }
-        #status.ok   { color: var(--accent); }
-        #status.err  { color: var(--danger); }
-        #status.info { color: var(--accent2); }
-        #status.idle { color: var(--muted); }
-        #status.warn { color: var(--warn); }
-
-        #toast {
-            position: fixed; bottom: 24px; left: 50%;
-            transform: translateX(-50%) translateY(80px);
-            font-family: var(--mono); font-size: 13px;
-            padding: 10px 20px; border-radius: 20px;
-            transition: transform 0.3s ease;
-            z-index: 999; white-space: nowrap;
-        }
-        #toast.show       { transform: translateX(-50%) translateY(0); background: var(--accent); color: #0f1117; font-weight: 700; }
-        #toast.show.error { background: var(--danger); color: #fff; }
-
-        .divider { border: none; border-top: 1px solid var(--border); margin: 4px 0 14px; }
+        /* SUCCESS FLASH */
+        @keyframes flashGreen{0%{background:rgba(0,229,160,.2)}100%{background:transparent}}
+        .flash{animation:flashGreen .6s ease-out;}
     </style>
 </head>
 <body>
 
 <header>
-    <div class="logo-dot"></div>
-    <h1>Part Scanner</h1>
+    <div class="dot"></div>
+    <h1>PART SCANNER</h1>
 </header>
 
-<!-- KAMERA -->
-<div class="card">
-    <div class="card-title">📷 Kamera</div>
-    <div class="camera-wrap">
-        <video id="kamera" autoplay playsinline muted></video>
-        <canvas id="kanvas"></canvas>
-        <div class="scan-line" id="scanLine"></div>
-        <div class="cam-label" id="camLabel">STANDBY</div>
-        <div class="corner tl"></div><div class="corner tr"></div>
-        <div class="corner bl"></div><div class="corner br"></div>
-    </div>
-    <div class="slider-wrap">
-        <div class="slider-label">
-            <span>Kontras Teks</span>
-            <span id="valThreshold">110</span>
-        </div>
-        <input type="range" id="thresholdSlider" min="0" max="255" value="110">
-    </div>
-    <div class="scan-btn-row">
-        <button class="btn btn-dies" id="btnScanDies" disabled>⚡ Scan Dies</button>
-        <button class="btn btn-lot"  id="btnScanLot"  disabled>🔷 Scan Lot</button>
-    </div>
+<!-- STEPS -->
+<div class="steps">
+    <div class="step active" id="s1"><span>1️⃣</span>Kereta</div>
+    <div class="step"        id="s2"><span>2️⃣</span>Dies</div>
+    <div class="step"        id="s3"><span>3️⃣</span>Lot</div>
+    <div class="step"        id="s4"><span>4️⃣</span>Simpan</div>
 </div>
 
 <!-- STATUS -->
-<div id="status" class="idle">Mengaktifkan kamera...</div>
+<div id="status" class="warn">Pilih mode scan lalu arahkan kamera ke QR...</div>
+
+<!-- VOICE BAR -->
+<div id="voiceBar">
+    <div class="voice-dot"></div>
+    <div id="voiceTranscript">Mendengarkan...</div>
+</div>
+
+<!-- KAMERA + MODE -->
+<div class="card">
+    <div class="card-title">📷 Kamera & Mode Scan</div>
+    <div class="mode-btns">
+        <button class="mode-btn active-kereta" id="mKereta" onclick="setMode('kereta')">🚃 Kereta</button>
+        <button class="mode-btn"               id="mDies"   onclick="setMode('dies')">⚙️ Dies</button>
+        <button class="mode-btn"               id="mLot"    onclick="setMode('lot')">📦 Lot</button>
+    </div>
+    <div id="qr-reader"></div>
+</div>
+
+<!-- HASIL SCAN -->
+<div class="card">
+    <div class="card-title">📊 Hasil Scan</div>
+    <div class="badges">
+        <div class="badge" id="badgeKereta">
+            <div class="badge-lbl">No. Kereta</div>
+            <div class="badge-val" id="valKereta">—</div>
+        </div>
+        <div class="badge" id="badgeDies">
+            <div class="badge-lbl">No. Dies</div>
+            <div class="badge-val" id="valDies">—</div>
+        </div>
+        <div class="badge" id="badgeLot">
+            <div class="badge-lbl">Lot (<span id="lotCount">0</span>)</div>
+            <div class="badge-val" id="valLot">—</div>
+        </div>
+    </div>
+    <div class="lot-chips" id="lotChips"></div>
+</div>
 
 <!-- FORM -->
 <div class="card">
-    <div class="card-title">📋 Data Entry</div>
-
+    <div class="card-title">👤 Data Operator</div>
     <div class="form-group">
         <label>NRP Operator</label>
-        <input type="text" id="nrpOperator" placeholder="Masukkan NRP...">
+        <input type="text" id="nrpOp" placeholder="Masukkan NRP...">
     </div>
     <div class="form-group">
         <label>Nama Part</label>
         <input type="text" id="namaPart" placeholder="Masukkan nama part...">
     </div>
+    <hr class="divider">
+
+    <!-- No. Dies + mic -->
+    <div class="form-group">
+        <label>Nomor Dies &nbsp;<span style="color:var(--purple);font-size:9px">← bisa isi via suara</span></label>
+        <div class="field-wrap">
+            <input type="text" id="inpDies" placeholder="Contoh: 18-0">
+            <button class="mic-btn" id="micDies" onclick="startVoice('dies')" title="Input suara Dies">🎙️</button>
+        </div>
+        <div class="help-text">Ucapkan: "dies delapan belas strip nol" → 18-0</div>
+    </div>
+
+    <!-- No. Lot + mic -->
+    <div class="form-group">
+        <label>Nomor Lot &nbsp;<span style="color:var(--purple);font-size:9px">← bisa isi via suara</span></label>
+        <div class="field-wrap">
+            <input type="text" id="inpLot" placeholder="Contoh: 10/01">
+            <button class="mic-btn" id="micLot" onclick="startVoice('lot')" title="Input suara Lot">🎙️</button>
+        </div>
+        <div class="help-text">Ucapkan: "nol tiga nol tiga" → 03/03</div>
+    </div>
 
     <hr class="divider">
 
-    <div class="form-group">
-        <label>Nomor Dies — hasil scan ↓</label>
-        <input type="text" id="nomorDies" placeholder="Contoh: 18-0 atau 5B-0">
-    </div>
-    <div class="form-group">
-        <label>Nomor Lot — hasil scan ↓</label>
-        <input type="text" id="nomorLot" placeholder="Contoh: 10/01">
+    <!-- VOICE COMMAND INFO -->
+    <div style="background:rgba(191,151,255,.07);border:1px solid rgba(191,151,255,.2);
+                border-radius:8px;padding:10px 12px;margin-bottom:12px;">
+        <div style="font-size:10px;font-family:var(--mono);color:var(--purple);
+                    letter-spacing:1px;margin-bottom:4px;">🎤 VOICE COMMAND</div>
+        <div style="font-size:11px;font-family:var(--mono);color:var(--muted);line-height:1.8;">
+            Ucapkan <span style="color:var(--purple)">"kirim"</span> → simpan data ke Sheet<br>
+            Ucapkan <span style="color:var(--warn)">"dies ..."</span> → isi Nomor Dies<br>
+            Ucapkan <span style="color:var(--accent)">"lot ..."</span> → isi Nomor Lot
+        </div>
+        <button class="mic-btn" id="micGlobal" onclick="startVoice('global')"
+            style="width:100%;border-radius:6px;margin-top:8px;height:38px;font-size:13px;
+                   font-family:var(--mono);letter-spacing:1px;"
+            title="Voice command global">
+            🎤 &nbsp;AKTIFKAN SUARA
+        </button>
     </div>
 
-    <button class="btn btn-submit" id="btnSubmit">💾 Simpan ke Google Sheet</button>
+    <button class="btn btn-save" id="btnSave" disabled>💾 Simpan ke Google Sheet</button>
+    <button class="btn btn-reset" id="btnReset">🔄 Reset Semua</button>
 </div>
 
 <div id="toast"></div>
 
 <script>
-    // =============================================
-    // ⚠️  GANTI URL INI DENGAN URL APPS SCRIPT ANDA
-    // =============================================
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwnc4WIVdwMQO9r5Yoohciw4w5N3t2HC02oD9vdn4jnpBw6rMjWKV4cvJxUoRIYxm8dwQ/exec';
+// =============================================
+// ⚠️  GANTI URL INI DENGAN URL APPS SCRIPT ANDA
+// =============================================
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwnc4WIVdwMQO9r5Yoohciw4w5N3t2HC02oD9vdn4jnpBw6rMjWKV4cvJxUoRIYxm8dwQ/exec';
 
-    const video           = document.getElementById('kamera');
-    const canvas          = document.getElementById('kanvas');
-    const btnScanDies     = document.getElementById('btnScanDies');
-    const btnScanLot      = document.getElementById('btnScanLot');
-    const btnSubmit       = document.getElementById('btnSubmit');
-    const nomorDiesInput  = document.getElementById('nomorDies');
-    const nomorLotInput   = document.getElementById('nomorLot');
-    const statusDiv       = document.getElementById('status');
-    const thresholdSlider = document.getElementById('thresholdSlider');
-    const valThreshold    = document.getElementById('valThreshold');
-    const scanLine        = document.getElementById('scanLine');
-    const camLabel        = document.getElementById('camLabel');
-    const toast           = document.getElementById('toast');
+// ── STATE ────────────────────────────────────
+var state = {
+    mode    : 'kereta',
+    kereta  : '',
+    dies    : '',
+    lots    : [],
+};
 
-    thresholdSlider.addEventListener('input', function() {
-        valThreshold.innerText = this.value;
+// ── DOM REFS ─────────────────────────────────
+var statusEl      = document.getElementById('status');
+var voiceBar      = document.getElementById('voiceBar');
+var voiceTrans    = document.getElementById('voiceTranscript');
+var valKereta     = document.getElementById('valKereta');
+var valDies       = document.getElementById('valDies');
+var valLot        = document.getElementById('valLot');
+var lotCount      = document.getElementById('lotCount');
+var lotChipsEl    = document.getElementById('lotChips');
+var badgeKereta   = document.getElementById('badgeKereta');
+var badgeDies     = document.getElementById('badgeDies');
+var badgeLot      = document.getElementById('badgeLot');
+var inpDies       = document.getElementById('inpDies');
+var inpLot        = document.getElementById('inpLot');
+var btnSave       = document.getElementById('btnSave');
+var micDies       = document.getElementById('micDies');
+var micLot        = document.getElementById('micLot');
+var micGlobal     = document.getElementById('micGlobal');
+
+// ── STATUS HELPER ─────────────────────────────
+function setStatus(msg, type) { statusEl.textContent = msg; statusEl.className = type||'idle'; }
+
+// ── TOAST ─────────────────────────────────────
+var toastTimer;
+function showToast(msg, type) {
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'show ' + (type||'');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ t.className=''; }, 3000);
+}
+
+// ── STEPS ─────────────────────────────────────
+function updateSteps() {
+    var s1 = document.getElementById('s1');
+    var s2 = document.getElementById('s2');
+    var s3 = document.getElementById('s3');
+    var s4 = document.getElementById('s4');
+    s1.className = 'step ' + (state.kereta ? 'done' : 'active');
+    s2.className = 'step ' + (!state.kereta ? '' : state.dies ? 'done' : 'active');
+    s3.className = 'step ' + (!state.dies   ? '' : state.lots.length>0 ? 'done' : 'active');
+    s4.className = 'step ' + (state.kereta && state.dies && state.lots.length>0 ? 'active' : '');
+}
+
+// ── RENDER BADGES ─────────────────────────────
+function renderBadges() {
+    valKereta.textContent = state.kereta || '—';
+    badgeKereta.className = 'badge' + (state.kereta ? ' purple' : '');
+    valDies.textContent   = state.dies   || '—';
+    badgeDies.className   = 'badge' + (state.dies   ? ' warn'   : '');
+    lotCount.textContent  = state.lots.length;
+    valLot.textContent    = state.lots.length > 0 ? state.lots[state.lots.length-1] : '—';
+    badgeLot.className    = 'badge' + (state.lots.length>0 ? ' ok' : '');
+
+    // Chips
+    if (state.lots.length === 0) {
+        lotChipsEl.innerHTML = '';
+    } else {
+        lotChipsEl.innerHTML = state.lots.map(function(l, i){
+            return '<div class="chip">' + l +
+                '<button onclick="removeLot(' + i + ')">×</button></div>';
+        }).join('');
+    }
+
+    // Sync input fields juga
+    inpDies.value = state.dies;
+    inpDies.className = state.dies ? 'warn' : '';
+    inpLot.value  = state.lots.length > 0 ? state.lots[state.lots.length-1] : '';
+    inpLot.className  = state.lots.length>0 ? 'ok' : '';
+
+    // Enable/disable save
+    btnSave.disabled = !(state.kereta && state.dies && state.lots.length > 0);
+    updateSteps();
+}
+
+function removeLot(i) {
+    state.lots.splice(i, 1);
+    renderBadges();
+}
+
+// ── SCAN MODE ─────────────────────────────────
+function setMode(mode) {
+    state.mode = mode;
+    ['kereta','dies','lot'].forEach(function(m){
+        document.getElementById('m' + m.charAt(0).toUpperCase() + m.slice(1)).className =
+            'mode-btn' + (mode===m ? ' active-' + m : '');
     });
+    var labels = { kereta:'🚃 Scan QR Kereta...', dies:'⚙️ Scan QR Dies...', lot:'📦 Scan QR Lot...' };
+    var types  = { kereta:'warn', dies:'warn', lot:'warn' };
+    setStatus(labels[mode], types[mode]);
+}
 
-    // Aktifkan kamera belakang
-    navigator.mediaDevices.getUserMedia({
-        video: { facingMode: { ideal: 'environment' } }
-    })
-    .then(stream => {
-        video.srcObject = stream;
-        btnScanDies.disabled = false;
-        btnScanLot.disabled  = false;
-        setStatus('Kamera siap. Pilih Scan Dies atau Scan Lot.', 'ok');
-        camLabel.textContent = 'READY';
-    })
-    .catch(err => {
-        setStatus(`Error kamera: ${err.name} — ${err.message}`, 'err');
-        camLabel.textContent = 'ERROR';
-    });
+// ── QR SCANNER ────────────────────────────────
+var html5QrCode = new Html5Qrcode('qr-reader');
+html5QrCode.start(
+    { facingMode: 'environment' },
+    { fps: 10, qrbox: { width: 220, height: 220 }, aspectRatio: 1.0 },
+    onQRScan,
+    function(){}
+).then(function(){
+    setStatus('Kamera siap. Mode: Scan Kereta', 'warn');
+}).catch(function(err){
+    setStatus('Error kamera: ' + err, 'err');
+});
 
-    function setStatus(msg, type = 'idle') {
-        statusDiv.textContent = msg;
-        statusDiv.className = type;
-    }
+// debounce scan
+var lastScan = 0;
+function onQRScan(text) {
+    var now = Date.now();
+    if (now - lastScan < 1500) return;
+    lastScan = now;
+    text = text.trim();
 
-    function showToast(msg, isError = false) {
-        toast.textContent = msg;
-        toast.className = isError ? 'show error' : 'show';
-        setTimeout(() => { toast.className = ''; }, 3000);
-    }
+    if (state.mode === 'kereta') {
+        // QR kereta berisi teks seperti "6E100105" langsung
+        state.kereta = text;
+        renderBadges();
+        setStatus('✅ Kereta ' + text + ' terscan! Lanjut scan Dies.', 'ok');
+        setMode('dies');
+        if (navigator.vibrate) navigator.vibrate(100);
+        flashBadge('badgeKereta');
 
-    // ─── Ambil gambar & jalankan OCR ──────────────────────────
-    async function doScan(mode) {
-        const ctx = canvas.getContext('2d');
-        canvas.width  = video.videoWidth;
-        canvas.height = video.videoHeight;
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    } else if (state.mode === 'dies') {
+        // QR Dies format "DIES:18-0"
+        var dies = text.startsWith('DIES:') ? text.replace('DIES:','') : text;
+        state.dies = dies;
+        inpDies.value = dies;
+        inpDies.className = 'warn';
+        renderBadges();
+        setStatus('✅ Dies ' + dies + ' terscan! Lanjut scan Lot.', 'ok');
+        setMode('lot');
+        if (navigator.vibrate) navigator.vibrate(100);
+        flashBadge('badgeDies');
 
-        // Filter hitam-putih berdasarkan threshold
-        let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        let data = imageData.data;
-        let threshold = parseInt(thresholdSlider.value);
-        for (let i = 0; i < data.length; i += 4) {
-            let avg = (data[i] + data[i+1] + data[i+2]) / 3;
-            let c = avg < threshold ? 0 : 255;
-            data[i] = data[i+1] = data[i+2] = c;
-        }
-        ctx.putImageData(imageData, 0, 0);
-
-        canvas.style.display = 'block';
-        video.style.display  = 'none';
-        scanLine.classList.add('active');
-        camLabel.textContent = 'SCANNING...';
-        btnScanDies.disabled = true;
-        btnScanLot.disabled  = true;
-        setStatus('Membaca teks... harap tunggu.', 'info');
-
-        try {
-            const result  = await Tesseract.recognize(canvas.toDataURL('image/png'), 'eng');
-            const rawText = result.data.text;
-            console.log('[OCR RAW]', rawText);
-
-            if (mode === 'dies') parseDies(rawText);
-            else                  parseLot(rawText);
-
-        } catch(e) {
-            console.error(e);
-            setStatus('Kesalahan sistem OCR.', 'err');
-        } finally {
-            btnScanDies.disabled = false;
-            btnScanLot.disabled  = false;
-            scanLine.classList.remove('active');
-            setTimeout(() => {
-                canvas.style.display = 'none';
-                video.style.display  = 'block';
-                camLabel.textContent = 'READY';
-                setStatus('Kamera siap untuk scan berikutnya.', 'ok');
-            }, 3000);
-        }
-    }
-
-    // ─── Parser Nomor Dies ─────────────────────────────────────
-    // Teks di part: "AHM18-0" atau "K1N5B-0 AHM"
-    // Yang kita inginkan: "18-0" atau "5B-0"
-    // Pola: (angka/huruf campuran) + "-" + (angka)
-    function parseDies(text) {
-        // Bersihkan — pertahankan A-Z, 0-9, tanda "-"
-        const clean = text.replace(/[^A-Z0-9\-\s]/gi, ' ').toUpperCase();
-
-        // Cari semua token yang mengandung tanda "-"
-        // Contoh match: "18-0", "5B-0", "AHM18-0", "K1N5B-0"
-        const matches = clean.match(/[A-Z0-9]{1,6}-[0-9]{1,2}/g);
-
-        if (matches && matches.length > 0) {
-            // Pilih token yang paling mungkin adalah nomor dies:
-            // yaitu yang diawali angka atau huruf+angka (bukan semua huruf)
-            let dies = null;
-            for (const m of matches) {
-                // Hapus prefix murni huruf di depan angka (AHM, K1N, dll)
-                // Pola dies: dimulai dari angka atau huruf yg langsung diikuti angka
-                const stripped = m.replace(/^[A-Z]+(?=[0-9])/, '');
-                // Valid: "18-0", "5B-0", "12A-1" — harus ada angka di awal
-                if (/^[0-9]/.test(stripped)) {
-                    dies = stripped;
-                    break;
-                }
-            }
-            if (!dies) {
-                // Fallback: strip prefix panjang (> 2 huruf berturut-turut) dari match pertama
-                dies = matches[0].replace(/^[A-Z]{2,}/, '');
-            }
-            nomorDiesInput.value     = dies;
-            nomorDiesInput.className = 'warn';
-            setStatus(`✅ Nomor Dies: ${dies}`, 'ok');
-        } else {
-            setStatus('Nomor Dies tidak terdeteksi. Coba atur kontras atau sudut kamera.', 'err');
-        }
-    }
-
-    // ─── Parser Nomor Lot ──────────────────────────────────────
-    // Di part: segi enam dengan angka "10" di atas dan "01" di bawah
-    // Disimpan sebagai: "10/01"
-    function parseLot(text) {
-        // Ambil semua angka 1-2 digit dari hasil OCR
-        const nums = text.match(/\b\d{1,2}\b/g);
-
-        if (nums && nums.length >= 2) {
-            const lot = `${nums[0]}/${nums[1]}`;
-            nomorLotInput.value     = lot;
-            nomorLotInput.className = 'ok';
-            setStatus(`✅ Nomor Lot: ${lot}`, 'ok');
-        } else if (nums && nums.length === 1) {
-            nomorLotInput.value     = nums[0];
-            nomorLotInput.className = 'warn';
-            setStatus(`⚠️ Hanya 1 angka terdeteksi: ${nums[0]}. Periksa kembali.`, 'warn');
-        } else {
-            setStatus('Nomor Lot tidak terdeteksi. Pastikan segi enam terlihat jelas & terang.', 'err');
-        }
-    }
-
-    btnScanDies.addEventListener('click', () => {
-        camLabel.textContent = 'MODE: DIES';
-        doScan('dies');
-    });
-
-    btnScanLot.addEventListener('click', () => {
-        camLabel.textContent = 'MODE: LOT';
-        doScan('lot');
-    });
-
-    // ─── Submit ke Google Sheet ────────────────────────────────
-    btnSubmit.addEventListener('click', async () => {
-        const nrp      = document.getElementById('nrpOperator').value.trim();
-        const namaPart = document.getElementById('namaPart').value.trim();
-        const dies     = nomorDiesInput.value.trim();
-        const lot      = nomorLotInput.value.trim();
-
-        if (!nrp || !namaPart || !dies || !lot) {
-            showToast('⚠️ Semua field wajib diisi!', true);
+    } else if (state.mode === 'lot') {
+        // QR Lot format "LOT:10/01"
+        var lot = text.startsWith('LOT:') ? text.replace('LOT:','') : text;
+        if (state.lots.indexOf(lot) !== -1) {
+            setStatus('⚠️ Lot ' + lot + ' sudah ada!', 'warn');
             return;
         }
+        state.lots.push(lot);
+        renderBadges();
+        setStatus('✅ Lot ' + lot + ' ditambahkan! Scan lot lagi atau Simpan.', 'ok');
+        if (navigator.vibrate) navigator.vibrate([80,40,80]);
+        flashBadge('badgeLot');
+    }
+}
 
-        btnSubmit.disabled = true;
-        btnSubmit.textContent = '⏳ Menyimpan...';
+function flashBadge(id) {
+    var el = document.getElementById(id);
+    el.classList.remove('flash');
+    void el.offsetWidth;
+    el.classList.add('flash');
+}
 
-        const payload = {
-            nrpOperator : nrp,
-            namaPart    : namaPart,
-            nomorDies   : dies,
-            nomorLot    : lot,
-            tanggal     : new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' })
-        };
-
-        try {
-            await fetch(APPS_SCRIPT_URL, {
-                method : 'POST',
-                mode   : 'no-cors',
-                headers: { 'Content-Type': 'application/json' },
-                body   : JSON.stringify(payload)
-            });
-            showToast('✅ Data berhasil disimpan!');
-            // Reset field hasil scan saja (NRP & Nama Part tetap)
-            nomorDiesInput.value = ''; nomorDiesInput.className = '';
-            nomorLotInput.value  = ''; nomorLotInput.className  = '';
-        } catch(e) {
-            console.error(e);
-            showToast('❌ Gagal menyimpan. Cek koneksi.', true);
-        } finally {
-            btnSubmit.disabled = false;
-            btnSubmit.textContent = '💾 Simpan ke Google Sheet';
+// ── MANUAL INPUT SYNC ─────────────────────────
+inpDies.addEventListener('change', function(){
+    state.dies = this.value.trim().toUpperCase();
+    this.className = state.dies ? 'warn' : '';
+    renderBadges();
+});
+inpLot.addEventListener('keydown', function(e){
+    if (e.key === 'Enter') {
+        var v = this.value.trim();
+        if (v && state.lots.indexOf(v) === -1) {
+            state.lots.push(v);
+            renderBadges();
         }
+    }
+});
+
+// ── VOICE INPUT ───────────────────────────────
+var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+var recognition = null;
+var activeVoiceTarget = null;
+
+if (SpeechRecognition) {
+    recognition = new SpeechRecognition();
+    recognition.lang = 'id-ID';
+    recognition.continuous = false;
+    recognition.interimResults = true;
+
+    recognition.onstart = function() {
+        voiceBar.classList.add('show');
+        setStatus('🎤 Mendengarkan... ucapkan perintah', 'voice');
+    };
+
+    recognition.onresult = function(e) {
+        var transcript = '';
+        for (var i = e.resultIndex; i < e.results.length; i++) {
+            transcript += e.results[i][0].transcript;
+        }
+        voiceTrans.textContent = transcript;
+
+        if (e.results[e.results.length-1].isFinal) {
+            processVoice(transcript.toLowerCase().trim(), activeVoiceTarget);
+        }
+    };
+
+    recognition.onend = function() {
+        voiceBar.classList.remove('show');
+        [micDies, micLot, micGlobal].forEach(function(b){ b.classList.remove('listening'); });
+        activeVoiceTarget = null;
+    };
+
+    recognition.onerror = function(e) {
+        voiceBar.classList.remove('show');
+        setStatus('Error mic: ' + e.error, 'err');
+    };
+} else {
+    [micDies, micLot, micGlobal].forEach(function(b){
+        b.disabled = true; b.title = 'Browser tidak mendukung voice';
     });
+}
+
+function startVoice(target) {
+    if (!recognition) { showToast('Browser tidak support voice input', 'error'); return; }
+    activeVoiceTarget = target;
+    [micDies, micLot, micGlobal].forEach(function(b){ b.classList.remove('listening'); });
+    if (target === 'dies')   micDies.classList.add('listening');
+    if (target === 'lot')    micLot.classList.add('listening');
+    if (target === 'global') micGlobal.classList.add('listening');
+    try { recognition.stop(); } catch(e){}
+    setTimeout(function(){ recognition.start(); }, 200);
+}
+
+// ── VOICE PARSER ──────────────────────────────
+var ANGKA_MAP = {
+    'nol':0,'kosong':0,'zero':0,
+    'satu':1,'esa':1,'one':1,
+    'dua':2,'two':2,
+    'tiga':3,'three':3,
+    'empat':4,'four':4,
+    'lima':5,'five':5,
+    'enam':6,'six':6,
+    'tujuh':7,'seven':7,
+    'delapan':8,'eight':8,
+    'sembilan':9,'nine':9,
+    'sepuluh':10,'ten':10,
+    'sebelas':11,'eleven':11,
+    'dua belas':12,'duabelas':12,'twelve':12,
+    'tiga belas':13,'tigabelas':13,
+    'empat belas':14,'empatbelas':14,
+    'lima belas':15,'limabelas':15,
+    'enam belas':16,'enambelas':16,
+    'tujuh belas':17,'tujuhbelas':17,
+    'delapan belas':18,'delapanbelas':18,'eighteen':18,
+    'sembilan belas':19,'sembilanbelas':19,
+    'dua puluh':20,'duapuluh':20,
+};
+var HURUF_MAP = {
+    'a':'A','b':'B','c':'C','d':'D','e':'E','f':'F','g':'G','h':'H','i':'I',
+    'j':'J','k':'K','l':'L','m':'M','n':'N','o':'O','p':'P','q':'Q','r':'R',
+    's':'S','t':'T','u':'U','v':'V','w':'W','x':'X','y':'Y','z':'Z',
+    'alpha':'A','bravo':'B','charlie':'C','delta':'D','echo':'E',
+};
+
+function wordsToNumber(words) {
+    // Coba match angka kata dulu dari paling panjang
+    var sorted = Object.keys(ANGKA_MAP).sort(function(a,b){ return b.length - a.length; });
+    for (var i = 0; i < sorted.length; i++) {
+        if (words.indexOf(sorted[i]) !== -1) {
+            return { num: ANGKA_MAP[sorted[i]], rest: words.replace(sorted[i],'').trim() };
+        }
+    }
+    // Coba angka digit langsung
+    var m = words.match(/\d+/);
+    if (m) return { num: parseInt(m[0]), rest: words.replace(m[0],'').trim() };
+    return null;
+}
+
+function parseDiesVoice(text) {
+    // Contoh: "dies delapan belas strip nol" → 18-0
+    // Hapus kata "dies" di depan jika ada
+    text = text.replace(/^dies?\s*/,'').trim();
+    // Pisahkan berdasarkan kata "strip", "garis", "minus", "dash", "-"
+    var parts = text.split(/\s*(?:strip|garis|minus|dash|-)\s*/);
+    if (parts.length < 2) {
+        // Coba parse 2 angka berurutan
+        var nums = [];
+        var tmp = text;
+        for (var i = 0; i < 2; i++) {
+            var r = wordsToNumber(tmp);
+            if (!r) break;
+            nums.push(r.num);
+            tmp = r.rest;
+        }
+        if (nums.length === 2) return nums[0] + '-' + nums[1];
+        return null;
+    }
+    var left  = wordsToNumber(parts[0].trim());
+    var right = wordsToNumber(parts[1].trim());
+    if (!left) return null;
+    var leftStr = String(left.num);
+    // Cek apakah ada huruf setelah angka di bagian kiri
+    var hurufMatch = parts[0].trim().match(/\b([a-z])\b\s*$/i);
+    if (hurufMatch && HURUF_MAP[hurufMatch[1].toLowerCase()]) {
+        leftStr = left.num + HURUF_MAP[hurufMatch[1].toLowerCase()];
+    }
+    var rightStr = right ? String(right.num) : '0';
+    return leftStr + '-' + rightStr;
+}
+
+function parseLotVoice(text) {
+    // Contoh: "nol tiga nol tiga" → 03/03
+    // Hapus kata "lot" di depan
+    text = text.replace(/^lots?\s*/,'').trim();
+    // Pisahkan berdasarkan "garis miring", "per", "slash"
+    var parts = text.split(/\s*(?:garis miring|slash|per|\/)\s*/);
+    var nums = [];
+    if (parts.length >= 2) {
+        var l = wordsToNumber(parts[0].trim());
+        var r = wordsToNumber(parts[1].trim());
+        if (l) nums.push(l.num);
+        if (r) nums.push(r.num);
+    } else {
+        // Parse 4 digit kata berturut-turut: "nol tiga nol tiga"
+        var tmp = text;
+        var digits = [];
+        for (var i = 0; i < 4; i++) {
+            var res = wordsToNumber(tmp);
+            if (!res) break;
+            digits.push(res.num);
+            tmp = res.rest;
+        }
+        if (digits.length === 4) {
+            nums = [digits[0]*10 + digits[1], digits[2]*10 + digits[3]];
+        } else if (digits.length === 2) {
+            nums = digits;
+        }
+    }
+    if (nums.length === 2) {
+        var mm = String(nums[0]).padStart(2,'0');
+        var dd = String(nums[1]).padStart(2,'0');
+        return mm + '/' + dd;
+    }
+    return null;
+}
+
+function processVoice(text, target) {
+    console.log('[VOICE]', target, ':', text);
+
+    // ── GLOBAL COMMANDS ──
+    if (target === 'global' || text.indexOf('kirim') !== -1 || text.indexOf('simpan') !== -1) {
+        if (text.indexOf('kirim') !== -1 || text.indexOf('simpan') !== -1) {
+            setStatus('🎤 Perintah "kirim" terdeteksi!', 'voice');
+            setTimeout(function(){ doSave(); }, 400);
+            return;
+        }
+    }
+
+    // Deteksi prefix untuk global mode
+    if (target === 'global') {
+        if (text.indexOf('dies') !== -1 || text.indexOf('die') !== -1) {
+            target = 'dies';
+        } else if (text.indexOf('lot') !== -1) {
+            target = 'lot';
+        } else {
+            setStatus('Tidak dikenali. Ucapkan "dies ...", "lot ...", atau "kirim"', 'err');
+            return;
+        }
+    }
+
+    if (target === 'dies') {
+        var result = parseDiesVoice(text);
+        if (result) {
+            state.dies = result;
+            inpDies.value = result;
+            inpDies.className = 'warn';
+            renderBadges();
+            setStatus('✅ Dies diisi: ' + result, 'ok');
+            showToast('Dies: ' + result, 'info');
+        } else {
+            setStatus('Gagal parse Dies. Coba: "dies delapan belas strip nol"', 'err');
+        }
+    } else if (target === 'lot') {
+        var lotResult = parseLotVoice(text);
+        if (lotResult) {
+            if (state.lots.indexOf(lotResult) === -1) {
+                state.lots.push(lotResult);
+            }
+            renderBadges();
+            setStatus('✅ Lot ditambahkan: ' + lotResult, 'ok');
+            showToast('Lot: ' + lotResult, 'info');
+        } else {
+            setStatus('Gagal parse Lot. Coba: "nol tiga nol tiga"', 'err');
+        }
+    }
+}
+
+// ── SAVE ──────────────────────────────────────
+btnSave.addEventListener('click', doSave);
+
+function doSave() {
+    var nrp  = document.getElementById('nrpOp').value.trim();
+    var part = document.getElementById('namaPart').value.trim();
+
+    if (!nrp || !part) {
+        showToast('⚠️ NRP dan Nama Part wajib diisi!', 'error');
+        return;
+    }
+    if (!state.kereta || !state.dies || state.lots.length === 0) {
+        showToast('⚠️ Scan Kereta, Dies, dan minimal 1 Lot!', 'error');
+        return;
+    }
+
+    btnSave.disabled = true;
+    btnSave.textContent = '⏳ Menyimpan...';
+    setStatus('Mengirim data ke Google Sheet...', 'info');
+
+    var tanggal = new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' });
+
+    // 1 baris per lot
+    var rows = state.lots.map(function(lot) {
+        return {
+            tanggal    : tanggal,
+            nrpOperator: nrp,
+            namaPart   : part,
+            noKereta   : state.kereta,
+            nomorDies  : state.dies,
+            nomorLot   : lot
+        };
+    });
+
+    fetch(APPS_SCRIPT_URL, {
+        method : 'POST',
+        mode   : 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body   : JSON.stringify({ rows: rows })
+    }).then(function() {
+        showToast('✅ ' + rows.length + ' data tersimpan!');
+        setStatus('✅ Berhasil simpan ' + rows.length + ' baris. Data tetap ada untuk scan berikutnya.', 'ok');
+        // ── TIDAK menghapus data apapun ──
+        // Hanya reset lot agar siap untuk sesi berikutnya jika diperlukan
+        // (semua field tetap terisi)
+    }).catch(function() {
+        showToast('❌ Gagal. Cek koneksi internet.', 'error');
+        setStatus('Gagal menyimpan.', 'err');
+    }).finally(function() {
+        btnSave.disabled = false;
+        btnSave.textContent = '💾 Simpan ke Google Sheet';
+    });
+}
+
+// ── RESET ─────────────────────────────────────
+document.getElementById('btnReset').addEventListener('click', function() {
+    state.kereta = '';
+    state.dies   = '';
+    state.lots   = [];
+    state.mode   = 'kereta';
+    inpDies.value = ''; inpDies.className = '';
+    inpLot.value  = ''; inpLot.className  = '';
+    setMode('kereta');
+    renderBadges();
+    setStatus('Data direset. Mulai scan kereta baru.', 'idle');
+});
+
+// ── INIT ──────────────────────────────────────
+renderBadges();
+setMode('kereta');
 </script>
 </body>
 </html>
