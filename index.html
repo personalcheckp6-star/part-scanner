@@ -105,9 +105,27 @@
         .vb-cmds small{color:var(--muted);font-size:9px;}
 
         /* FORM */
-        .form-group{margin-bottom:10px;}
-        .form-group label{display:block;font-size:10px;font-family:var(--mono);
-            color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px;}
+        .field-row-label{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;}
+        .field-row-label label{font-size:10px;font-family:var(--mono);color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;}
+
+        /* PUSH-TO-TALK */
+        .ptt-btn{
+            display:flex;align-items:center;gap:5px;
+            padding:5px 12px;border-radius:14px;
+            border:1.5px solid var(--border);background:var(--bg);
+            font-family:var(--mono);font-size:10px;color:var(--muted);
+            cursor:pointer;transition:all .15s;user-select:none;
+            -webkit-user-select:none;touch-action:none;
+        }
+        .ptt-btn:active,.ptt-btn.pressing{
+            border-color:var(--purple);
+            background:rgba(191,151,255,.2);
+            color:var(--purple);
+            box-shadow:0 0 10px rgba(191,151,255,.3);
+            transform:scale(.97);
+        }
+        .ptt-btn.pressing{ animation:pttPulse .6s infinite; }
+        @keyframes pttPulse{0%,100%{box-shadow:0 0 6px rgba(191,151,255,.3)}50%{box-shadow:0 0 14px rgba(191,151,255,.6)}}
         .form-group input{width:100%;padding:10px 12px;background:var(--bg);
             border:1px solid var(--border);border-radius:6px;color:var(--text);
             font-family:var(--mono);font-size:15px;outline:none;transition:all .25s;}
@@ -168,48 +186,7 @@
 
 <div id="status" class="warn">Arahkan kamera ke QR Kereta...</div>
 
-<!-- VOICE BOX -->
-<div id="voiceBox">
-    <div class="vb-row"><div class="vb-rec"></div><div class="vb-title">MIKROFON AKTIF — SCAN DIBLOKIR</div></div>
-    <div id="voiceRaw">mendengarkan...</div>
-    <div id="voiceClean">—</div>
-    <div class="vb-cmds">
-        <b>"dies delapan belas strip nol"</b> → 18-0<br>
-        <b>"dies dua A strip nol"</b> → 2A-0<br>
-        <b>"lot nol empat nol tiga"</b> → 04/03<br>
-        <b>"kirim"</b> → Simpan ke Sheet<br>
-        <small>Format Dies: angka-angka / angkaHuruf-angka</small><br>
-        <small>Format Lot:  2digit / 2digit</small>
-    </div>
-</div>
-
-<!-- KAMERA -->
-<div class="card">
-    <div class="card-title">📷 Kamera — Scan Otomatis</div>
-    <div id="camWrap">
-        <div id="qr-reader"></div>
-        <div id="camOverlay">
-            <div class="ov-icon">🎤</div>
-            <div class="ov-text">Mode Suara Aktif<br>Scan QR diblokir<br><br>Matikan suara untuk scan QR</div>
-        </div>
-    </div>
-    <div style="font-size:10px;font-family:var(--mono);color:var(--muted);margin-top:8px;text-align:center;">
-        Sistem otomatis mengenali: Kereta / Dies / Lot dari format QR
-    </div>
-</div>
-
-<!-- HASIL SCAN -->
-<div class="card">
-    <div class="card-title">📊 Hasil Scan</div>
-    <div class="badges">
-        <div class="badge" id="badgeKereta"><div class="badge-lbl">No. Kereta</div><div class="badge-val" id="valKereta">—</div></div>
-        <div class="badge" id="badgeDies">  <div class="badge-lbl">No. Dies</div>  <div class="badge-val" id="valDies">—</div></div>
-        <div class="badge" id="badgeLot">   <div class="badge-lbl">Lot (<span id="lotCount">0</span>)</div><div class="badge-val" id="valLot">—</div></div>
-    </div>
-    <div class="lot-chips" id="lotChips"></div>
-</div>
-
-<!-- FORM -->
+<!-- ══ CARD 1: DATA OPERATOR ══ -->
 <div class="card">
     <div class="card-title">👤 Data Operator</div>
     <div class="form-group">
@@ -228,17 +205,60 @@
         <label>Nama Part</label>
         <input type="text" id="namaPart" placeholder="Masukkan nama part...">
     </div>
+</div>
+
+<!-- ══ CARD 2: KAMERA ══ -->
+<div class="card">
+    <div class="card-title">📷 Kamera — Scan Otomatis</div>
+    <div id="camWrap">
+        <div id="qr-reader"></div>
+        <div id="camOverlay">
+            <div class="ov-icon">🎤</div>
+            <div class="ov-text">Mode Suara Aktif<br>Scan QR diblokir<br><br>Matikan suara untuk scan QR</div>
+        </div>
+    </div>
+    <div style="font-size:10px;font-family:var(--mono);color:var(--muted);margin-top:8px;text-align:center;">
+        Auto-detect: Kereta / Dies / Lot dari format QR
+    </div>
+</div>
+
+<!-- ══ CARD 3: HASIL SCAN ══ -->
+<div class="card">
+    <div class="card-title">📊 Hasil Scan</div>
+    <div class="badges">
+        <div class="badge" id="badgeKereta"><div class="badge-lbl">No. Kereta</div><div class="badge-val" id="valKereta">—</div></div>
+        <div class="badge" id="badgeDies">  <div class="badge-lbl">No. Dies</div>  <div class="badge-val" id="valDies">—</div></div>
+        <div class="badge" id="badgeLot">   <div class="badge-lbl">Lot (<span id="lotCount">0</span>)</div><div class="badge-val" id="valLot">—</div></div>
+    </div>
+    <div class="lot-chips" id="lotChips"></div>
+
     <hr class="divider">
 
+    <!-- Nomor Dies + PTT -->
     <div class="form-group">
-        <label>Nomor Dies</label>
+        <div class="field-row-label">
+            <label>Nomor Dies</label>
+            <button class="ptt-btn" id="pttDies"
+                onpointerdown="startPTT('dies')" onpointerup="stopPTT()"
+                onpointerleave="stopPTT()" ontouchstart="startPTT('dies')" ontouchend="stopPTT()">
+                🎤 Tahan
+            </button>
+        </div>
         <input type="text" id="inpDies" placeholder="Contoh: 18-0 atau 2A-0"
                oninput="liveValidate('dies')" onblur="commitManual('dies')">
         <div class="field-hint" id="hintDies">Format: 18-0 &nbsp;/&nbsp; 2A-0 &nbsp;/&nbsp; 3-1</div>
     </div>
 
+    <!-- Nomor Lot + PTT -->
     <div class="form-group">
-        <label>Nomor Lot &nbsp;<span style="color:var(--muted);font-size:9px">(Enter untuk tambah)</span></label>
+        <div class="field-row-label">
+            <label>Nomor Lot <span style="color:var(--muted);font-size:9px">(Enter tambah)</span></label>
+            <button class="ptt-btn" id="pttLot"
+                onpointerdown="startPTT('lot')" onpointerup="stopPTT()"
+                onpointerleave="stopPTT()" ontouchstart="startPTT('lot')" ontouchend="stopPTT()">
+                🎤 Tahan
+            </button>
+        </div>
         <input type="text" id="inpLot" placeholder="Contoh: 04/03"
                oninput="liveValidate('lot')" onkeydown="lotEnter(event)">
         <div class="field-hint" id="hintLot">Format: 04/03 &nbsp;/&nbsp; 13/12</div>
@@ -247,6 +267,18 @@
     <hr class="divider">
     <button class="btn btn-save" id="btnSave" disabled>💾 Simpan ke Google Sheet</button>
     <button class="btn btn-reset" id="btnReset">🔄 Reset Semua</button>
+</div>
+
+<!-- VOICE BOX (always-on mode) -->
+<div id="voiceBox">
+    <div class="vb-row"><div class="vb-rec"></div><div class="vb-title">MIKROFON AKTIF — SCAN DIBLOKIR</div></div>
+    <div id="voiceRaw">mendengarkan...</div>
+    <div id="voiceClean">—</div>
+    <div class="vb-cmds">
+        <b>"dies delapan belas strip nol"</b> → 18-0<br>
+        <b>"lot nol empat nol tiga"</b> → 04/03<br>
+        <b>"kirim"</b> → Simpan ke Sheet
+    </div>
 </div>
 
 <div id="toast"></div>
@@ -655,39 +687,31 @@ function processVoice(raw){
     }
 }
 
-// ── Toggle Voice ──────────────────────────
-var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-function toggleVoice(){
-    if(!SR){showToast('Browser tidak mendukung voice','error');return;}
-    voiceOn=!voiceOn;
-    var btn=document.getElementById('voiceToggle');
-    var lbl=document.getElementById('voiceLabel');
-    if(voiceOn){
-        // Tampilkan overlay (blokir scan via JS, kamera tetap running)
-        camOverlay.classList.add('show');
-        btn.classList.add('on'); lbl.textContent='ON';
-        voiceBox.classList.add('show');
-        startVoice();
-        setStatus('🎤 Mikrofon aktif — scan QR diblokir','voice');
-    } else {
-        camOverlay.classList.remove('show');
-        btn.classList.remove('on'); lbl.textContent='SUARA';
-        voiceBox.classList.remove('show');
-        voiceRaw.textContent='mendengarkan...';
-        voiceClean.textContent='—';
-        stopVoice();
-        setStatus('Kamera aktif — arahkan ke QR','idle');
-    }
-}
+// ══════════════════════════════════════════
+// VOICE ENGINE — Push-to-Talk + Always-On
+// ══════════════════════════════════════════
+var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+var _recRestartTimer = null;
+var _pttTarget = null;   // 'dies' | 'lot' | 'global'
+var _pttActive  = false;
 
-// Satu recognition id-ID — lebih stabil di Android Chrome
-// en-US menyebabkan konflik di mobile, cukup 1
-var _recRestartTimer=null;
-function startVoice(){
-    if(!SR) return;
+// ── PTT: Tahan untuk Dies/Lot ─────────────
+// Operator tekan tombol → bicara angka → lepas → otomatis parse
+// Tidak perlu ucapkan kata "dies"/"lot" — sudah tahu konteksnya
+function startPTT(target){
+    if(!SR){ showToast('Browser tidak mendukung voice','error'); return; }
+    _pttTarget = target;
+    _pttActive = true;
+    var btn = document.getElementById(target==='dies'?'pttDies':'pttLot');
+    btn.classList.add('pressing');
+    btn.textContent = '🔴 Sedang...';
+
+    // PTT pakai recognition baru tiap kali tekan
+    if(recID){ try{recID.stop();}catch(e){} recID=null; }
+
     recID = new SR();
-    recID.lang = 'en-US'; // en-US lebih akurat untuk 'dies','lot','strip'
-    recID.continuous = true;
+    recID.lang = 'en-US';
+    recID.continuous = false;      // stop otomatis setelah jeda diam
     recID.interimResults = true;
     recID.onresult = function(e){
         var interim='', final_='';
@@ -695,35 +719,173 @@ function startVoice(){
             if(e.results[i].isFinal) final_ += e.results[i][0].transcript;
             else                     interim += e.results[i][0].transcript;
         }
-        if(interim) voiceRaw.textContent = '📥 '+interim+'...';
-        if(final_)  processVoice(final_);
+        // Tampilkan di voiceBox jika terbuka, atau di status
+        if(voiceOn){
+            if(interim) voiceRaw.textContent = '📥 '+interim+'...';
+        } else {
+            if(interim) setStatus('🎤 '+interim+'...','voice');
+        }
+        if(final_) processPTT(final_, _pttTarget);
     };
     recID.onend = function(){
-        // Restart otomatis jika masih voiceOn, dengan jeda kecil
-        if(voiceOn){
-            clearTimeout(_recRestartTimer);
-            _recRestartTimer = setTimeout(function(){
-                if(voiceOn && recID){
-                    try{ recID.start(); }catch(e){}
+        _pttActive = false;
+        var b2 = document.getElementById(target==='dies'?'pttDies':'pttLot');
+        if(b2){ b2.classList.remove('pressing'); b2.textContent='🎤 Tahan'; }
+        recID = null;
+        // Jika always-on voice aktif, restart
+        if(voiceOn) startAlwaysOn();
+    };
+    recID.onerror = function(e){
+        _pttActive = false;
+        var b3 = document.getElementById(target==='dies'?'pttDies':'pttLot');
+        if(b3){ b3.classList.remove('pressing'); b3.textContent='🎤 Tahan'; }
+        if(e.error==='not-allowed') showToast('Izin mikrofon ditolak!','error');
+    };
+    try{ recID.start(); }catch(e){ console.warn('ptt start:',e); }
+}
+
+function stopPTT(){
+    if(!_pttActive) return;
+    _pttActive = false;
+    if(recID){ try{recID.stop();}catch(e){} }
+    ['pttDies','pttLot'].forEach(function(id){
+        var b=document.getElementById(id);
+        if(b){ b.classList.remove('pressing'); b.textContent='🎤 Tahan'; }
+    });
+}
+
+// PTT processor — TIDAK perlu kata "dies"/"lot", langsung parse angka sesuai konteks
+function processPTT(raw, target){
+    var tokens = toTokens(raw);
+
+    // Jika ada keyword KIRIM di tengah PTT
+    if(tokens.indexOf('KIRIM')!==-1){
+        setTimeout(doSave,300); return;
+    }
+
+    if(target==='dies'){
+        // Untuk PTT dies: inject token DIES di depan lalu parse
+        var tDies = ['DIES'].concat(tokens);
+        // Jika belum ada STRIP, coba deteksi dari posisi token
+        var dr = parseDies(tDies);
+        if(dr){
+            state.dies=dr;
+            inpDies.value=dr; inpDies.className='warn';
+            hintDies.className='field-hint ok'; hintDies.textContent='✅ Dies: '+dr;
+            flashInp(inpDies,'fw'); flash('badgeDies','fw');
+            render();
+            setStatus('✅ Dies: '+dr,'ok');
+            showToast('✅ Dies: '+dr,'info');
+        } else {
+            setStatus('⚠️ Tidak terbaca. Coba: "delapan belas strip nol"','err');
+            showToast('Coba ucapkan: angka strip angka','error');
+        }
+    } else if(target==='lot'){
+        // Untuk PTT lot: inject token LOT di depan lalu parse
+        var tLot  = ['LOT'].concat(tokens);
+        var lr = parseLot(tLot);
+        if(lr){
+            if(state.lots.indexOf(lr)===-1) state.lots.push(lr);
+            inpLot.value=lr; inpLot.className='ok';
+            hintLot.className='field-hint ok'; hintLot.textContent='✅ Lot: '+lr;
+            flashInp(inpLot,'fg'); flash('badgeLot','fg');
+            render();
+            setStatus('✅ Lot: '+lr,'ok');
+            showToast('✅ Lot: '+lr,'info');
+        } else {
+            setStatus('⚠️ Tidak terbaca. Coba: "nol empat nol tiga"','err');
+            showToast('Coba ucapkan: 4 angka berurutan','error');
+        }
+    }
+}
+
+// ── Always-On: untuk perintah "kirim" ─────
+function startAlwaysOn(){
+    if(!SR||!voiceOn) return;
+    if(recID) return; // jangan tumpuk
+    recID = new SR();
+    recID.lang = 'en-US';
+    recID.continuous = true;
+    recID.interimResults = false;
+    recID.onresult = function(e){
+        var final_='';
+        for(var i=e.resultIndex;i<e.results.length;i++){
+            if(e.results[i].isFinal) final_+=e.results[i][0].transcript;
+        }
+        if(final_){
+            voiceRaw.textContent='📥 '+final_;
+            var t=toTokens(final_);
+            voiceClean.textContent='🔤 '+t.join(' › ');
+            if(t.indexOf('KIRIM')!==-1){
+                setStatus('🎤 Kirim!','voice');
+                showToast('🎤 Menyimpan...','info');
+                setTimeout(doSave,400);
+            }
+            // Juga handle dies/lot via always-on jika ada keyword
+            if(t.indexOf('DIES')!==-1){
+                var dr2=parseDies(t);
+                if(dr2){
+                    state.dies=dr2; inpDies.value=dr2; inpDies.className='warn';
+                    hintDies.className='field-hint ok'; hintDies.textContent='✅ Dies: '+dr2;
+                    flashInp(inpDies,'fw'); flash('badgeDies','fw'); render();
+                    setStatus('🎤 Dies: '+dr2,'ok'); showToast('✅ Dies: '+dr2,'info');
                 }
-            }, 300);
+            }
+            if(t.indexOf('LOT')!==-1){
+                var lr2=parseLot(t);
+                if(lr2){
+                    if(state.lots.indexOf(lr2)===-1) state.lots.push(lr2);
+                    inpLot.value=lr2; inpLot.className='ok';
+                    hintLot.className='field-hint ok'; hintLot.textContent='✅ Lot: '+lr2;
+                    flashInp(inpLot,'fg'); flash('badgeLot','fg'); render();
+                    setStatus('🎤 Lot: '+lr2,'ok'); showToast('✅ Lot: '+lr2,'info');
+                }
+            }
+        }
+    };
+    recID.onend = function(){
+        recID = null;
+        if(voiceOn && !_pttActive){
+            clearTimeout(_recRestartTimer);
+            _recRestartTimer = setTimeout(startAlwaysOn, 300);
         }
     };
     recID.onerror = function(e){
-        if(e.error==='not-allowed'){
-            showToast('Izin mikrofon ditolak!','error');
-            voiceOn=false;
-        }
-        if(e.error!=='no-speech' && e.error!=='aborted'){
-            console.warn('Voice err:',e.error);
-        }
+        if(e.error==='not-allowed'){showToast('Izin mikrofon ditolak!','error');voiceOn=false;}
     };
-    try{ recID.start(); }catch(e){ console.warn('start err:',e); }
+    try{ recID.start(); }catch(e){}
 }
+
+// ── Toggle Always-On Voice ─────────────────
+function toggleVoice(){
+    if(!SR){ showToast('Browser tidak mendukung voice','error'); return; }
+    voiceOn=!voiceOn;
+    var btn=document.getElementById('voiceToggle');
+    var lbl=document.getElementById('voiceLabel');
+    if(voiceOn){
+        camOverlay.classList.add('show');
+        btn.classList.add('on'); lbl.textContent='ON';
+        voiceBox.classList.add('show');
+        startAlwaysOn();
+        setStatus('🎤 Suara aktif — ucapkan "kirim" atau gunakan tombol 🎤 Tahan','voice');
+    } else {
+        stopPTT();
+        clearTimeout(_recRestartTimer);
+        if(recID){try{recID.stop();}catch(e){} recID=null;}
+        camOverlay.classList.remove('show');
+        btn.classList.remove('on'); lbl.textContent='SUARA';
+        voiceBox.classList.remove('show');
+        voiceRaw.textContent='mendengarkan...';
+        voiceClean.textContent='—';
+        setStatus('Kamera aktif — arahkan ke QR','idle');
+    }
+}
+
+function startVoice(){ startAlwaysOn(); }
 function stopVoice(){
     clearTimeout(_recRestartTimer);
-    if(recID){ try{recID.stop();}catch(e){} recID=null; }
-    if(recEN){ try{recEN.stop();}catch(e){} recEN=null; }
+    if(recID){try{recID.stop();}catch(e){} recID=null;}
+    if(recEN){try{recEN.stop();}catch(e){} recEN=null;}
 }
 
 // ══════════════════════════════════════════
