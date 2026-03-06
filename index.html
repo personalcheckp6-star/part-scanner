@@ -265,7 +265,7 @@
     </div>
 
     <hr class="divider">
-    <button class="btn btn-save" id="btnSave" disabled>💾 Simpan ke Excel OneDrive</button>
+    <button class="btn btn-save" id="btnSave" disabled>💾 Simpan ke Google Sheet</button>
     <button class="btn btn-reset" id="btnReset">🔄 Reset Semua</button>
 </div>
 
@@ -285,10 +285,9 @@
 
 <script>
 // ============================================
-// ⚠️ GANTI DENGAN URL POWER AUTOMATE ANDA
-// Lihat panduan: SETUP_POWER_AUTOMATE.md
+// ⚠️ GANTI DENGAN URL APPS SCRIPT ANDA
 // ============================================
-var POWER_AUTOMATE_URL = 'https://default5fa04609cf9c412eb36051a158ccf4.14.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/1d976707fe384fb5af36f1df549373b1/triggers/manual/paths/invoke?api-version=1';
+var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwnc4WIVdwMQO9r5Yoohciw4w5N3t2HC02oD9vdn4jnpBw6rMjWKV4cvJxUoRIYxm8dwQ/exec';
 
 // ══════════════════════════════════════════
 // VALIDASI FORMAT
@@ -454,19 +453,32 @@ html5QrCode.start(
     onQRScan, function(){}
 ).catch(function(e){ setStatus('Error kamera: '+e,'err'); });
 
-var _lastScan=0;
+// Cooldown per QR — bukan global timer
+// Kereta/Dies: skip jika QR sama dalam 2 detik
+// Lot: cooldown hanya 300ms agar scan banyak lot tetap cepat
+var _lastScanVal  = '';
+var _lastScanTime = 0;
+
 function onQRScan(raw){
-    // Blokir scan saat voice aktif
     if(voiceOn) return;
 
-    var now=Date.now();
-    if(now-_lastScan<1800) return;
-    _lastScan=now;
-
+    var now = Date.now();
     var det = detectFormat(raw);
 
+    // Cegah QR SAMA diproses ulang dalam 2 detik (anti-duplikat)
+    if(raw === _lastScanVal && now - _lastScanTime < 2000) return;
+
+    // Lot: cooldown 300ms | Kereta/Dies: cooldown 600ms
+    var minGap = (det.type === 'lot') ? 300 : 600;
+    if(now - _lastScanTime < minGap) return;
+
+    _lastScanVal  = raw;
+    _lastScanTime = now;
+
     if(det.type==='kereta'){
-        // Terima sebagai kereta
+        if(state.kereta === det.val){
+            setStatus('ℹ️ Kereta '+det.val+' sudah terscan','idle'); return;
+        }
         state.kereta=det.val;
         render(); flash('badgeKereta','fp');
         setStatus('✅ Kereta: '+det.val,'ok');
@@ -476,6 +488,9 @@ function onQRScan(raw){
         var dv = det.val.toUpperCase();
         if(!RE_DIES.test(dv)){
             setStatus('⚠️ Format Dies tidak valid: '+dv,'err'); return;
+        }
+        if(state.dies === dv){
+            setStatus('ℹ️ Dies '+dv+' sudah terscan','idle'); return;
         }
         state.dies=dv;
         inpDies.value=dv; inpDies.className='warn';
@@ -492,8 +507,8 @@ function onQRScan(raw){
         if(state.lots.indexOf(lv)===-1){
             state.lots.push(lv);
             render(); flash('badgeLot','fg');
-            setStatus('✅ Lot '+lv+' ditambahkan!','ok');
-            if(navigator.vibrate) navigator.vibrate([80,40,80]);
+            setStatus('✅ Lot '+lv+' ditambahkan! Total: '+state.lots.length,'ok');
+            if(navigator.vibrate) navigator.vibrate([60,30,60]);
         } else {
             setStatus('⚠️ Lot '+lv+' sudah ada!','warn');
         }
@@ -909,38 +924,23 @@ function doSave(){
         return{tanggal:tanggal,nrpOperator:nrp,mesin:mesin,kondisiPart:kondisi,namaPart:part,
                noKereta:state.kereta,nomorDies:state.dies,nomorLot:lot};
     });
-    // Kirim tiap row ke Power Automate
-    // mode:'no-cors' digunakan karena Power Automate tidak kirim CORS header
-    // Data tetap terkirim meski response tidak bisa dibaca (opaque response)
-    var sent = 0;
-    var total = rows.length;
-
-    function sendNext(i){
-        if(i >= total){
-            // Semua terkirim
-            showToast('✅ '+total+' data terkirim ke Excel!');
-            setStatus('✅ Data terkirim! Cek file Excel di OneDrive.','ok');
-            btnSave.disabled=false;
-            btnSave.textContent='💾 Simpan ke Excel OneDrive';
-            return;
-        }
-        fetch(POWER_AUTOMATE_URL, {
-            method: 'POST',
-            mode: 'no-cors',  // wajib untuk Power Automate dari browser
-            headers: {'Content-Type':'application/json'},
-            body: JSON.stringify(rows[i])
-        }).then(function(){
-            sent++;
-            setStatus('⏳ Mengirim '+sent+'/'+total+'...','info');
-            sendNext(i+1);
-        }).catch(function(err){
-            console.error('Send error row '+i+':',err);
-            // Coba lanjut ke row berikutnya
-            sendNext(i+1);
-        });
-    }
-
-    sendNext(0);
+    // Kirim semua rows ke Google Apps Script
+    fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({rows: rows})
+    }).then(function(){
+        showToast('✅ '+rows.length+' data tersimpan ke Google Sheet!');
+        setStatus('✅ Tersimpan di Google Sheet!','ok');
+    }).catch(function(err){
+        console.error('Save error:',err);
+        showToast('❌ Gagal. Cek koneksi dan URL Apps Script.','error');
+        setStatus('Gagal menyimpan.','err');
+    }).finally(function(){
+        btnSave.disabled=false;
+        btnSave.textContent='💾 Simpan ke Google Sheet';
+    });
 }
 
 // RESET
