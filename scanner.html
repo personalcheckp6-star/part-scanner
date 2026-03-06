@@ -162,6 +162,24 @@
         .btn-save:hover:not(:disabled){filter:brightness(1.15);transform:translateY(-1px);}
         .btn-reset{background:transparent;color:var(--muted);border:1px solid var(--border);padding:9px;font-size:12px;margin-bottom:0;}
 
+        /* MANUAL MODE */
+        .manual-toggle{width:100%;display:flex;align-items:center;justify-content:center;
+            gap:8px;padding:8px;border:1px dashed var(--border);border-radius:8px;
+            background:transparent;font-family:var(--mono);font-size:10px;letter-spacing:1px;
+            color:var(--muted);cursor:pointer;transition:all .2s;margin-bottom:0;text-transform:uppercase;}
+        .manual-toggle:hover{border-color:var(--warn);color:var(--warn);}
+        .manual-toggle.active{border-color:var(--warn);color:var(--warn);
+            background:rgba(240,180,41,.08);}
+        .manual-section{display:none;margin-top:10px;padding:12px;
+            border:1px solid rgba(240,180,41,.3);border-radius:10px;
+            background:rgba(240,180,41,.05);}
+        .manual-section.show{display:block;}
+        .manual-label{font-size:9px;font-family:var(--mono);color:var(--warn);
+            letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;
+            display:flex;align-items:center;gap:6px;}
+        .manual-label::before{content:'';display:inline-block;width:6px;height:6px;
+            border-radius:50%;background:var(--warn);}
+
         #status{width:100%;max-width:500px;font-size:12px;font-family:var(--mono);
             text-align:center;padding:8px 12px;border-radius:6px;margin-bottom:10px;background:rgba(255,255,255,.03);}
         #status.ok   {color:var(--accent);} #status.err  {color:var(--danger);}
@@ -225,7 +243,26 @@
 
 <!-- ══ CARD 2: KAMERA ══ -->
 <div class="card">
-    <div class="card-title">📷 Kamera — Scan Otomatis</div>
+    <div class="card-title" style="display:flex;align-items:center;justify-content:space-between;">
+        <span>📷 Kamera — Scan Otomatis</span>
+        <button class="manual-toggle" id="manualToggle" onclick="toggleManual()" style="width:auto;padding:4px 12px;">
+            ⌨️ Input Manual
+        </button>
+    </div>
+
+    <!-- MANUAL INPUT SECTION -->
+    <div class="manual-section" id="manualSection">
+        <div class="manual-label">⚠️ Mode Input Manual — Kamera Bermasalah</div>
+        <div class="form-group" style="margin-bottom:8px;">
+            <label>No. Kereta</label>
+            <input type="text" id="inpKeretaManual" placeholder="Contoh: 6E100105"
+                   oninput="validateKeretaManual()"
+                   onblur="commitKeretaManual()"
+                   style="text-transform:uppercase;">
+            <div class="field-hint" id="hintKeretaManual">Format: kombinasi huruf & angka (min 4 karakter)</div>
+        </div>
+    </div>
+
     <div id="camWrap">
         <div id="qr-reader"></div>
         <div id="camOverlay">
@@ -665,6 +702,68 @@ function parseLot(tokens){
     return RE_LOT.test(result)?result:null;
 }
 
+// ══════════════════════════════════════════
+// MANUAL INPUT MODE
+// ══════════════════════════════════════════
+var manualMode = false;
+
+function toggleManual(){
+    manualMode = !manualMode;
+    var btn = document.getElementById('manualToggle');
+    var sec = document.getElementById('manualSection');
+    var inp = document.getElementById('inpKeretaManual');
+
+    if(manualMode){
+        btn.classList.add('active');
+        btn.innerHTML = '✅ Manual ON';
+        sec.classList.add('show');
+        inp.focus();
+        setStatus('⌨️ Mode manual aktif — isi No. Kereta di atas, Dies & Lot di bawah','warn');
+        showToast('Mode Manual aktif','info');
+    } else {
+        btn.classList.remove('active');
+        btn.innerHTML = '⌨️ Input Manual';
+        sec.classList.remove('show');
+        // Jika kereta sudah diisi manual, tanya konfirmasi
+        if(state.kereta && inp.value.trim()){
+            // biarkan state tetap
+        }
+        setStatus('Mode kamera aktif — arahkan ke QR','idle');
+    }
+}
+
+function validateKeretaManual(){
+    var inp  = document.getElementById('inpKeretaManual');
+    var hint = document.getElementById('hintKeretaManual');
+    var v    = inp.value.trim().toUpperCase();
+    inp.value = v;
+    if(v.length >= 4 && /^[A-Z0-9]+$/.test(v)){
+        inp.className = 'ok';
+        hint.className = 'field-hint ok';
+        hint.textContent = '✅ Format valid';
+    } else if(v.length > 0){
+        inp.className = 'warn';
+        hint.className = 'field-hint warn';
+        hint.textContent = '⚠️ Min 4 karakter, hanya huruf & angka';
+    } else {
+        inp.className = '';
+        hint.className = 'field-hint';
+        hint.textContent = 'Format: kombinasi huruf & angka (min 4 karakter)';
+    }
+}
+
+function commitKeretaManual(){
+    var inp = document.getElementById('inpKeretaManual');
+    var v   = inp.value.trim().toUpperCase();
+    if(v.length >= 4 && /^[A-Z0-9]+$/.test(v)){
+        state.kereta = v;
+        render();
+        flash('badgeKereta','fp');
+        setStatus('✅ Kereta: '+v+' (manual)','ok');
+        showToast('✅ Kereta: '+v,'info');
+    }
+}
+
 // ── Process Voice ─────────────────────────
 var _lRaw='',_lTime=0;
 function processVoice(raw){
@@ -940,23 +1039,47 @@ function doSave(){
         return{tanggal:tanggal,nrpOperator:nrp,mesin:mesin,kondisiPart:kondisi,namaPart:part,
                noKereta:state.kereta,nomorDies:state.dies,nomorLot:lot};
     });
-    // Kirim semua rows ke Google Apps Script
-    fetch(APPS_SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({rows: rows})
-    }).then(function(){
-        showToast('✅ '+rows.length+' data tersimpan ke Google Sheet!');
-        setStatus('✅ Tersimpan di Google Sheet!','ok');
-    }).catch(function(err){
-        console.error('Save error:',err);
-        showToast('❌ Gagal. Cek koneksi dan URL Apps Script.','error');
-        setStatus('Gagal menyimpan.','err');
-    }).finally(function(){
-        btnSave.disabled=false;
-        btnSave.textContent='💾 Simpan ke Google Sheet';
-    });
+    // Kirim ke Google Apps Script dengan retry otomatis (max 3x)
+    // Jika gagal karena server sibuk (multi-user), coba lagi setelah jeda
+    var _retryCount = 0;
+    var _maxRetry   = 3;
+
+    function trySend(){
+        _retryCount++;
+        var attempt = _retryCount;
+        if(attempt > 1){
+            setStatus('⏳ Mencoba ulang ('+attempt+'/'+_maxRetry+')...','info');
+        }
+
+        fetch(APPS_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({rows: rows})
+        }).then(function(){
+            // no-cors selalu resolve meski error — anggap sukses
+            showToast('✅ '+rows.length+' data tersimpan!');
+            setStatus('✅ Tersimpan di Google Sheet!','ok');
+            btnSave.disabled=false;
+            btnSave.textContent='💾 Simpan ke Google Sheet';
+        }).catch(function(err){
+            console.warn('Send attempt '+attempt+' failed:',err);
+            if(_retryCount < _maxRetry){
+                // Jeda makin lama tiap retry: 1s, 2s, 3s
+                var delay = _retryCount * 1000;
+                setStatus('⚠️ Gagal, coba lagi dalam '+(_retryCount)+'s...','warn');
+                setTimeout(trySend, delay);
+            } else {
+                // Semua retry habis
+                showToast('❌ Gagal menyimpan setelah '+_maxRetry+'x percobaan','error');
+                setStatus('❌ Gagal. Cek koneksi internet.','err');
+                btnSave.disabled=false;
+                btnSave.textContent='💾 Simpan ke Google Sheet';
+            }
+        });
+    }
+
+    trySend();
 }
 
 // RESET
