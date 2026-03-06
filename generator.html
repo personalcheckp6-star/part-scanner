@@ -155,10 +155,14 @@
         <div class="input-row">
             <input type="text" id="inputKereta" placeholder="Contoh: 6E100105" maxlength="20"
                    style="text-transform:uppercase;"
-                   onkeydown="if(event.key='Enter') addItem('kereta')">
+                   oninput="this.value=this.value.toUpperCase(); document.getElementById('keretaCount').textContent=this.value.length+' karakter'; document.getElementById('keretaCount').style.color=this.value.length>=3?'var(--accent)':' var(--danger)';"
+                   onkeydown="if(event.key==='Enter') addItem('kereta')">
             <button class="btn-add" style="background:var(--purple);color:#0d1117;" onclick="addItem('kereta')">+ Tambah</button>
         </div>
-        <div class="hint">Format: kombinasi huruf & angka &nbsp;(contoh: 6E100105 / A001 / KRT-01)</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div class="hint">Ketik nomor kereta lengkap lalu klik + Tambah &nbsp;(min 3 karakter)</div>
+            <span id="keretaCount" style="font-family:var(--mono);font-size:11px;color:var(--muted);">0 karakter</span>
+        </div>
     </div>
     <div class="card">
         <div class="card-title">Preview Stiker QR Kereta</div>
@@ -236,7 +240,7 @@
         } else if (type === 'kereta') {
             val = val.toUpperCase();
             if (val.length < 3) {
-                alert('Format salah: minimum 3 karakter.\nContoh: 6E100105 / A001 / KRT-01'); return;
+                alert('Nomor kereta terlalu pendek!\nMinimum 3 karakter.\n\nContoh yang benar:\n6E100105\nA001\nKRT-01\n\nPastikan ketik nomor lengkap dulu.'); return;
             }
         }
         if (data[type].indexOf(val) !== -1) { alert('Sudah ada!'); return; }
