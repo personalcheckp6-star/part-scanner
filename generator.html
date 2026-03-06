@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generator QR</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@400;600;700&display=swap');
+        :root {
+            --bg:#0d1117; --card:#161b22; --border:#30363d;
+            --accent:#00e5a0; --blue:#58a6ff; --warn:#f0b429;
+            --purple:#bf97ff; --danger:#f85149; --text:#c9d1d9; --muted:#8b949e;
+            --mono:'Share Tech Mono',monospace; --sans:'Barlow',sans-serif;
+        }
+        *{box-sizing:border-box;margin:0;padding:0;}
+        body{font-family:var(--sans);background:var(--bg);color:var(--text);
+            min-height:100vh;padding:16px 16px 48px;
+            display:flex;flex-direction:column;align-items:center;}
+        header{width:100%;max-width:640px;display:flex;align-items:center;gap:10px;
+            padding:10px 0 14px;border-bottom:1px solid var(--border);margin-bottom:16px;}
+        .dot{width:9px;height:9px;border-radius:50%;background:var(--warn);box-shadow:0 0 10px var(--warn);}
+        header h1{font-family:var(--mono);font-size:14px;color:var(--warn);letter-spacing:3px;}
+
+        .tabs{width:100%;max-width:640px;display:flex;margin-bottom:16px;
+            border:1px solid var(--border);border-radius:8px;overflow:hidden;}
+        .tab{flex:1;padding:11px;text-align:center;font-family:var(--mono);font-size:11px;
+            letter-spacing:1px;cursor:pointer;background:var(--card);color:var(--muted);
+            transition:all .2s;text-transform:uppercase;border:none;}
+        .tab.active-dies  {background:rgba(240,180,41,.15);color:var(--warn);}
+        .tab.active-lot   {background:rgba(0,229,160,.14); color:var(--accent);}
+
+        .panel{display:none;width:100%;max-width:640px;}
+        .panel.active{display:block;}
+
+        .card{background:var(--card);border:1px solid var(--border);
+            border-radius:12px;padding:16px;width:100%;margin-bottom:12px;}
+        .card-title{font-size:10px;font-family:var(--mono);color:var(--muted);
+            letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;}
+
+        .input-row{display:flex;gap:8px;margin-bottom:8px;}
+        .input-row input{flex:1;padding:11px 12px;background:var(--bg);
+            border:1px solid var(--border);border-radius:6px;color:var(--text);
+            font-family:var(--mono);font-size:15px;outline:none;transition:border-color .2s;}
+        .input-row input:focus{border-color:var(--blue);}
+
+        .btn-add{padding:11px 20px;border:none;border-radius:6px;
+            font-family:var(--sans);font-weight:700;font-size:14px;
+            cursor:pointer;white-space:nowrap;transition:all .2s;}
+        .btn-add-dies{background:var(--warn); color:#0d1117;}
+        .btn-add-lot {background:var(--accent);color:#0d1117;}
+        .btn-add:active{transform:scale(.97);}
+
+        .hint{font-size:11px;color:var(--muted);font-family:var(--mono);}
+
+        .qr-grid{display:flex;flex-wrap:wrap;gap:14px;min-height:40px;}
+        .qr-item{display:flex;flex-direction:column;align-items:center;gap:6px;
+            padding:14px 12px 10px;border-radius:8px;background:#fff;position:relative;min-width:140px;}
+        .qr-item img{width:130px;height:130px;display:block;}
+        .qr-label{font-family:var(--mono);font-size:15px;font-weight:700;color:#000;text-align:center;}
+        .qr-sub  {font-family:var(--mono);font-size:10px;color:#666;}
+        .remove-btn{position:absolute;top:4px;right:6px;background:var(--danger);
+            border:none;color:#fff;cursor:pointer;font-size:13px;
+            width:20px;height:20px;border-radius:50%;
+            display:flex;align-items:center;justify-content:center;font-weight:700;}
+
+        .empty-hint{font-family:var(--mono);font-size:12px;color:var(--muted);
+            padding:24px 0;text-align:center;width:100%;}
+
+        .btn-print{width:100%;padding:12px;border:none;border-radius:8px;
+            font-family:var(--sans);font-weight:700;font-size:14px;
+            cursor:pointer;background:var(--blue);color:#fff;
+            margin-top:14px;text-transform:uppercase;letter-spacing:.5px;transition:filter .2s;}
+        .btn-print:hover{filter:brightness(1.15);}
+
+        .info-box{background:rgba(88,166,255,.08);border:1px solid rgba(88,166,255,.2);
+            border-radius:8px;padding:10px 14px;margin-bottom:10px;
+            font-family:var(--mono);font-size:11px;color:var(--blue);line-height:1.7;}
+
+        @media print {
+            body{background:#fff!important;padding:4px;}
+            header,.tabs,.input-row,.hint,.btn-print,.remove-btn,.card-title,.info-box{display:none!important;}
+            .card{border:none!important;background:#fff!important;padding:0!important;}
+            .panel{display:block!important;}
+            .qr-grid{gap:8px;}
+            .qr-item{border:1px dashed #bbb;page-break-inside:avoid;break-inside:avoid;}
+        }
+        /* NAV */
+        .nav-bar{width:100%;max-width:640px;display:flex;gap:6px;margin-bottom:12px;}
+        .nav-btn{flex:1;padding:9px 6px;border-radius:8px;border:1px solid var(--border);
+            background:var(--card);font-family:var(--mono);font-size:10px;letter-spacing:1px;
+            text-transform:uppercase;color:var(--muted);cursor:pointer;text-align:center;
+            text-decoration:none;display:flex;align-items:center;justify-content:center;gap:5px;
+            transition:all .2s;}
+        .nav-btn.active{border-color:var(--warn);color:var(--warn);background:rgba(240,180,41,.08);}
+        .nav-btn:hover:not(.active){border-color:var(--accent);color:var(--accent);}
+    </style>
+</head>
+<body>
+<header>
+    <div class="dot"></div>
+    <h1>QR GENERATOR</h1>
+</header>
+
+<div class="tabs">
+    <button class="tab active-dies" id="tabDies" onclick="switchTab('dies')">⚙️ QR Dies</button>
+    <button class="tab"             id="tabLot"  onclick="switchTab('lot')">📦 QR Lot</button>
+</div>
+
+<!-- DIES -->
+<div class="panel active" id="panelDies">
+    <div class="info-box">
+        ℹ️ QR Kereta sudah ada di mesin (format: 6E100105).<br>
+        Di sini hanya perlu buat QR untuk <strong>Dies</strong> dan <strong>Lot</strong>.
+    </div>
+    <div class="card">
+        <div class="card-title">Tambah Nomor Dies</div>
+        <div class="input-row">
+            <input type="text" id="inputDies" placeholder="Contoh: 18-0" maxlength="10"
+                   onkeydown="if(event.key==='Enter') addItem('dies')">
+            <button class="btn-add btn-add-dies" onclick="addItem('dies')">+ Tambah</button>
+        </div>
+        <div class="hint">Format: 18-0 &nbsp;/&nbsp; 2A-0 &nbsp;/&nbsp; 1A &nbsp;/&nbsp; 10A</div>
+    </div>
+    <div class="card">
+        <div class="card-title">Preview Stiker QR Dies</div>
+        <div class="qr-grid" id="diesGrid">
+            <div class="empty-hint">Belum ada QR. Tambahkan nomor dies di atas.</div>
+        </div>
+        <button class="btn-print" onclick="doPrint('dies')">🖨️ Cetak Stiker Dies</button>
+    </div>
+</div>
+
+<!-- LOT -->
+<div class="panel" id="panelLot">
+    <div class="card">
+        <div class="card-title">Tambah Nomor Lot</div>
+        <div class="input-row">
+            <input type="text" id="inputLot" placeholder="Contoh: 10/01" maxlength="10"
+                   onkeydown="if(event.key==='Enter') addItem('lot')">
+            <button class="btn-add btn-add-lot" onclick="addItem('lot')">+ Tambah</button>
+        </div>
+        <div class="hint">Format: bulan/hari &nbsp;(contoh: 10/01 / 3/15)</div>
+    </div>
+    <div class="card">
+        <div class="card-title">Preview Stiker QR Lot</div>
+        <div class="qr-grid" id="lotGrid">
+            <div class="empty-hint">Belum ada QR. Tambahkan nomor lot di atas.</div>
+        </div>
+        <button class="btn-print" onclick="doPrint('lot')">🖨️ Cetak Stiker Lot</button>
+    </div>
+</div>
+
+<script>
+    var data = { dies:[], lot:[] };
+
+    function switchTab(tab) {
+        document.getElementById('panelDies').className = 'panel' + (tab==='dies'?' active':'');
+        document.getElementById('panelLot').className  = 'panel' + (tab==='lot' ?' active':'');
+        document.getElementById('tabDies').className   = 'tab'   + (tab==='dies'?' active-dies':'');
+        document.getElementById('tabLot').className    = 'tab'   + (tab==='lot' ?' active-lot' :'');
+    }
+
+    function qrUrl(text) {
+        return 'https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=' + encodeURIComponent(text);
+    }
+
+    function render(type) {
+        var gridId = type==='dies' ? 'diesGrid' : 'lotGrid';
+        var grid   = document.getElementById(gridId);
+        grid.innerHTML = '';
+        if (data[type].length === 0) {
+            grid.innerHTML = '<div class="empty-hint">Belum ada QR. Tambahkan nomor ' + type + ' di atas.</div>';
+            return;
+        }
+        data[type].forEach(function(val) {
+            var prefix = type === 'dies' ? 'DIES' : 'LOT';
+            var item   = document.createElement('div');
+            item.className = 'qr-item';
+            var img = document.createElement('img');
+            img.src = qrUrl(prefix + ':' + val);
+            img.alt = val;
+            var label = document.createElement('div');
+            label.className = 'qr-label';
+            label.textContent = val;
+            var sub = document.createElement('div');
+            sub.className = 'qr-sub';
+            sub.textContent = prefix;
+            var rm = document.createElement('button');
+            rm.className = 'remove-btn';
+            rm.innerHTML = '&times;';
+            rm.setAttribute('onclick','removeItem("'+type+'","'+val+'")');
+            item.appendChild(rm);
+            item.appendChild(img);
+            item.appendChild(label);
+            item.appendChild(sub);
+            grid.appendChild(item);
+        });
+    }
+
+    function addItem(type) {
+        var inputId = type==='dies' ? 'inputDies' : 'inputLot';
+        var input   = document.getElementById(inputId);
+        var val     = input.value.trim();
+        if (!val) return;
+        if (type === 'dies') {
+            val = val.toUpperCase();
+            // Format valid:
+            // 18-0   → angka - angka
+            // 2A-0   → angka huruf - angka
+            // 1A     → angka huruf (tanpa strip)
+            // 10A    → angka huruf (tanpa strip)
+            if (!/^\d{1,2}[A-Z]?(-\d+)?$/.test(val)) {
+                alert('Format salah.\nContoh yang valid:\n18-0\n2A-0\n1A\n10A'); return;
+            }
+        } else {
+            if (!/^\d{1,2}\/\d{1,2}$/.test(val)) {
+                alert('Format salah.\nContoh: 10/01 atau 3/15'); return;
+            }
+        }
+        if (data[type].indexOf(val) !== -1) { alert('Sudah ada!'); return; }
+        data[type].push(val);
+        input.value = '';
+        input.focus();
+        render(type);
+    }
+
+    function removeItem(type, val) {
+        data[type] = data[type].filter(function(v){ return v !== val; });
+        render(type);
+    }
+
+    function doPrint(type) {
+        document.getElementById('panelDies').style.display = type==='dies' ? 'block' : 'none';
+        document.getElementById('panelLot').style.display  = type==='lot'  ? 'block' : 'none';
+        window.print();
+        setTimeout(function(){
+            document.getElementById('panelDies').style.display = '';
+            document.getElementById('panelLot').style.display  = '';
+            switchTab(type);
+        }, 800);
+    }
+</script>
+</body>
+</html>
