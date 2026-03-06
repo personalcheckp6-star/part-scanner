@@ -147,6 +147,29 @@
         @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
         .fade-in{animation:fadeIn .25s ease-out;}
 
+        /* QTY BADGE */
+        .qty-badge{display:inline-flex;align-items:center;justify-content:center;
+            min-width:22px;height:22px;border-radius:11px;padding:0 6px;
+            font-family:var(--mono);font-size:11px;font-weight:700;}
+        .qty-badge.single{background:rgba(88,166,255,.15);color:var(--blue);
+            border:1px solid rgba(88,166,255,.3);}
+        .qty-badge.multi{background:rgba(0,229,160,.15);color:var(--accent);
+            border:1px solid rgba(0,229,160,.3);}
+
+        /* DETAIL TABLE */
+        .detail-table{width:100%;border-collapse:collapse;margin-top:8px;font-size:11px;}
+        .detail-table th{font-family:var(--mono);font-size:9px;letter-spacing:1px;
+            text-transform:uppercase;color:var(--muted);padding:4px 6px;
+            border-bottom:1px solid var(--border);text-align:left;}
+        .detail-table td{padding:5px 6px;border-bottom:1px solid rgba(48,54,61,.5);
+            font-family:var(--mono);font-size:11px;color:var(--text);}
+        .detail-table tr:last-child td{border-bottom:none;}
+        .detail-table tr:hover td{background:rgba(255,255,255,.03);}
+        .td-lot{color:var(--accent);font-weight:700;}
+        .td-dies{color:var(--warn);}
+        .td-mesin{color:var(--purple);}
+        .td-tanggal{color:var(--muted);font-size:10px;}
+
         /* LOADER */
         .loader{display:inline-block;width:16px;height:16px;border:2px solid var(--border);
             border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;
@@ -332,17 +355,21 @@ function searchByKereta(data){
 
     setStatus('✅ Ditemukan '+filtered.length+' record untuk Kereta: '+q,'ok');
 
-    // Group by kereta → namaPart → kumpulkan dies & lot unik
+    // Group by kereta → namaPart → group by dies+lot → hitung jumlah
     var keretaMap = {};
     filtered.forEach(function(r){
         var k = r.kereta || '-';
         if(!keretaMap[k]) keretaMap[k] = {};
         var p = r.namaPart || '-';
-        if(!keretaMap[k][p]) keretaMap[k][p] = { dies:[], lots:[], rows:[] };
-        var entry = keretaMap[k][p];
-        if(r.dies && entry.dies.indexOf(r.dies)===-1) entry.dies.push(r.dies);
-        if(r.lot  && entry.lots.indexOf(r.lot)===-1)  entry.lots.push(r.lot);
-        entry.rows.push(r);
+        if(!keretaMap[k][p]) keretaMap[k][p] = {};
+        // Key unik per kombinasi dies+lot+mesin
+        var dlKey = (r.dies||'-') + '||' + (r.lot||'-') + '||' + (r.mesin||'-');
+        if(!keretaMap[k][p][dlKey]){
+            keretaMap[k][p][dlKey] = { dies:r.dies, lot:r.lot, mesin:r.mesin,
+                                        tanggals:[], qty:0 };
+        }
+        keretaMap[k][p][dlKey].qty++;
+        if(r.tanggal) keretaMap[k][p][dlKey].tanggals.push(r.tanggal);
     });
 
     var html = '';
@@ -354,34 +381,39 @@ function searchByKereta(data){
         html += '<div class="summary-card fade-in">';
         html += '<div class="summary-header">';
         html += '<div class="summary-kereta">🚃 '+hl(kereta,q)+'</div>';
-        html += '<div class="summary-count">'+nParts+' part &nbsp;·&nbsp; '+nRecord+' record</div>';
+        html += '<div class="summary-count">'+nParts+' part &nbsp;·&nbsp; '+nRecord+' pcs total</div>';
         html += '</div>';
 
         Object.keys(parts).forEach(function(partName){
-            var entry = parts[partName];
+            var dlMap  = parts[partName];
+            var dlKeys = Object.keys(dlMap);
+            // Total qty untuk part ini
+            var totalQty = dlKeys.reduce(function(sum,k){ return sum + dlMap[k].qty; }, 0);
+
             html += '<div class="part-group">';
-            html += '<div class="part-name">📦 '+partName+'</div>';
+            html += '<div class="part-name" style="display:flex;align-items:center;justify-content:space-between;">';
+            html += '<span>📦 '+partName+'</span>';
+            html += '<span class="qty-badge '+(totalQty>1?'multi':'single')+'">'+totalQty+' pcs</span>';
+            html += '</div>';
 
-            // Tampilkan pasangan dies-lot
-            var usedDies = {};
-            entry.rows.forEach(function(r){
-                var key = (r.dies||'-')+'|'+(r.lot||'-');
-                if(!usedDies[key]){
-                    usedDies[key] = true;
-                    html += '<div class="dl-pair">';
-                    html += '<span class="dl-chip dies">⚙️ '+(r.dies||'-')+'</span>';
-                    html += '<span class="arrow">→</span>';
-                    html += '<span class="dl-chip lot">📦 '+(r.lot||'-')+'</span>';
-                    if(r.mesin)  html += '<span class="dl-chip" style="background:rgba(191,151,255,.1);border-color:rgba(191,151,255,.25);color:var(--purple);font-family:var(--mono);font-size:11px;padding:3px 9px;border-radius:8px;">🔧 '+r.mesin+'</span>';
-                    html += '</div>';
-                }
+            // Tabel detail semua kombinasi dies-lot
+            html += '<table class="detail-table">';
+            html += '<tr><th>No</th><th>Dies</th><th>Lot</th><th>Mesin</th><th>Jml</th><th>Terakhir</th></tr>';
+            dlKeys.forEach(function(dlk, idx){
+                var entry = dlMap[dlk];
+                var lastDate = entry.tanggals.length > 0 ? entry.tanggals[entry.tanggals.length-1] : '-';
+                // Potong tanggal jadi lebih pendek
+                var shortDate = lastDate.toString().substring(0,16);
+                html += '<tr>';
+                html += '<td style="color:var(--muted)">'+(idx+1)+'</td>';
+                html += '<td class="td-dies">⚙️ '+(entry.dies||'-')+'</td>';
+                html += '<td class="td-lot">🏷️ '+(entry.lot||'-')+'</td>';
+                html += '<td class="td-mesin">'+(entry.mesin||'-')+'</td>';
+                html += '<td><span class="qty-badge '+(entry.qty>1?'multi':'single')+'">'+entry.qty+'</span></td>';
+                html += '<td class="td-tanggal">'+shortDate+'</td>';
+                html += '</tr>';
             });
-
-            // Tanggal terbaru
-            var dates = entry.rows.map(function(r){ return r.tanggal; }).filter(Boolean);
-            if(dates.length > 0){
-                html += '<div style="font-size:10px;font-family:var(--mono);color:var(--muted);margin-top:5px;">🕐 Terakhir: '+dates[dates.length-1]+'</div>';
-            }
+            html += '</table>';
             html += '</div>';
         });
         html += '</div>';
@@ -434,20 +466,44 @@ function searchByPart(data){
     var qStr = [qDies&&'Dies: <b>'+qDies+'</b>', qLot&&'Lot: <b>'+qLot+'</b>', qPart&&'Part: <b>'+qPart+'</b>'].filter(Boolean).join(' · ');
     setStatus('✅ '+filtered.length+' record di '+keretaUnik.length+' kereta — '+qStr,'ok');
 
-    var html = '';
+    // Group by kereta → hitung qty per kereta
+    var keretaGroup = {};
     filtered.forEach(function(r){
-        html += '<div class="result-row fade-in">';
-        html += '<div class="rr-top">';
-        html += '<div class="rr-kereta">🚃 '+(r.kereta||'-')+'</div>';
-        html += '<div class="rr-tanggal">'+(r.tanggal||'')+'</div>';
+        var k = r.kereta || '-';
+        if(!keretaGroup[k]) keretaGroup[k] = [];
+        keretaGroup[k].push(r);
+    });
+
+    var html = '';
+    // Summary bar: total kereta unik
+    html += '<div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:8px;padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;">';
+    html += '📊 Total: <b style="color:var(--text)">'+filtered.length+' pcs</b> di <b style="color:var(--purple)">'+keretaUnik.length+' kereta</b>';
+    html += '</div>';
+
+    Object.keys(keretaGroup).sort().forEach(function(kereta){
+        var rows = keretaGroup[kereta];
+        var qty  = rows.length;
+
+        html += '<div class="summary-card fade-in">';
+        html += '<div class="summary-header">';
+        html += '<div class="summary-kereta" style="font-size:15px;">🚃 '+hl(kereta, q||'')+'</div>';
+        html += '<span class="qty-badge '+(qty>1?'multi':'single')+'" style="font-size:13px;min-width:28px;height:28px;border-radius:14px;">'+qty+' pcs</span>';
         html += '</div>';
-        html += '<div class="rr-badges">';
-        if(r.namaPart) html += '<span class="rr-badge part">📦 '+hl(r.namaPart, qPart)+'</span>';
-        if(r.dies)     html += '<span class="rr-badge dies">⚙️ '+hl(r.dies, qDies)+'</span>';
-        if(r.lot)      html += '<span class="rr-badge lot">🏷️ '+hl(r.lot, qLot)+'</span>';
-        if(r.mesin)    html += '<span class="rr-badge mesin">🔧 '+r.mesin+'</span>';
-        html += '</div>';
-        html += '<div class="rr-meta">👤 NRP: '+(r.nrp||'-')+'&nbsp;&nbsp;|&nbsp;&nbsp;Kondisi: '+(r.kondisi||'-')+'</div>';
+
+        html += '<table class="detail-table">';
+        html += '<tr><th>No</th><th>Part</th><th>Dies</th><th>Lot</th><th>Mesin</th><th>Tanggal</th></tr>';
+        rows.forEach(function(r, idx){
+            var shortDate = (r.tanggal||'').toString().substring(0,16);
+            html += '<tr>';
+            html += '<td style="color:var(--muted)">'+(idx+1)+'</td>';
+            html += '<td><span class="rr-badge part" style="font-size:10px;">'+hl(r.namaPart||'-',qPart)+'</span></td>';
+            html += '<td class="td-dies">'+hl(r.dies||'-',qDies)+'</td>';
+            html += '<td class="td-lot">'+hl(r.lot||'-',qLot)+'</td>';
+            html += '<td class="td-mesin">'+(r.mesin||'-')+'</td>';
+            html += '<td class="td-tanggal">'+shortDate+'</td>';
+            html += '</tr>';
+        });
+        html += '</table>';
         html += '</div>';
     });
 
