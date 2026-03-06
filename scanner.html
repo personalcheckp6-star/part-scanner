@@ -313,7 +313,7 @@
             </button>
         </div>
         <input type="text" id="inpLot" placeholder="Contoh: 04/03"
-               oninput="liveValidate('lot')" onkeydown="lotEnter(event)">
+               oninput="liveValidate('lot')" onkeydown="lotEnter(event)" onblur="lotBlurCommit()">
         <div class="field-hint" id="hintLot">Format: 04/03 &nbsp;/&nbsp; 13/12</div>
     </div>
 
@@ -470,7 +470,7 @@ function liveValidate(type){
     } else {
         var v2=inpLot.value.trim();
         if(!v2){inpLot.className='';hintLot.className='field-hint';hintLot.textContent='Format: 04/03 / 13/12';return;}
-        if(RE_LOT.test(v2)){inpLot.className='ok'; hintLot.className='field-hint ok'; hintLot.textContent='✅ Format valid — tekan Enter';}
+        if(RE_LOT.test(v2)){inpLot.className='ok'; hintLot.className='field-hint ok'; hintLot.textContent='✅ Format valid — tekan Enter atau pindah field';}
         else               {inpLot.className='err';hintLot.className='field-hint bad';hintLot.textContent='⚠️ Harus 2digit/2digit — contoh: 04/03';}
     }
 }
@@ -484,16 +484,43 @@ function commitManual(type){
 }
 function lotEnter(e){
     if(e.key!=='Enter') return;
-    var v=inpLot.value.trim();
+    commitLot();
+}
+
+// Commit lot saat blur (pindah ke field lain / tap area lain)
+// Penting untuk mode manual agar tidak perlu tekan Enter
+function lotBlurCommit(){
+    var v = inpLot.value.trim();
+    if(!v || !RE_LOT.test(v)) return; // kosong atau format salah, skip
+    commitLot(true); // true = mode blur, jangan clear input
+}
+
+function commitLot(fromBlur){
+    var v = inpLot.value.trim();
     if(!RE_LOT.test(v)){
         hintLot.className='field-hint bad';
         hintLot.textContent='⚠️ Format salah — harus 04/03 atau 13/12';
         return;
     }
-    if(state.lots.indexOf(v)===-1){ state.lots.push(v); }
+    if(state.lots.indexOf(v)===-1){
+        state.lots.push(v);
+        flashInp(inpLot,'fg');
+        flash('badgeLot','fg');
+        showToast('✅ Lot '+v+' ditambahkan','info');
+    } else {
+        showToast('ℹ️ Lot '+v+' sudah ada','info');
+    }
     render();
-    inpLot.value=''; inpLot.className='';
-    hintLot.className='field-hint'; hintLot.textContent='Format: 04/03 / 13/12';
+    if(!fromBlur){
+        // Enter: clear input untuk tambah lot berikutnya
+        inpLot.value=''; inpLot.className='';
+        hintLot.className='field-hint';
+        hintLot.textContent='✅ Lot '+v+' tersimpan — Enter untuk tambah lagi';
+    } else {
+        // Blur: tampilkan konfirmasi di hint, jangan clear
+        hintLot.className='field-hint ok';
+        hintLot.textContent='✅ Lot '+v+' tersimpan — Enter untuk tambah lagi';
+    }
 }
 
 // ══════════════════════════════════════════
