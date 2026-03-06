@@ -152,14 +152,29 @@
             border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;
             vertical-align:middle;margin-right:6px;}
         @keyframes spin{to{transform:rotate(360deg)}}
+
+        /* NAV */
+        .nav-bar{width:100%;max-width:600px;display:flex;gap:6px;margin-bottom:12px;}
+        .nav-btn{flex:1;padding:9px 6px;border-radius:8px;border:1px solid var(--border);
+            background:var(--card);font-family:var(--mono);font-size:10px;letter-spacing:1px;
+            text-transform:uppercase;color:var(--muted);cursor:pointer;text-align:center;
+            text-decoration:none;display:flex;align-items:center;justify-content:center;gap:5px;
+            transition:all .2s;}
+        .nav-btn.active{border-color:var(--blue);color:var(--blue);background:rgba(88,166,255,.08);}
+        .nav-btn:hover:not(.active){border-color:var(--accent);color:var(--accent);}
     </style>
 </head>
 <body>
 
 <header>
     <div class="header-left"><div class="dot"></div><h1>SEARCH DATA</h1></div>
-    <a class="back-btn" href="scanner.html">← Scanner</a>
 </header>
+
+<div class="nav-bar">
+    <a class="nav-btn" href="scanner.html">📷 Scanner</a>
+    <span class="nav-btn active">🔍 Search</span>
+    <a class="nav-btn" href="generator.html">⚙️ Generator</a>
+</div>
 
 <!-- MODE TABS -->
 <div class="mode-tabs">
