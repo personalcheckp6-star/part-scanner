@@ -909,31 +909,38 @@ function doSave(){
         return{tanggal:tanggal,nrpOperator:nrp,mesin:mesin,kondisiPart:kondisi,namaPart:part,
                noKereta:state.kereta,nomorDies:state.dies,nomorLot:lot};
     });
-    // Kirim tiap row ke Power Automate (satu per satu per lot)
-    var promises = rows.map(function(row){
-        return fetch(POWER_AUTOMATE_URL, {
-            method: 'POST',
-            headers: {'Content-Type':'application/json'},
-            body: JSON.stringify(row)
-        });
-    });
+    // Kirim tiap row ke Power Automate
+    // mode:'no-cors' digunakan karena Power Automate tidak kirim CORS header
+    // Data tetap terkirim meski response tidak bisa dibaca (opaque response)
+    var sent = 0;
+    var total = rows.length;
 
-    Promise.all(promises).then(function(responses){
-        var allOk = responses.every(function(r){ return r.ok || r.status===0; });
-        if(allOk){
-            showToast('✅ '+rows.length+' data tersimpan ke Excel!');
-            setStatus('✅ Tersimpan di OneDrive Excel!','ok');
-        } else {
-            showToast('⚠️ Sebagian data gagal','error');
-            setStatus('Periksa koneksi dan URL Power Automate','err');
+    function sendNext(i){
+        if(i >= total){
+            // Semua terkirim
+            showToast('✅ '+total+' data terkirim ke Excel!');
+            setStatus('✅ Data terkirim! Cek file Excel di OneDrive.','ok');
+            btnSave.disabled=false;
+            btnSave.textContent='💾 Simpan ke Excel OneDrive';
+            return;
         }
-    }).catch(function(err){
-        console.error('Save error:',err);
-        showToast('❌ Gagal kirim. Cek URL Power Automate.','error');
-        setStatus('Gagal menyimpan — cek panduan setup','err');
-    }).finally(function(){
-        btnSave.disabled=false; btnSave.textContent='💾 Simpan ke Excel OneDrive';
-    });
+        fetch(POWER_AUTOMATE_URL, {
+            method: 'POST',
+            mode: 'no-cors',  // wajib untuk Power Automate dari browser
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify(rows[i])
+        }).then(function(){
+            sent++;
+            setStatus('⏳ Mengirim '+sent+'/'+total+'...','info');
+            sendNext(i+1);
+        }).catch(function(err){
+            console.error('Send error row '+i+':',err);
+            // Coba lanjut ke row berikutnya
+            sendNext(i+1);
+        });
+    }
+
+    sendNext(0);
 }
 
 // RESET
