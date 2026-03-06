@@ -224,7 +224,13 @@
                    oninput="onInput1()" onkeydown="if(event.key==='Enter') doSearch()">
             <button class="btn-search mode-1" id="btnSearch" onclick="doSearch()">🔍 Cari</button>
         </div>
-        <div class="search-hint" id="hint1">Ketik nomor kereta untuk melihat semua part yang pernah diproses</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px;">
+            <div class="search-hint" id="hint1">Ketik nomor kereta untuk melihat semua part</div>
+            <button onclick="refreshData()" style="background:none;border:1px solid var(--border);
+                border-radius:10px;padding:3px 10px;font-family:var(--mono);font-size:9px;
+                color:var(--muted);cursor:pointer;white-space:nowrap;transition:all .2s;"
+                title="Muat ulang data terbaru">🔄 Refresh</button>
+        </div>
     </div>
 
     <!-- MODE 2: Cari by Dies/Lot/Part -->
@@ -291,16 +297,25 @@ function setStatus(msg, type){
     el.className = type || 'idle';
 }
 
-// ── LOAD ALL DATA (cache) ─────────────────
+// ── LOAD ALL DATA (cache 60 detik) ───────
+var _cacheTime = 0;
+var CACHE_TTL  = 60000; // 60 detik — otomatis reload data terbaru
+
 function loadAll(cb){
-    if(isLoaded){ cb(allData); return; }
-    setStatus('<span class="loader"></span>Memuat data dari Google Sheet...','loading');
-    fetch(APPS_SCRIPT_URL + '?action=all')
+    var now = Date.now();
+    // Gunakan cache jika masih segar (< 60 detik)
+    if(isLoaded && (now - _cacheTime) < CACHE_TTL){
+        cb(allData); return;
+    }
+    // Cache expired atau belum ada — ambil data baru
+    setStatus('<span class="loader"></span>Memuat data terbaru...','loading');
+    fetch(APPS_SCRIPT_URL + '?action=all&t=' + now) // cache-bust
         .then(function(r){ return r.json(); })
         .then(function(res){
             if(res.status === 'ok'){
-                allData   = res.data || [];
-                isLoaded  = true;
+                allData    = res.data || [];
+                isLoaded   = true;
+                _cacheTime = Date.now();
                 cb(allData);
             } else {
                 setStatus('❌ Gagal memuat data: '+res.message,'err');
@@ -312,11 +327,14 @@ function loadAll(cb){
         });
 }
 
-// Refresh cache
+// Refresh paksa (tombol manual)
 function refreshData(){
-    isLoaded = false;
-    allData  = [];
-    loadAll(function(){ setStatus('✅ Data diperbarui ('+allData.length+' baris)','ok'); });
+    isLoaded   = false;
+    _cacheTime = 0;
+    allData    = [];
+    loadAll(function(){
+        setStatus('✅ Data diperbarui — '+allData.length+' baris','ok');
+    });
 }
 
 // ── INPUT HINT ────────────────────────────
@@ -486,7 +504,7 @@ function searchByPart(data){
 
         html += '<div class="summary-card fade-in">';
         html += '<div class="summary-header">';
-        html += '<div class="summary-kereta" style="font-size:15px;">🚃 '+hl(kereta, q||'')+'</div>';
+        html += '<div class="summary-kereta" style="font-size:15px;">🚃 '+hl(kereta, '')+'</div>';
         html += '<span class="qty-badge '+(qty>1?'multi':'single')+'" style="font-size:13px;min-width:28px;height:28px;border-radius:14px;">'+qty+' pcs</span>';
         html += '</div>';
 
