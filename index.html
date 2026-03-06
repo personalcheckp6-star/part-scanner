@@ -126,6 +126,16 @@
         }
         .ptt-btn.pressing{ animation:pttPulse .6s infinite; }
         @keyframes pttPulse{0%,100%{box-shadow:0 0 6px rgba(191,151,255,.3)}50%{box-shadow:0 0 14px rgba(191,151,255,.6)}}
+
+        /* NAV */
+        .nav-bar{width:100%;max-width:500px;display:flex;gap:6px;margin-bottom:12px;}
+        .nav-btn{flex:1;padding:9px 6px;border-radius:8px;border:1px solid var(--border);
+            background:var(--card);font-family:var(--mono);font-size:10px;letter-spacing:1px;
+            text-transform:uppercase;color:var(--muted);cursor:pointer;text-align:center;
+            text-decoration:none;display:flex;align-items:center;justify-content:center;gap:5px;
+            transition:all .2s;}
+        .nav-btn.active{border-color:var(--accent);color:var(--accent);background:rgba(0,229,160,.08);}
+        .nav-btn:hover:not(.active){border-color:var(--blue);color:var(--blue);}
         .form-group input{width:100%;padding:10px 12px;background:var(--bg);
             border:1px solid var(--border);border-radius:6px;color:var(--text);
             font-family:var(--mono);font-size:15px;outline:none;transition:all .25s;}
@@ -176,6 +186,12 @@
         <div class="vdot"></div><span>🎤</span><span id="voiceLabel">SUARA</span>
     </button>
 </header>
+
+<div class="nav-bar">
+    <span class="nav-btn active">📷 Scanner</span>
+    <a class="nav-btn" href="search.html">🔍 Search</a>
+    <a class="nav-btn" href="generator.html">⚙️ Generator</a>
+</div>
 
 <div class="steps">
     <div class="step active" id="s1"><span>1️⃣</span>Kereta</div>
