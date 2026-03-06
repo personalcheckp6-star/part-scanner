@@ -235,8 +235,8 @@
             }
         } else if (type === 'kereta') {
             val = val.toUpperCase();
-            if (val.length < 3 || !/^[A-Z0-9\-]+$/.test(val)) {
-                alert('Format salah.\nMin 3 karakter, hanya huruf, angka, dan tanda -\nContoh: 6E100105 / A001 / KRT-01'); return;
+            if (val.length < 3) {
+                alert('Format salah: minimum 3 karakter.\nContoh: 6E100105 / A001 / KRT-01'); return;
             }
         }
         if (data[type].indexOf(val) !== -1) { alert('Sudah ada!'); return; }
