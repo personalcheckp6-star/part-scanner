@@ -28,6 +28,7 @@
             transition:all .2s;text-transform:uppercase;border:none;}
         .tab.active-dies  {background:rgba(240,180,41,.15);color:var(--warn);}
         .tab.active-lot   {background:rgba(0,229,160,.14); color:var(--accent);}
+        .tab.active-kereta{background:rgba(191,151,255,.15);color:var(--purple);}
 
         .panel{display:none;width:100%;max-width:640px;}
         .panel.active{display:block;}
@@ -102,16 +103,13 @@
 </header>
 
 <div class="tabs">
-    <button class="tab active-dies" id="tabDies" onclick="switchTab('dies')">⚙️ QR Dies</button>
-    <button class="tab"             id="tabLot"  onclick="switchTab('lot')">📦 QR Lot</button>
+    <button class="tab active-dies" id="tabDies"   onclick="switchTab('dies')">⚙️ QR Dies</button>
+    <button class="tab"             id="tabLot"    onclick="switchTab('lot')">📦 QR Lot</button>
+    <button class="tab"             id="tabKereta" onclick="switchTab('kereta')">🚃 QR Kereta</button>
 </div>
 
 <!-- DIES -->
 <div class="panel active" id="panelDies">
-    <div class="info-box">
-        ℹ️ QR Kereta sudah ada di mesin (format: 6E100105).<br>
-        Di sini hanya perlu buat QR untuk <strong>Dies</strong> dan <strong>Lot</strong>.
-    </div>
     <div class="card">
         <div class="card-title">Tambah Nomor Dies</div>
         <div class="input-row">
@@ -150,14 +148,37 @@
     </div>
 </div>
 
+<!-- KERETA -->
+<div class="panel" id="panelKereta">
+    <div class="card">
+        <div class="card-title">Tambah Nomor Kereta</div>
+        <div class="input-row">
+            <input type="text" id="inputKereta" placeholder="Contoh: 6E100105" maxlength="20"
+                   style="text-transform:uppercase;"
+                   onkeydown="if(event.key='Enter') addItem('kereta')">
+            <button class="btn-add" style="background:var(--purple);color:#0d1117;" onclick="addItem('kereta')">+ Tambah</button>
+        </div>
+        <div class="hint">Format: kombinasi huruf & angka &nbsp;(contoh: 6E100105 / A001 / KRT-01)</div>
+    </div>
+    <div class="card">
+        <div class="card-title">Preview Stiker QR Kereta</div>
+        <div class="qr-grid" id="keretaGrid">
+            <div class="empty-hint">Belum ada QR. Tambahkan nomor kereta di atas.</div>
+        </div>
+        <button class="btn-print" style="background:var(--purple);" onclick="doPrint('kereta')">🖨️ Cetak Stiker Kereta</button>
+    </div>
+</div>
+
 <script>
-    var data = { dies:[], lot:[] };
+    var data = { dies:[], lot:[], kereta:[] };
 
     function switchTab(tab) {
-        document.getElementById('panelDies').className = 'panel' + (tab==='dies'?' active':'');
-        document.getElementById('panelLot').className  = 'panel' + (tab==='lot' ?' active':'');
-        document.getElementById('tabDies').className   = 'tab'   + (tab==='dies'?' active-dies':'');
-        document.getElementById('tabLot').className    = 'tab'   + (tab==='lot' ?' active-lot' :'');
+        document.getElementById('panelDies').className   = 'panel' + (tab==='dies'   ?' active':'');
+        document.getElementById('panelLot').className    = 'panel' + (tab==='lot'    ?' active':'');
+        document.getElementById('panelKereta').className = 'panel' + (tab==='kereta' ?' active':'');
+        document.getElementById('tabDies').className     = 'tab'   + (tab==='dies'   ?' active-dies'   :'');
+        document.getElementById('tabLot').className      = 'tab'   + (tab==='lot'    ?' active-lot'    :'');
+        document.getElementById('tabKereta').className   = 'tab'   + (tab==='kereta' ?' active-kereta' :'');
     }
 
     function qrUrl(text) {
@@ -165,7 +186,7 @@
     }
 
     function render(type) {
-        var gridId = type==='dies' ? 'diesGrid' : 'lotGrid';
+        var gridId = type==='dies' ? 'diesGrid' : (type==='lot' ? 'lotGrid' : 'keretaGrid');
         var grid   = document.getElementById(gridId);
         grid.innerHTML = '';
         if (data[type].length === 0) {
@@ -173,7 +194,7 @@
             return;
         }
         data[type].forEach(function(val) {
-            var prefix = type === 'dies' ? 'DIES' : 'LOT';
+            var prefix = type==='dies' ? 'DIES' : (type==='lot' ? 'LOT' : 'KERETA');
             var item   = document.createElement('div');
             item.className = 'qr-item';
             var img = document.createElement('img');
@@ -181,6 +202,7 @@
             img.alt = val;
             var label = document.createElement('div');
             label.className = 'qr-label';
+            label.style.fontSize = type==='kereta' ? '13px' : '15px';
             label.textContent = val;
             var sub = document.createElement('div');
             sub.className = 'qr-sub';
@@ -198,23 +220,23 @@
     }
 
     function addItem(type) {
-        var inputId = type==='dies' ? 'inputDies' : 'inputLot';
+        var inputId = type==='dies' ? 'inputDies' : (type==='lot' ? 'inputLot' : 'inputKereta');
         var input   = document.getElementById(inputId);
         var val     = input.value.trim();
         if (!val) return;
         if (type === 'dies') {
             val = val.toUpperCase();
-            // Format valid:
-            // 18-0   → angka - angka
-            // 2A-0   → angka huruf - angka
-            // 1A     → angka huruf (tanpa strip)
-            // 10A    → angka huruf (tanpa strip)
             if (!/^\d{1,2}[A-Z]?(-\d+)?$/.test(val)) {
                 alert('Format salah.\nContoh yang valid:\n18-0\n2A-0\n1A\n10A'); return;
             }
-        } else {
+        } else if (type === 'lot') {
             if (!/^\d{1,2}\/\d{1,2}$/.test(val)) {
                 alert('Format salah.\nContoh: 10/01 atau 3/15'); return;
+            }
+        } else if (type === 'kereta') {
+            val = val.toUpperCase();
+            if (val.length < 3 || !/^[A-Z0-9\-]+$/.test(val)) {
+                alert('Format salah.\nMin 3 karakter, hanya huruf, angka, dan tanda -\nContoh: 6E100105 / A001 / KRT-01'); return;
             }
         }
         if (data[type].indexOf(val) !== -1) { alert('Sudah ada!'); return; }
@@ -230,12 +252,14 @@
     }
 
     function doPrint(type) {
-        document.getElementById('panelDies').style.display = type==='dies' ? 'block' : 'none';
-        document.getElementById('panelLot').style.display  = type==='lot'  ? 'block' : 'none';
+        document.getElementById('panelDies').style.display    = type==='dies'   ? 'block' : 'none';
+        document.getElementById('panelLot').style.display     = type==='lot'    ? 'block' : 'none';
+        document.getElementById('panelKereta').style.display  = type==='kereta' ? 'block' : 'none';
         window.print();
         setTimeout(function(){
-            document.getElementById('panelDies').style.display = '';
-            document.getElementById('panelLot').style.display  = '';
+            document.getElementById('panelDies').style.display   = '';
+            document.getElementById('panelLot').style.display    = '';
+            document.getElementById('panelKereta').style.display = '';
             switchTab(type);
         }, 800);
     }
