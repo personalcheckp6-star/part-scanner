@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login — Part Scanner</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@400;600;700;800&display=swap');
+        :root{
+            --bg:#0d1117;--card:#161b22;--border:#30363d;
+            --accent:#00e5a0;--blue:#58a6ff;--warn:#f0b429;
+            --purple:#bf97ff;--danger:#f85149;--text:#c9d1d9;--muted:#8b949e;
+            --mono:'Share Tech Mono',monospace;--sans:'Barlow',sans-serif;
+        }
+        *{box-sizing:border-box;margin:0;padding:0;}
+        body{font-family:var(--sans);background:var(--bg);color:var(--text);
+            min-height:100vh;display:flex;flex-direction:column;
+            align-items:center;justify-content:center;padding:20px;}
+
+        .login-wrap{width:100%;max-width:400px;}
+
+        /* LOGO */
+        .logo{text-align:center;margin-bottom:32px;}
+        .logo-dot{width:14px;height:14px;border-radius:50%;background:var(--blue);
+            box-shadow:0 0 16px var(--blue);display:inline-block;margin-bottom:12px;}
+        .logo-title{font-family:var(--mono);font-size:18px;color:var(--blue);
+            letter-spacing:4px;display:block;}
+        .logo-sub{font-family:var(--mono);font-size:10px;color:var(--muted);
+            letter-spacing:2px;margin-top:4px;display:block;}
+        .logo-company{font-size:11px;color:var(--muted);margin-top:6px;}
+
+        /* CARD */
+        .card{background:var(--card);border:1px solid var(--border);
+            border-radius:16px;padding:28px 24px;}
+        .card-title{font-family:var(--mono);font-size:11px;color:var(--muted);
+            letter-spacing:2px;text-transform:uppercase;margin-bottom:20px;
+            text-align:center;}
+
+        /* FORM */
+        .form-group{margin-bottom:16px;}
+        .form-group label{display:block;font-family:var(--mono);font-size:10px;
+            color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;
+            margin-bottom:6px;}
+        .form-group input{width:100%;padding:13px 14px;background:var(--bg);
+            border:1.5px solid var(--border);border-radius:8px;
+            color:var(--text);font-family:var(--mono);font-size:16px;
+            outline:none;transition:all .25s;letter-spacing:1px;}
+        .form-group input:focus{border-color:var(--blue);
+            box-shadow:0 0 0 3px rgba(88,166,255,.15);}
+        .form-group input.err{border-color:var(--danger);}
+        .form-group input.ok{border-color:var(--accent);}
+
+        /* PIN INPUT — tampil sebagai dots */
+        #inpPin{letter-spacing:6px;font-size:20px;}
+
+        .btn-login{width:100%;padding:14px;border:none;border-radius:10px;
+            background:var(--blue);color:#fff;font-family:var(--sans);
+            font-weight:700;font-size:15px;cursor:pointer;
+            transition:all .2s;margin-top:8px;letter-spacing:.5px;}
+        .btn-login:hover:not(:disabled){filter:brightness(1.15);transform:translateY(-1px);}
+        .btn-login:disabled{background:var(--border);color:var(--muted);
+            cursor:not-allowed;transform:none;}
+
+        /* STATUS */
+        .status{margin-top:14px;padding:10px 14px;border-radius:8px;
+            font-family:var(--mono);font-size:11px;text-align:center;
+            display:none;}
+        .status.err{display:block;background:rgba(248,81,73,.1);
+            border:1px solid rgba(248,81,73,.3);color:var(--danger);}
+        .status.loading{display:block;background:rgba(88,166,255,.08);
+            border:1px solid rgba(88,166,255,.2);color:var(--blue);}
+        .status.ok{display:block;background:rgba(0,229,160,.08);
+            border:1px solid rgba(0,229,160,.2);color:var(--accent);}
+
+        /* LOADER */
+        .loader{display:inline-block;width:12px;height:12px;
+            border:2px solid rgba(88,166,255,.3);border-top-color:var(--blue);
+            border-radius:50%;animation:spin .7s linear infinite;
+            vertical-align:middle;margin-right:6px;}
+        @keyframes spin{to{transform:rotate(360deg)}}
+
+        /* SHAKE */
+        @keyframes shake{
+            0%,100%{transform:translateX(0)}
+            20%,60%{transform:translateX(-6px)}
+            40%,80%{transform:translateX(6px)}
+        }
+        .shake{animation:shake .35s ease-in-out;}
+
+        /* FOOTER */
+        .login-footer{text-align:center;margin-top:16px;
+            font-family:var(--mono);font-size:10px;color:var(--muted);}
+
+        /* Scan icon animasi */
+        .scan-anim{font-size:32px;margin-bottom:8px;display:block;
+            animation:pulse 2s ease-in-out infinite;}
+        @keyframes pulse{0%,100%{opacity:.7;transform:scale(1)}50%{opacity:1;transform:scale(1.08)}}
+    </style>
+</head>
+<body>
+<div class="login-wrap">
+
+    <!-- LOGO -->
+    <div class="logo">
+        <span class="scan-anim">📷</span>
+        <div class="logo-dot"></div>
+        <span class="logo-title">PART SCANNER</span>
+        <span class="logo-sub">SISTEM TRACKING PRODUKSI</span>
+        <div class="logo-company">PT Astra Honda Motor</div>
+    </div>
+
+    <!-- CARD LOGIN -->
+    <div class="card">
+        <div class="card-title">🔑 Login Operator</div>
+
+        <div class="form-group">
+            <label>NRP Operator</label>
+            <input type="text" id="inpNrp" placeholder="Masukkan NRP..."
+                   maxlength="20" autocomplete="username"
+                   oninput="clearStatus()" onkeydown="if(event.key==='Enter') document.getElementById('inpPin').focus()">
+        </div>
+
+        <div class="form-group">
+            <label>PIN <span style="color:var(--muted);font-size:9px">(4-6 digit)</span></label>
+            <input type="password" id="inpPin" placeholder="••••••"
+                   maxlength="6" autocomplete="current-password" inputmode="numeric"
+                   oninput="clearStatus()" onkeydown="if(event.key==='Enter') doLogin()">
+        </div>
+
+        <button class="btn-login" id="btnLogin" onclick="doLogin()">
+            🚀 Masuk
+        </button>
+
+        <div class="status" id="statusEl"></div>
+    </div>
+
+    <div class="login-footer">
+        Lupa PIN? Hubungi supervisor atau admin sistem
+    </div>
+</div>
+
+<script>
+// ============================================================
+// ⚠️ GANTI DENGAN URL APPS SCRIPT ANDA
+// ============================================================
+var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwnc4WIVdwMQO9r5Yoohciw4w5N3t2HC02oD9vdn4jnpBw6rMjWKV4cvJxUoRIYxm8dwQ/exec';
+
+// Halaman tujuan setelah login berhasil
+var REDIRECT_AFTER_LOGIN = 'scanner.html';
+
+// Cek: jika sudah login, langsung redirect
+(function(){
+    var s = getSession();
+    if(s && s.nrp){
+        // Cek apakah ada halaman tujuan yang disimpan sebelumnya
+        var dest = sessionStorage.getItem('loginRedirect') || REDIRECT_AFTER_LOGIN;
+        sessionStorage.removeItem('loginRedirect');
+        window.location.href = dest;
+    }
+})();
+
+function setStatus(msg, type){
+    var el = document.getElementById('statusEl');
+    el.textContent = msg;
+    el.className = 'status ' + type;
+}
+function clearStatus(){
+    document.getElementById('statusEl').className = 'status';
+}
+
+function doLogin(){
+    var nrp = document.getElementById('inpNrp').value.trim().toUpperCase();
+    var pin = document.getElementById('inpPin').value.trim();
+    var btn = document.getElementById('btnLogin');
+
+    if(!nrp){ setStatus('⚠️ Masukkan NRP terlebih dahulu','err'); shake('inpNrp'); return; }
+    if(!pin){ setStatus('⚠️ Masukkan PIN terlebih dahulu','err'); shake('inpPin'); return; }
+    if(pin.length < 4){ setStatus('⚠️ PIN minimal 4 digit','err'); shake('inpPin'); return; }
+
+    btn.disabled = true;
+    btn.textContent = '⏳ Memeriksa...';
+    setStatus('<span class="loader"></span>Memeriksa data...', 'loading');
+
+    fetch(APPS_SCRIPT_URL + '?action=login&nrp=' + encodeURIComponent(nrp) + '&pin=' + encodeURIComponent(pin))
+        .then(function(r){ return r.json(); })
+        .then(function(res){
+            if(res.status === 'ok' && res.valid){
+                // Login berhasil — simpan session
+                setSession({ nrp: nrp, nama: res.nama || nrp, role: res.role || 'operator', loginAt: Date.now() });
+                setStatus('✅ Login berhasil! Mengalihkan...', 'ok');
+                setTimeout(function(){
+                    var dest = sessionStorage.getItem('loginRedirect') || REDIRECT_AFTER_LOGIN;
+                    sessionStorage.removeItem('loginRedirect');
+                    window.location.href = dest;
+                }, 800);
+            } else {
+                setStatus('❌ NRP atau PIN salah. Coba lagi.', 'err');
+                shake('inpPin');
+                document.getElementById('inpPin').value = '';
+                document.getElementById('inpPin').focus();
+                btn.disabled = false;
+                btn.textContent = '🚀 Masuk';
+            }
+        })
+        .catch(function(e){
+            setStatus('❌ Tidak dapat terhubung ke server. Cek koneksi.', 'err');
+            btn.disabled = false;
+            btn.textContent = '🚀 Masuk';
+            console.error(e);
+        });
+}
+
+function shake(id){
+    var el = document.getElementById(id);
+    el.classList.remove('shake');
+    void el.offsetWidth; // reflow
+    el.classList.add('shake');
+    setTimeout(function(){ el.classList.remove('shake'); }, 400);
+}
+
+// ── SESSION HELPERS ──────────────────────────────────
+// Simpan session di sessionStorage (hilang saat browser ditutup)
+// Durasi maksimal: SESSION_HOURS jam
+
+var SESSION_HOURS = 12; // sesi berakhir setelah 12 jam
+
+function setSession(data){
+    sessionStorage.setItem('partScannerUser', JSON.stringify(data));
+}
+function getSession(){
+    try{
+        var raw = sessionStorage.getItem('partScannerUser');
+        if(!raw) return null;
+        var s = JSON.parse(raw);
+        // Cek expired
+        if(Date.now() - s.loginAt > SESSION_HOURS * 3600 * 1000){
+            sessionStorage.removeItem('partScannerUser');
+            return null;
+        }
+        return s;
+    } catch(e){ return null; }
+}
+</script>
+</body>
+</html>

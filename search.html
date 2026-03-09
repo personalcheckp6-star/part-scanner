@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search — Part Scanner</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@400;600;700;800&display=swap');
+        :root{
+            --bg:#0d1117;--card:#161b22;--border:#30363d;
+            --accent:#00e5a0;--blue:#58a6ff;--warn:#f0b429;
+            --purple:#bf97ff;--danger:#f85149;--text:#c9d1d9;--muted:#8b949e;
+            --mono:'Share Tech Mono',monospace;--sans:'Barlow',sans-serif;
+        }
+        *{box-sizing:border-box;margin:0;padding:0;}
+        body{font-family:var(--sans);background:var(--bg);color:var(--text);
+            min-height:100vh;padding:12px 12px 60px;
+            display:flex;flex-direction:column;align-items:center;}
+
+        header{width:100%;max-width:600px;display:flex;align-items:center;
+            justify-content:space-between;padding:10px 0 14px;
+            border-bottom:1px solid var(--border);margin-bottom:14px;}
+        .header-left{display:flex;align-items:center;gap:10px;}
+        .dot{width:9px;height:9px;border-radius:50%;background:var(--blue);
+            box-shadow:0 0 10px var(--blue);}
+        header h1{font-family:var(--mono);font-size:14px;color:var(--blue);letter-spacing:3px;}
+        .back-btn{font-family:var(--mono);font-size:10px;color:var(--muted);
+            text-decoration:none;padding:6px 12px;border:1px solid var(--border);
+            border-radius:14px;transition:all .2s;}
+        .back-btn:hover{color:var(--text);border-color:var(--text);}
+
+        /* SEARCH MODES */
+        .mode-tabs{width:100%;max-width:600px;display:grid;
+            grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+        .mode-tab{padding:12px 8px;border:1.5px solid var(--border);border-radius:10px;
+            background:var(--card);cursor:pointer;transition:all .2s;text-align:center;}
+        .mode-tab .mt-icon{font-size:22px;display:block;margin-bottom:4px;}
+        .mode-tab .mt-title{font-family:var(--mono);font-size:10px;letter-spacing:1px;
+            color:var(--muted);text-transform:uppercase;display:block;}
+        .mode-tab .mt-desc{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.4;}
+        .mode-tab.active-1{border-color:var(--purple);background:rgba(191,151,255,.1);}
+        .mode-tab.active-1 .mt-title{color:var(--purple);}
+        .mode-tab.active-2{border-color:var(--warn);background:rgba(240,180,41,.1);}
+        .mode-tab.active-2 .mt-title{color:var(--warn);}
+
+        /* SEARCH BOX */
+        .card{background:var(--card);border:1px solid var(--border);border-radius:12px;
+            padding:14px;width:100%;max-width:600px;margin-bottom:10px;}
+        .card-title{font-size:10px;font-family:var(--mono);color:var(--muted);
+            letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;}
+
+        .search-wrap{display:flex;gap:8px;margin-bottom:8px;}
+        .search-inp{flex:1;padding:11px 14px;background:var(--bg);
+            border:1.5px solid var(--border);border-radius:8px;
+            color:var(--text);font-family:var(--mono);font-size:15px;
+            outline:none;transition:all .25s;}
+        .search-inp:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(88,166,255,.15);}
+        .search-inp.kereta:focus{border-color:var(--purple);}
+        .search-inp.part:focus{border-color:var(--warn);}
+
+        .btn-search{padding:11px 18px;border:none;border-radius:8px;
+            font-family:var(--sans);font-weight:700;font-size:13px;
+            cursor:pointer;transition:all .2s;white-space:nowrap;}
+        .btn-search.mode-1{background:var(--purple);color:#0d1117;}
+        .btn-search.mode-2{background:var(--warn);color:#0d1117;}
+        .btn-search:hover{filter:brightness(1.1);}
+        .btn-search:disabled{background:var(--border);color:var(--muted);cursor:not-allowed;}
+
+        .search-hint{font-size:10px;font-family:var(--mono);color:var(--muted);}
+
+        /* SUB FILTERS (mode 2) */
+        #subFilters{display:none;}
+        #subFilters.show{display:block;}
+        .filter-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;}
+        .filter-inp{padding:9px 12px;background:var(--bg);border:1.5px solid var(--border);
+            border-radius:6px;color:var(--text);font-family:var(--mono);font-size:13px;outline:none;}
+        .filter-inp:focus{border-color:var(--warn);}
+        .filter-lbl{font-size:9px;font-family:var(--mono);color:var(--muted);
+            letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;}
+
+        /* STATUS */
+        #statusEl{width:100%;max-width:600px;font-size:11px;font-family:var(--mono);
+            text-align:center;padding:7px;border-radius:6px;margin-bottom:8px;
+            background:rgba(255,255,255,.03);}
+        #statusEl.idle{color:var(--muted);}
+        #statusEl.loading{color:var(--blue);}
+        #statusEl.ok{color:var(--accent);}
+        #statusEl.err{color:var(--danger);}
+        #statusEl.empty{color:var(--warn);}
+
+        /* RESULTS */
+        #results{width:100%;max-width:600px;}
+
+        /* SUMMARY CARD (mode 1) */
+        .summary-card{background:var(--card);border:1px solid var(--border);
+            border-radius:12px;padding:14px;margin-bottom:10px;}
+        .summary-header{display:flex;align-items:center;justify-content:space-between;
+            margin-bottom:10px;}
+        .summary-kereta{font-family:var(--mono);font-size:18px;font-weight:700;
+            color:var(--purple);}
+        .summary-count{font-family:var(--mono);font-size:10px;color:var(--muted);
+            background:rgba(191,151,255,.15);padding:3px 10px;border-radius:10px;}
+
+        /* PART GROUP dalam summary */
+        .part-group{margin-bottom:12px;padding-bottom:12px;
+            border-bottom:1px solid var(--border);}
+        .part-group:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+        .part-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px;}
+        .dies-lot-grid{display:flex;flex-wrap:wrap;gap:5px;}
+        .dl-chip{font-family:var(--mono);font-size:11px;padding:3px 9px;
+            border-radius:8px;border:1px solid var(--border);}
+        .dl-chip.dies{background:rgba(240,180,41,.1);border-color:rgba(240,180,41,.3);
+            color:var(--warn);}
+        .dl-chip.lot{background:rgba(0,229,160,.1);border-color:rgba(0,229,160,.3);
+            color:var(--accent);}
+        .dl-pair{display:flex;align-items:center;gap:4px;margin-bottom:4px;}
+        .dl-pair .arrow{color:var(--muted);font-size:10px;}
+
+        /* RESULT ROW (mode 2) */
+        .result-row{background:var(--card);border:1px solid var(--border);
+            border-radius:10px;padding:12px 14px;margin-bottom:8px;transition:all .2s;}
+        .result-row:hover{border-color:var(--border);background:#1a2030;}
+        .rr-top{display:flex;align-items:center;justify-content:space-between;
+            margin-bottom:6px;}
+        .rr-kereta{font-family:var(--mono);font-size:15px;font-weight:700;color:var(--purple);}
+        .rr-tanggal{font-size:10px;font-family:var(--mono);color:var(--muted);}
+        .rr-badges{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:5px;}
+        .rr-badge{font-family:var(--mono);font-size:11px;padding:2px 8px;border-radius:6px;}
+        .rr-badge.dies{background:rgba(240,180,41,.12);color:var(--warn);
+            border:1px solid rgba(240,180,41,.25);}
+        .rr-badge.lot{background:rgba(0,229,160,.1);color:var(--accent);
+            border:1px solid rgba(0,229,160,.22);}
+        .rr-badge.part{background:rgba(88,166,255,.1);color:var(--blue);
+            border:1px solid rgba(88,166,255,.22);}
+        .rr-badge.mesin{background:rgba(191,151,255,.1);color:var(--purple);
+            border:1px solid rgba(191,151,255,.22);}
+        .rr-meta{font-size:10px;font-family:var(--mono);color:var(--muted);}
+
+        /* EMPTY */
+        .empty-box{text-align:center;padding:40px 20px;color:var(--muted);
+            font-family:var(--mono);font-size:12px;}
+        .empty-box .ei{font-size:36px;margin-bottom:10px;}
+
+        /* HIGHLIGHT */
+        mark{background:rgba(240,180,41,.3);color:var(--warn);border-radius:2px;padding:0 2px;}
+
+        @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+        .fade-in{animation:fadeIn .25s ease-out;}
+
+        /* QTY BADGE */
+        .qty-badge{display:inline-flex;align-items:center;justify-content:center;
+            min-width:22px;height:22px;border-radius:11px;padding:0 6px;
+            font-family:var(--mono);font-size:11px;font-weight:700;}
+        .qty-badge.single{background:rgba(88,166,255,.15);color:var(--blue);
+            border:1px solid rgba(88,166,255,.3);}
+        .qty-badge.multi{background:rgba(0,229,160,.15);color:var(--accent);
+            border:1px solid rgba(0,229,160,.3);}
+
+        /* DETAIL TABLE */
+        .detail-table{width:100%;border-collapse:collapse;margin-top:8px;font-size:11px;}
+        .detail-table th{font-family:var(--mono);font-size:9px;letter-spacing:1px;
+            text-transform:uppercase;color:var(--muted);padding:4px 6px;
+            border-bottom:1px solid var(--border);text-align:left;}
+        .detail-table td{padding:5px 6px;border-bottom:1px solid rgba(48,54,61,.5);
+            font-family:var(--mono);font-size:11px;color:var(--text);}
+        .detail-table tr:last-child td{border-bottom:none;}
+        .detail-table tr:hover td{background:rgba(255,255,255,.03);}
+        .td-lot{color:var(--accent);font-weight:700;}
+        .td-dies{color:var(--warn);}
+        .td-mesin{color:var(--purple);}
+        .td-tanggal{color:var(--muted);font-size:10px;}
+
+        /* LOADER */
+        .loader{display:inline-block;width:16px;height:16px;border:2px solid var(--border);
+            border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;
+            vertical-align:middle;margin-right:6px;}
+        @keyframes spin{to{transform:rotate(360deg)}}
+
+        /* NAV */
+        .nav-bar{width:100%;max-width:600px;display:flex;gap:6px;margin-bottom:12px;}
+        .nav-btn{flex:1;padding:9px 6px;border-radius:8px;border:1px solid var(--border);
+            background:var(--card);font-family:var(--mono);font-size:10px;letter-spacing:1px;
+            text-transform:uppercase;color:var(--muted);cursor:pointer;text-align:center;
+            text-decoration:none;display:flex;align-items:center;justify-content:center;gap:5px;
+            transition:all .2s;}
+        .nav-btn.active{border-color:var(--blue);color:var(--blue);background:rgba(88,166,255,.08);}
+        .nav-btn:hover:not(.active){border-color:var(--accent);color:var(--accent);}
+
+        /* USER BAR */
+        .user-bar{width:100%;max-width:600px;display:flex;align-items:center;
+            justify-content:space-between;padding:8px 12px;
+            background:rgba(0,229,160,.06);border:1px solid rgba(0,229,160,.15);
+            border-radius:8px;margin-bottom:10px;font-family:var(--mono);font-size:10px;}
+        .user-bar-left{color:var(--accent);}
+        .user-bar-right{display:flex;gap:8px;align-items:center;}
+        .btn-logout{padding:4px 12px;border:1px solid rgba(248,81,73,.3);
+            border-radius:6px;background:transparent;color:var(--danger);
+            font-family:var(--mono);font-size:9px;cursor:pointer;transition:all .2s;letter-spacing:1px;}
+        .btn-logout:hover{background:rgba(248,81,73,.1);}
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-left"><div class="dot"></div><h1>SEARCH DATA</h1></div>
+</header>
+
+<div class="nav-bar">
+    <a class="nav-btn" href="scanner.html">📷 Scanner</a>
+    <span class="nav-btn active">🔍 Search</span>
+    <a class="nav-btn" href="generator.html">⚙️ Generator</a>
+</div>
+
+<!-- USER BAR -->
+<div class="user-bar" id="userBar">
+    <span class="user-bar-left">👤 <span id="userNama">—</span> &nbsp;|&nbsp; <span id="userNrp" style="color:var(--muted)">—</span></span>
+    <div class="user-bar-right">
+        <span id="userRole" style="color:var(--muted);font-size:9px;letter-spacing:1px;text-transform:uppercase;"></span>
+        <button class="btn-logout" onclick="doLogout()">⏏ Logout</button>
+    </div>
+</div>
+
+<!-- MODE TABS -->
+<div class="mode-tabs">
+    <div class="mode-tab active-1" id="tab1" onclick="setMode(1)">
+        <span class="mt-icon">🚃</span>
+        <span class="mt-title">Cari by Kereta</span>
+        <div class="mt-desc">Part apa saja yang ada di No. Kereta tertentu?</div>
+    </div>
+    <div class="mode-tab" id="tab2" onclick="setMode(2)">
+        <span class="mt-icon">🔍</span>
+        <span class="mt-title">Cari by Part</span>
+        <div class="mt-desc">Dies/Lot tertentu ada di Kereta mana saja?</div>
+    </div>
+</div>
+
+<!-- SEARCH BOX -->
+<div class="card">
+    <!-- MODE 1: Cari by Kereta -->
+    <div id="box1">
+        <div class="card-title">🚃 Cari berdasarkan Nomor Kereta</div>
+        <div class="search-wrap">
+            <input class="search-inp kereta" id="inp1" type="text"
+                   placeholder="Masukkan No. Kereta... (contoh: 6E100105)"
+                   oninput="onInput1()" onkeydown="if(event.key==='Enter') doSearch()">
+            <button class="btn-search mode-1" id="btnSearch" onclick="doSearch()">🔍 Cari</button>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px;">
+            <div class="search-hint" id="hint1">Ketik nomor kereta untuk melihat semua part</div>
+            <button onclick="refreshData()" style="background:none;border:1px solid var(--border);
+                border-radius:10px;padding:3px 10px;font-family:var(--mono);font-size:9px;
+                color:var(--muted);cursor:pointer;white-space:nowrap;transition:all .2s;"
+                title="Muat ulang data terbaru">🔄 Refresh</button>
+        </div>
+    </div>
+
+    <!-- MODE 2: Cari by Dies/Lot/Part -->
+    <div id="box2" style="display:none">
+        <div class="card-title">🔍 Cari berdasarkan Dies / Lot / Nama Part</div>
+        <div id="subFilters" class="show">
+            <div class="filter-row">
+                <div>
+                    <div class="filter-lbl">Nomor Dies</div>
+                    <input class="filter-inp" id="inp2Dies" type="text"
+                           placeholder="contoh: 18-0"
+                           onkeydown="if(event.key==='Enter') doSearch()">
+                </div>
+                <div>
+                    <div class="filter-lbl">Nomor Lot</div>
+                    <input class="filter-inp" id="inp2Lot" type="text"
+                           placeholder="contoh: 04/03"
+                           onkeydown="if(event.key==='Enter') doSearch()">
+                </div>
+            </div>
+            <div style="margin-bottom:8px;">
+                <div class="filter-lbl">Nama Part</div>
+                <input class="filter-inp" id="inp2Part" type="text"
+                       placeholder="contoh: Crank Case"
+                       style="width:100%"
+                       onkeydown="if(event.key==='Enter') doSearch()">
+            </div>
+        </div>
+        <div class="search-wrap">
+            <button class="btn-search mode-2" style="width:100%" onclick="doSearch()">🔍 Cari</button>
+        </div>
+        <div class="search-hint">Isi satu atau lebih filter — kosongkan yang tidak perlu</div>
+    </div>
+</div>
+
+<div id="statusEl" class="idle">Masukkan kata kunci pencarian</div>
+<div id="results"></div>
+
+<script>
+// ════════════════════════════════════════════
+// SESSION / AUTH
+// ════════════════════════════════════════════
+var SESSION_HOURS = 12;
+function getSession(){
+    try{
+        var raw=sessionStorage.getItem('partScannerUser');
+        if(!raw) return null;
+        var s=JSON.parse(raw);
+        if(Date.now()-s.loginAt>SESSION_HOURS*3600*1000){ sessionStorage.removeItem('partScannerUser'); return null; }
+        return s;
+    } catch(e){ return null; }
+}
+function requireLogin(){
+    var s=getSession();
+    if(!s||!s.nrp){
+        sessionStorage.setItem('loginRedirect', window.location.pathname.split('/').pop()||'search.html');
+        window.location.href='login.html'; return null;
+    }
+    return s;
+}
+function doLogout(){
+    if(!confirm('Yakin ingin logout?')) return;
+    sessionStorage.removeItem('partScannerUser');
+    window.location.href='login.html';
+}
+var _session = requireLogin();
+if(_session){
+    document.getElementById('userNama').textContent = _session.nama||_session.nrp;
+    document.getElementById('userNrp').textContent  = _session.nrp;
+    document.getElementById('userRole').textContent = _session.role||'operator';
+}
+
+// ============================================
+// ⚠️ GANTI DENGAN URL APPS SCRIPT ANDA
+// ============================================
+var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwnc4WIVdwMQO9r5Yoohciw4w5N3t2HC02oD9vdn4jnpBw6rMjWKV4cvJxUoRIYxm8dwQ/exec';
+
+var currentMode = 1;
+var allData     = [];   // cache semua data
+var isLoaded    = false;
+
+// ── MODE SWITCH ───────────────────────────
+function setMode(m){
+    currentMode = m;
+    document.getElementById('box1').style.display = m===1?'':'none';
+    document.getElementById('box2').style.display = m===2?'':'none';
+    document.getElementById('tab1').className = 'mode-tab'+(m===1?' active-1':'');
+    document.getElementById('tab2').className = 'mode-tab'+(m===2?' active-2':'');
+    document.getElementById('results').innerHTML = '';
+    setStatus('Masukkan kata kunci pencarian','idle');
+}
+
+// ── STATUS ────────────────────────────────
+function setStatus(msg, type){
+    var el = document.getElementById('statusEl');
+    el.innerHTML = msg;
+    el.className = type || 'idle';
+}
+
+// ── LOAD ALL DATA (cache 60 detik) ───────
+var _cacheTime = 0;
+var CACHE_TTL  = 60000; // 60 detik — otomatis reload data terbaru
+
+function loadAll(cb){
+    var now = Date.now();
+    // Gunakan cache jika masih segar (< 60 detik)
+    if(isLoaded && (now - _cacheTime) < CACHE_TTL){
+        cb(allData); return;
+    }
+    // Cache expired atau belum ada — ambil data baru
+    setStatus('<span class="loader"></span>Memuat data terbaru...','loading');
+    fetch(APPS_SCRIPT_URL + '?action=all&t=' + now) // cache-bust
+        .then(function(r){ return r.json(); })
+        .then(function(res){
+            if(res.status === 'ok'){
+                allData    = res.data || [];
+                isLoaded   = true;
+                _cacheTime = Date.now();
+                cb(allData);
+            } else {
+                setStatus('❌ Gagal memuat data: '+res.message,'err');
+            }
+        })
+        .catch(function(e){
+            setStatus('❌ Tidak dapat terhubung ke Google Sheet. Cek URL Apps Script.','err');
+            console.error(e);
+        });
+}
+
+// Refresh paksa (tombol manual)
+function refreshData(){
+    isLoaded   = false;
+    _cacheTime = 0;
+    allData    = [];
+    loadAll(function(){
+        setStatus('✅ Data diperbarui — '+allData.length+' baris','ok');
+    });
+}
+
+// ── INPUT HINT ────────────────────────────
+function onInput1(){
+    var v = document.getElementById('inp1').value.trim();
+    document.getElementById('hint1').textContent =
+        v ? 'Tekan Enter atau tombol Cari' : 'Ketik nomor kereta untuk melihat semua part';
+}
+
+// ── MAIN SEARCH ───────────────────────────
+function doSearch(){
+    loadAll(function(data){
+        if(currentMode === 1) searchByKereta(data);
+        else                  searchByPart(data);
+    });
+}
+
+// ══════════════════════════════════════════
+// MODE 1 — Cari by Kereta
+// Tampilkan semua part + dies + lot di kereta tsb
+// ══════════════════════════════════════════
+function searchByKereta(data){
+    var q = document.getElementById('inp1').value.trim().toUpperCase();
+    if(!q){ setStatus('⚠️ Masukkan nomor kereta dulu','empty'); return; }
+
+    var filtered = data.filter(function(r){
+        return String(r.kereta||'').toUpperCase().indexOf(q) !== -1;
+    });
+
+    if(filtered.length === 0){
+        setStatus('Tidak ditemukan data untuk Kereta: '+q,'empty');
+        document.getElementById('results').innerHTML =
+            '<div class="empty-box"><div class="ei">🔍</div>Kereta <b>'+q+'</b> tidak ditemukan dalam data</div>';
+        return;
+    }
+
+    setStatus('✅ Ditemukan '+filtered.length+' record untuk Kereta: '+q,'ok');
+
+    // Group by kereta → namaPart → group by dies+lot → hitung jumlah
+    var keretaMap = {};
+    filtered.forEach(function(r){
+        var k = r.kereta || '-';
+        if(!keretaMap[k]) keretaMap[k] = {};
+        var p = r.namaPart || '-';
+        if(!keretaMap[k][p]) keretaMap[k][p] = {};
+        // Key unik per kombinasi dies+lot+mesin
+        var dlKey = (r.dies||'-') + '||' + (r.lot||'-') + '||' + (r.mesin||'-');
+        if(!keretaMap[k][p][dlKey]){
+            keretaMap[k][p][dlKey] = { dies:r.dies, lot:r.lot, mesin:r.mesin,
+                                        tanggals:[], qty:0 };
+        }
+        keretaMap[k][p][dlKey].qty++;
+        if(r.tanggal) keretaMap[k][p][dlKey].tanggals.push(r.tanggal);
+    });
+
+    var html = '';
+    Object.keys(keretaMap).forEach(function(kereta){
+        var parts   = keretaMap[kereta];
+        var nParts  = Object.keys(parts).length;
+        var nRecord = filtered.filter(function(r){ return r.kereta===kereta; }).length;
+
+        html += '<div class="summary-card fade-in">';
+        html += '<div class="summary-header">';
+        html += '<div class="summary-kereta">🚃 '+hl(kereta,q)+'</div>';
+        html += '<div class="summary-count">'+nParts+' part &nbsp;·&nbsp; '+nRecord+' pcs total</div>';
+        html += '</div>';
+
+        Object.keys(parts).forEach(function(partName){
+            var dlMap  = parts[partName];
+            var dlKeys = Object.keys(dlMap);
+            // Total qty untuk part ini
+            var totalQty = dlKeys.reduce(function(sum,k){ return sum + dlMap[k].qty; }, 0);
+
+            html += '<div class="part-group">';
+            html += '<div class="part-name" style="display:flex;align-items:center;justify-content:space-between;">';
+            html += '<span>📦 '+partName+'</span>';
+            html += '<span class="qty-badge '+(totalQty>1?'multi':'single')+'">'+totalQty+' pcs</span>';
+            html += '</div>';
+
+            // Tabel detail semua kombinasi dies-lot
+            html += '<table class="detail-table">';
+            html += '<tr><th>No</th><th>Dies</th><th>Lot</th><th>Mesin</th><th>Jml</th><th>Terakhir</th></tr>';
+            dlKeys.forEach(function(dlk, idx){
+                var entry = dlMap[dlk];
+                var lastDate = entry.tanggals.length > 0 ? entry.tanggals[entry.tanggals.length-1] : '-';
+                // Potong tanggal jadi lebih pendek
+                var shortDate = lastDate.toString().substring(0,16);
+                html += '<tr>';
+                html += '<td style="color:var(--muted)">'+(idx+1)+'</td>';
+                html += '<td class="td-dies">⚙️ '+(entry.dies||'-')+'</td>';
+                html += '<td class="td-lot">🏷️ '+(entry.lot||'-')+'</td>';
+                html += '<td class="td-mesin">'+(entry.mesin||'-')+'</td>';
+                html += '<td><span class="qty-badge '+(entry.qty>1?'multi':'single')+'">'+entry.qty+'</span></td>';
+                html += '<td class="td-tanggal">'+shortDate+'</td>';
+                html += '</tr>';
+            });
+            html += '</table>';
+            html += '</div>';
+        });
+        html += '</div>';
+    });
+
+    document.getElementById('results').innerHTML = html;
+}
+
+// ══════════════════════════════════════════
+// MODE 2 — Cari by Dies / Lot / Part
+// Tampilkan semua kereta yang cocok
+// ══════════════════════════════════════════
+function searchByPart(data){
+    var qDies = document.getElementById('inp2Dies').value.trim().toUpperCase();
+    var qLot  = document.getElementById('inp2Lot').value.trim().toUpperCase();
+    var qPart = document.getElementById('inp2Part').value.trim().toUpperCase();
+
+    if(!qDies && !qLot && !qPart){
+        setStatus('⚠️ Isi minimal satu filter pencarian','empty'); return;
+    }
+
+    var filtered = data.filter(function(r){
+        var matchDies = !qDies || String(r.dies||'').toUpperCase().indexOf(qDies) !== -1;
+        var matchLot  = !qLot  || String(r.lot||'').toUpperCase().indexOf(qLot)   !== -1;
+        var matchPart = !qPart || String(r.namaPart||'').toUpperCase().indexOf(qPart) !== -1;
+        return matchDies && matchLot && matchPart;
+    });
+
+    if(filtered.length === 0){
+        var qStr = [qDies&&'Dies:'+qDies, qLot&&'Lot:'+qLot, qPart&&'Part:'+qPart].filter(Boolean).join(' + ');
+        setStatus('Tidak ditemukan data untuk: '+qStr,'empty');
+        document.getElementById('results').innerHTML =
+            '<div class="empty-box"><div class="ei">🔍</div>Tidak ada data yang cocok dengan filter</div>';
+        return;
+    }
+
+    // Urutkan: kereta unik dulu, lalu per tanggal terbaru
+    filtered.sort(function(a,b){
+        if(a.kereta < b.kereta) return -1;
+        if(a.kereta > b.kereta) return 1;
+        return 0;
+    });
+
+    // Hitung kereta unik
+    var keretaUnik = [];
+    filtered.forEach(function(r){
+        if(r.kereta && keretaUnik.indexOf(r.kereta)===-1) keretaUnik.push(r.kereta);
+    });
+
+    var qStr = [qDies&&'Dies: <b>'+qDies+'</b>', qLot&&'Lot: <b>'+qLot+'</b>', qPart&&'Part: <b>'+qPart+'</b>'].filter(Boolean).join(' · ');
+    setStatus('✅ '+filtered.length+' record di '+keretaUnik.length+' kereta — '+qStr,'ok');
+
+    // Group by kereta → hitung qty per kereta
+    var keretaGroup = {};
+    filtered.forEach(function(r){
+        var k = r.kereta || '-';
+        if(!keretaGroup[k]) keretaGroup[k] = [];
+        keretaGroup[k].push(r);
+    });
+
+    var html = '';
+    // Summary bar: total kereta unik
+    html += '<div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:8px;padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;">';
+    html += '📊 Total: <b style="color:var(--text)">'+filtered.length+' pcs</b> di <b style="color:var(--purple)">'+keretaUnik.length+' kereta</b>';
+    html += '</div>';
+
+    Object.keys(keretaGroup).sort().forEach(function(kereta){
+        var rows = keretaGroup[kereta];
+        var qty  = rows.length;
+
+        html += '<div class="summary-card fade-in">';
+        html += '<div class="summary-header">';
+        html += '<div class="summary-kereta" style="font-size:15px;">🚃 '+hl(kereta, '')+'</div>';
+        html += '<span class="qty-badge '+(qty>1?'multi':'single')+'" style="font-size:13px;min-width:28px;height:28px;border-radius:14px;">'+qty+' pcs</span>';
+        html += '</div>';
+
+        html += '<table class="detail-table">';
+        html += '<tr><th>No</th><th>Part</th><th>Dies</th><th>Lot</th><th>Mesin</th><th>Tanggal</th></tr>';
+        rows.forEach(function(r, idx){
+            var shortDate = (r.tanggal||'').toString().substring(0,16);
+            html += '<tr>';
+            html += '<td style="color:var(--muted)">'+(idx+1)+'</td>';
+            html += '<td><span class="rr-badge part" style="font-size:10px;">'+hl(r.namaPart||'-',qPart)+'</span></td>';
+            html += '<td class="td-dies">'+hl(r.dies||'-',qDies)+'</td>';
+            html += '<td class="td-lot">'+hl(r.lot||'-',qLot)+'</td>';
+            html += '<td class="td-mesin">'+(r.mesin||'-')+'</td>';
+            html += '<td class="td-tanggal">'+shortDate+'</td>';
+            html += '</tr>';
+        });
+        html += '</table>';
+        html += '</div>';
+    });
+
+    document.getElementById('results').innerHTML = html;
+}
+
+// ── HIGHLIGHT HELPER ──────────────────────
+function hl(text, query){
+    if(!query || !text) return text;
+    var re = new RegExp('('+escRe(query)+')', 'gi');
+    return String(text).replace(re, '<mark>$1</mark>');
+}
+function escRe(s){
+    return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+}
+
+// Init
+setMode(1);
+</script>
+</body>
+</html>
