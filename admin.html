@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel — Part Scanner</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@400;600;700;800&display=swap');
+        :root{
+            --bg:#0d1117;--card:#161b22;--border:#30363d;
+            --accent:#00e5a0;--blue:#58a6ff;--warn:#f0b429;
+            --purple:#bf97ff;--danger:#f85149;--text:#c9d1d9;--muted:#8b949e;
+            --mono:'Share Tech Mono',monospace;--sans:'Barlow',sans-serif;
+        }
+        *{box-sizing:border-box;margin:0;padding:0;}
+        body{font-family:var(--sans);background:var(--bg);color:var(--text);
+            min-height:100vh;padding:12px 12px 60px;
+            display:flex;flex-direction:column;align-items:center;}
+
+        /* NAV */
+        .nav-bar{width:100%;max-width:700px;display:flex;gap:6px;margin-bottom:10px;}
+        .nav-btn{flex:1;padding:9px 6px;border-radius:8px;border:1px solid var(--border);
+            background:var(--card);font-family:var(--mono);font-size:10px;letter-spacing:1px;
+            text-transform:uppercase;color:var(--muted);text-align:center;
+            text-decoration:none;display:flex;align-items:center;justify-content:center;gap:5px;
+            transition:all .2s;}
+        .nav-btn.active{border-color:var(--danger);color:var(--danger);background:rgba(248,81,73,.08);}
+        .nav-btn:hover:not(.active){border-color:var(--accent);color:var(--accent);}
+
+        /* USER BAR */
+        .user-bar{width:100%;max-width:700px;display:flex;align-items:center;
+            justify-content:space-between;padding:8px 12px;
+            background:rgba(248,81,73,.06);border:1px solid rgba(248,81,73,.2);
+            border-radius:8px;margin-bottom:10px;font-family:var(--mono);font-size:10px;}
+        .user-bar-left{color:var(--danger);}
+        .btn-logout{padding:4px 12px;border:1px solid rgba(248,81,73,.3);
+            border-radius:6px;background:transparent;color:var(--danger);
+            font-family:var(--mono);font-size:9px;cursor:pointer;transition:all .2s;}
+        .btn-logout:hover{background:rgba(248,81,73,.1);}
+
+        /* STATS ROW */
+        .stats-row{width:100%;max-width:700px;display:grid;
+            grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px;}
+        .stat-card{background:var(--card);border:1px solid var(--border);
+            border-radius:10px;padding:14px;text-align:center;}
+        .stat-num{font-family:var(--mono);font-size:28px;font-weight:700;margin-bottom:4px;}
+        .stat-lbl{font-family:var(--mono);font-size:9px;color:var(--muted);
+            letter-spacing:1.5px;text-transform:uppercase;}
+
+        /* CARD */
+        .card{background:var(--card);border:1px solid var(--border);border-radius:12px;
+            padding:16px;width:100%;max-width:700px;margin-bottom:12px;}
+        .card-title{font-size:10px;font-family:var(--mono);color:var(--muted);
+            letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;
+            display:flex;align-items:center;justify-content:space-between;}
+
+        /* TABS */
+        .tabs{width:100%;max-width:700px;display:flex;gap:6px;margin-bottom:10px;}
+        .tab-btn{flex:1;padding:10px;border-radius:8px;border:1px solid var(--border);
+            background:var(--card);font-family:var(--mono);font-size:10px;letter-spacing:1px;
+            text-transform:uppercase;color:var(--muted);cursor:pointer;transition:all .2s;}
+        .tab-btn.active-users{border-color:var(--purple);color:var(--purple);background:rgba(191,151,255,.08);}
+        .tab-btn.active-data{border-color:var(--blue);color:var(--blue);background:rgba(88,166,255,.08);}
+        .tab-panel{display:none;width:100%;max-width:700px;}
+        .tab-panel.show{display:block;}
+
+        /* FORM */
+        .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
+        .form-group{display:flex;flex-direction:column;gap:4px;}
+        .form-group label{font-family:var(--mono);font-size:9px;color:var(--muted);
+            letter-spacing:1.5px;text-transform:uppercase;}
+        .form-group input, .form-group select{padding:10px 12px;background:var(--bg);
+            border:1.5px solid var(--border);border-radius:6px;color:var(--text);
+            font-family:var(--mono);font-size:13px;outline:none;transition:border-color .2s;}
+        .form-group input:focus, .form-group select:focus{border-color:var(--purple);}
+        .form-group select option{background:var(--card);}
+
+        /* BUTTONS */
+        .btn{padding:10px 18px;border:none;border-radius:8px;font-family:var(--sans);
+            font-weight:700;font-size:13px;cursor:pointer;transition:all .2s;}
+        .btn-purple{background:var(--purple);color:#0d1117;}
+        .btn-blue{background:var(--blue);color:#0d1117;}
+        .btn-danger{background:var(--danger);color:#fff;}
+        .btn-warn{background:var(--warn);color:#0d1117;}
+        .btn-muted{background:transparent;border:1px solid var(--border);color:var(--muted);}
+        .btn:hover{filter:brightness(1.1);}
+        .btn:disabled{opacity:.4;cursor:not-allowed;filter:none;}
+        .btn-sm{padding:5px 12px;font-size:11px;border-radius:6px;}
+
+        /* USER TABLE */
+        .user-table{width:100%;border-collapse:collapse;font-size:12px;}
+        .user-table th{font-family:var(--mono);font-size:9px;letter-spacing:1px;
+            text-transform:uppercase;color:var(--muted);padding:8px 10px;
+            border-bottom:1px solid var(--border);text-align:left;}
+        .user-table td{padding:10px 10px;border-bottom:1px solid rgba(48,54,61,.5);
+            font-family:var(--mono);font-size:12px;}
+        .user-table tr:last-child td{border-bottom:none;}
+        .user-table tr:hover td{background:rgba(255,255,255,.02);}
+
+        /* BADGES */
+        .badge{display:inline-block;padding:2px 8px;border-radius:6px;
+            font-family:var(--mono);font-size:10px;font-weight:700;}
+        .badge-admin{background:rgba(248,81,73,.15);color:var(--danger);border:1px solid rgba(248,81,73,.3);}
+        .badge-operator{background:rgba(88,166,255,.12);color:var(--blue);border:1px solid rgba(88,166,255,.25);}
+        .badge-aktif{background:rgba(0,229,160,.1);color:var(--accent);border:1px solid rgba(0,229,160,.25);}
+        .badge-nonaktif{background:rgba(248,81,73,.1);color:var(--danger);border:1px solid rgba(248,81,73,.25);}
+
+        /* DATA TABLE */
+        .data-table{width:100%;border-collapse:collapse;font-size:11px;}
+        .data-table th{font-family:var(--mono);font-size:9px;letter-spacing:1px;
+            text-transform:uppercase;color:var(--muted);padding:6px 8px;
+            border-bottom:1px solid var(--border);text-align:left;}
+        .data-table td{padding:7px 8px;border-bottom:1px solid rgba(48,54,61,.4);
+            font-family:var(--mono);font-size:11px;color:var(--text);}
+        .data-table tr:last-child td{border-bottom:none;}
+        .data-table tr:hover td{background:rgba(255,255,255,.02);}
+
+        /* STATUS */
+        .status-bar{padding:8px 12px;border-radius:6px;font-family:var(--mono);
+            font-size:11px;margin-bottom:10px;display:none;}
+        .status-bar.show{display:block;}
+        .status-bar.ok{background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.2);color:var(--accent);}
+        .status-bar.err{background:rgba(248,81,73,.08);border:1px solid rgba(248,81,73,.2);color:var(--danger);}
+        .status-bar.info{background:rgba(88,166,255,.08);border:1px solid rgba(88,166,255,.2);color:var(--blue);}
+
+        /* LOADER */
+        .loader{display:inline-block;width:14px;height:14px;border:2px solid var(--border);
+            border-top-color:var(--blue);border-radius:50%;
+            animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px;}
+        @keyframes spin{to{transform:rotate(360deg)}}
+
+        /* MODAL */
+        .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);
+            z-index:100;align-items:center;justify-content:center;padding:20px;}
+        .modal-overlay.show{display:flex;}
+        .modal{background:var(--card);border:1px solid var(--border);border-radius:14px;
+            padding:24px;width:100%;max-width:400px;}
+        .modal-title{font-family:var(--mono);font-size:12px;color:var(--warn);
+            letter-spacing:2px;text-transform:uppercase;margin-bottom:16px;}
+        .modal-btns{display:flex;gap:8px;margin-top:16px;}
+
+        @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+        .fade-in{animation:fadeIn .2s ease-out;}
+
+        .empty-state{text-align:center;padding:32px;color:var(--muted);
+            font-family:var(--mono);font-size:12px;}
+    </style>
+</head>
+<body>
+
+<div class="nav-bar">
+    <a class="nav-btn" href="index.html">🏠 Menu</a>
+    <a class="nav-btn" href="scanner.html">📷 Scanner</a>
+    <a class="nav-btn" href="search.html">🔍 Search</a>
+    <span class="nav-btn active">🛡️ Admin</span>
+</div>
+
+<div class="user-bar">
+    <span class="user-bar-left">🛡️ Admin: <span id="userNama">—</span> &nbsp;|&nbsp; <span id="userNrp" style="color:var(--muted)">—</span></span>
+    <button class="btn-logout" onclick="doLogout()">⏏ Logout</button>
+</div>
+
+<!-- STATS -->
+<div class="stats-row" id="statsRow">
+    <div class="stat-card">
+        <div class="stat-num" id="statTotal" style="color:var(--blue)">—</div>
+        <div class="stat-lbl">Total Scan</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-num" id="statUsers" style="color:var(--purple)">—</div>
+        <div class="stat-lbl">Total User</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-num" id="statAktif" style="color:var(--accent)">—</div>
+        <div class="stat-lbl">User Aktif</div>
+    </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+    <button class="tab-btn active-users" id="tabUsers" onclick="switchTab('users')">👥 Kelola User</button>
+    <button class="tab-btn" id="tabData"  onclick="switchTab('data')">📊 Data Scan</button>
+</div>
+
+<!-- STATUS BAR -->
+<div class="status-bar" id="statusBar"></div>
+
+<!-- ══ TAB: USERS ══ -->
+<div class="tab-panel show" id="panelUsers">
+
+    <!-- FORM TAMBAH USER -->
+    <div class="card">
+        <div class="card-title">
+            <span>➕ Tambah / Edit User</span>
+            <button class="btn btn-muted btn-sm" onclick="clearForm()">✕ Bersihkan</button>
+        </div>
+        <div class="form-grid">
+            <div class="form-group">
+                <label>NRP</label>
+                <input type="text" id="fNrp" placeholder="Contoh: 12345" style="text-transform:uppercase"
+                       oninput="this.value=this.value.toUpperCase()">
+            </div>
+            <div class="form-group">
+                <label>PIN (4-6 digit)</label>
+                <input type="text" id="fPin" placeholder="Contoh: 1234" maxlength="6" inputmode="numeric">
+            </div>
+            <div class="form-group">
+                <label>Nama Lengkap</label>
+                <input type="text" id="fNama" placeholder="Contoh: Budi Santoso">
+            </div>
+            <div class="form-group">
+                <label>Role</label>
+                <select id="fRole">
+                    <option value="operator">Operator</option>
+                    <option value="admin">Admin</option>
+                </select>
+            </div>
+        </div>
+        <div style="display:flex;gap:8px;">
+            <button class="btn btn-purple" id="btnSaveUser" onclick="saveUser()">💾 Simpan User</button>
+            <input type="hidden" id="fEditNrp"> <!-- NRP asli saat edit -->
+        </div>
+    </div>
+
+    <!-- DAFTAR USER -->
+    <div class="card">
+        <div class="card-title">
+            <span>👥 Daftar User</span>
+            <button class="btn btn-muted btn-sm" onclick="loadUsers()">🔄 Refresh</button>
+        </div>
+        <div id="userList"><div class="empty-state"><span class="loader"></span> Memuat...</div></div>
+    </div>
+</div>
+
+<!-- ══ TAB: DATA SCAN ══ -->
+<div class="tab-panel" id="panelData">
+    <div class="card">
+        <div class="card-title">
+            <span>📊 Data Scan Terbaru</span>
+            <div style="display:flex;gap:6px;">
+                <button class="btn btn-muted btn-sm" onclick="loadData()">🔄 Refresh</button>
+                <button class="btn btn-blue btn-sm" onclick="exportCSV()">⬇️ Export CSV</button>
+            </div>
+        </div>
+        <div id="dataList"><div class="empty-state">Pilih tab Data Scan untuk memuat</div></div>
+    </div>
+</div>
+
+<!-- MODAL KONFIRMASI -->
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+        <div class="modal-title" id="modalTitle">Konfirmasi</div>
+        <div id="modalBody" style="font-size:13px;color:var(--text);line-height:1.6;"></div>
+        <div class="modal-btns">
+            <button class="btn btn-danger" id="modalConfirm">Ya, Lanjutkan</button>
+            <button class="btn btn-muted" onclick="closeModal()">Batal</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// ============================================================
+// ⚠️ GANTI DENGAN URL APPS SCRIPT ANDA
+// ============================================================
+var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwnc4WIVdwMQO9r5Yoohciw4w5N3t2HC02oD9vdn4jnpBw6rMjWKV4cvJxUoRIYxm8dwQ/exec';
+
+// ── SESSION ───────────────────────────────────────────────
+var SESSION_HOURS = 12;
+function getSession(){
+    try{
+        var raw=sessionStorage.getItem('partScannerUser');
+        if(!raw) return null;
+        var s=JSON.parse(raw);
+        if(Date.now()-s.loginAt>SESSION_HOURS*3600*1000){
+            sessionStorage.removeItem('partScannerUser'); return null;
+        }
+        return s;
+    } catch(e){ return null; }
+}
+function doLogout(){
+    if(!confirm('Yakin ingin logout?')) return;
+    sessionStorage.removeItem('partScannerUser');
+    window.location.href='login.html';
+}
+
+// Cek login + cek role admin
+var _session = getSession();
+if(!_session || !_session.nrp){
+    sessionStorage.setItem('loginRedirect','admin.html');
+    window.location.href='login.html';
+} else if(_session.role !== 'admin'){
+    alert('⛔ Akses ditolak! Halaman ini hanya untuk Admin.');
+    window.location.href='index.html';
+} else {
+    document.getElementById('userNama').textContent = _session.nama || _session.nrp;
+    document.getElementById('userNrp').textContent  = _session.nrp;
+}
+
+// ── TABS ──────────────────────────────────────────────────
+var currentTab = 'users';
+function switchTab(tab){
+    currentTab = tab;
+    document.getElementById('panelUsers').className = 'tab-panel' + (tab==='users'?' show':'');
+    document.getElementById('panelData').className  = 'tab-panel' + (tab==='data' ?' show':'');
+    document.getElementById('tabUsers').className   = 'tab-btn'   + (tab==='users'?' active-users':'');
+    document.getElementById('tabData').className    = 'tab-btn'   + (tab==='data' ?' active-data':'');
+    if(tab==='data') loadData();
+}
+
+// ── STATUS ────────────────────────────────────────────────
+function showStatus(msg, type){
+    var el = document.getElementById('statusBar');
+    el.innerHTML = msg;
+    el.className = 'status-bar show ' + type;
+    if(type==='ok') setTimeout(function(){ el.className='status-bar'; }, 3000);
+}
+
+// ── MODAL ─────────────────────────────────────────────────
+var _modalCb = null;
+function showModal(title, body, cb){
+    document.getElementById('modalTitle').textContent = title;
+    document.getElementById('modalBody').innerHTML    = body;
+    document.getElementById('modalOverlay').className = 'modal-overlay show';
+    _modalCb = cb;
+    document.getElementById('modalConfirm').onclick = function(){
+        closeModal(); if(_modalCb) _modalCb();
+    };
+}
+function closeModal(){
+    document.getElementById('modalOverlay').className = 'modal-overlay';
+}
+
+// ══════════════════════════════════════════════════════════
+// LOAD USERS
+// ══════════════════════════════════════════════════════════
+var _users = [];
+function loadUsers(){
+    document.getElementById('userList').innerHTML = '<div class="empty-state"><span class="loader"></span> Memuat data user...</div>';
+    fetch(APPS_SCRIPT_URL + '?action=getUsers&t=' + Date.now())
+        .then(function(r){ return r.json(); })
+        .then(function(res){
+            if(res.status !== 'ok'){ showStatus('❌ '+res.message,'err'); return; }
+            _users = res.users || [];
+            renderUsers(_users);
+            document.getElementById('statUsers').textContent = _users.length;
+            document.getElementById('statAktif').textContent = _users.filter(function(u){ return u.status==='aktif'; }).length;
+        })
+        .catch(function(e){ showStatus('❌ Gagal memuat user','err'); console.error(e); });
+}
+
+function renderUsers(users){
+    if(users.length === 0){
+        document.getElementById('userList').innerHTML = '<div class="empty-state">Belum ada user terdaftar</div>';
+        return;
+    }
+    var html = '<table class="user-table"><tr>';
+    html += '<th>NRP</th><th>Nama</th><th>Role</th><th>Status</th><th>Aksi</th>';
+    html += '</tr>';
+    users.forEach(function(u){
+        var roleBadge   = u.role==='admin'
+            ? '<span class="badge badge-admin">👑 Admin</span>'
+            : '<span class="badge badge-operator">👷 Operator</span>';
+        var statusBadge = u.status==='aktif'
+            ? '<span class="badge badge-aktif">✅ Aktif</span>'
+            : '<span class="badge badge-nonaktif">🔴 Nonaktif</span>';
+        var toggleLabel = u.status==='aktif' ? '🔴 Nonaktifkan' : '✅ Aktifkan';
+        var isSelf      = u.nrp === (_session && _session.nrp);
+
+        html += '<tr class="fade-in">';
+        html += '<td style="color:var(--accent);font-weight:700;">'+u.nrp+'</td>';
+        html += '<td>'+u.nama+'</td>';
+        html += '<td>'+roleBadge+'</td>';
+        html += '<td>'+statusBadge+'</td>';
+        html += '<td style="display:flex;gap:5px;flex-wrap:wrap;">';
+        html += '<button class="btn btn-warn btn-sm" onclick="editUser(\''+u.nrp+'\')">✏️ Edit</button>';
+        if(!isSelf){
+            html += '<button class="btn btn-muted btn-sm" onclick="toggleStatus(\''+u.nrp+'\',\''+u.status+'\')">'+toggleLabel+'</button>';
+            html += '<button class="btn btn-danger btn-sm" onclick="deleteUser(\''+u.nrp+'\',\''+u.nama+'\')">🗑️</button>';
+        } else {
+            html += '<span style="font-size:10px;color:var(--muted);padding:5px;">(akun Anda)</span>';
+        }
+        html += '</td></tr>';
+    });
+    html += '</table>';
+    document.getElementById('userList').innerHTML = html;
+}
+
+// ══════════════════════════════════════════════════════════
+// SAVE USER (tambah / edit)
+// ══════════════════════════════════════════════════════════
+function saveUser(){
+    var nrp      = document.getElementById('fNrp').value.trim().toUpperCase();
+    var pin      = document.getElementById('fPin').value.trim();
+    var nama     = document.getElementById('fNama').value.trim();
+    var role     = document.getElementById('fRole').value;
+    var editNrp  = document.getElementById('fEditNrp').value; // kosong = tambah baru
+
+    if(!nrp)  { showStatus('⚠️ NRP wajib diisi','err'); return; }
+    if(!pin && !editNrp)  { showStatus('⚠️ PIN wajib diisi untuk user baru','err'); return; }
+    if(pin && (pin.length < 4)) { showStatus('⚠️ PIN minimal 4 digit','err'); return; }
+    if(!nama) { showStatus('⚠️ Nama wajib diisi','err'); return; }
+
+    var btn = document.getElementById('btnSaveUser');
+    btn.disabled = true;
+    btn.textContent = '⏳ Menyimpan...';
+    showStatus('<span class="loader"></span>Menyimpan...','info');
+
+    var params = '?action=saveUser'
+        + '&nrp='    + encodeURIComponent(nrp)
+        + '&pin='    + encodeURIComponent(pin)
+        + '&nama='   + encodeURIComponent(nama)
+        + '&role='   + encodeURIComponent(role)
+        + '&editNrp='+ encodeURIComponent(editNrp);
+
+    fetch(APPS_SCRIPT_URL + params)
+        .then(function(r){ return r.json(); })
+        .then(function(res){
+            btn.disabled = false;
+            btn.textContent = '💾 Simpan User';
+            if(res.status === 'ok'){
+                showStatus('✅ ' + res.message, 'ok');
+                clearForm();
+                loadUsers();
+            } else {
+                showStatus('❌ ' + res.message, 'err');
+            }
+        })
+        .catch(function(e){
+            btn.disabled = false;
+            btn.textContent = '💾 Simpan User';
+            showStatus('❌ Gagal terhubung ke server','err');
+        });
+}
+
+function editUser(nrp){
+    var u = _users.find(function(x){ return x.nrp === nrp; });
+    if(!u) return;
+    document.getElementById('fNrp').value     = u.nrp;
+    document.getElementById('fNrp').disabled  = true; // NRP tidak boleh diubah saat edit
+    document.getElementById('fPin').value     = '';
+    document.getElementById('fPin').placeholder = 'Kosongkan jika tidak ingin ganti PIN';
+    document.getElementById('fNama').value    = u.nama;
+    document.getElementById('fRole').value    = u.role;
+    document.getElementById('fEditNrp').value = u.nrp;
+    document.getElementById('btnSaveUser').textContent = '💾 Update User';
+    showStatus('✏️ Mode edit: '+u.nama+' ('+u.nrp+')','info');
+    window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function clearForm(){
+    document.getElementById('fNrp').value       = '';
+    document.getElementById('fNrp').disabled    = false;
+    document.getElementById('fPin').value       = '';
+    document.getElementById('fPin').placeholder = 'Contoh: 1234';
+    document.getElementById('fNama').value      = '';
+    document.getElementById('fRole').value      = 'operator';
+    document.getElementById('fEditNrp').value   = '';
+    document.getElementById('btnSaveUser').textContent = '💾 Simpan User';
+    document.getElementById('statusBar').className = 'status-bar';
+}
+
+function toggleStatus(nrp, currentStatus){
+    var newStatus = currentStatus === 'aktif' ? 'nonaktif' : 'aktif';
+    var label     = newStatus === 'aktif' ? 'mengaktifkan' : 'menonaktifkan';
+    showModal(
+        '⚠️ Konfirmasi',
+        'Yakin ingin <b>'+label+'</b> akun <b>'+nrp+'</b>?',
+        function(){
+            fetch(APPS_SCRIPT_URL + '?action=toggleStatus&nrp='+encodeURIComponent(nrp)+'&status='+newStatus)
+                .then(function(r){ return r.json(); })
+                .then(function(res){
+                    if(res.status==='ok'){ showStatus('✅ '+res.message,'ok'); loadUsers(); }
+                    else showStatus('❌ '+res.message,'err');
+                });
+        }
+    );
+}
+
+function deleteUser(nrp, nama){
+    showModal(
+        '🗑️ Hapus User',
+        'Yakin ingin <b>menghapus permanen</b> akun:<br><br>'+
+        '<b style="color:var(--danger)">'+nama+' ('+nrp+')</b><br><br>'+
+        'Data scan yang sudah tersimpan <b>tidak akan terhapus</b>.',
+        function(){
+            fetch(APPS_SCRIPT_URL + '?action=deleteUser&nrp='+encodeURIComponent(nrp))
+                .then(function(r){ return r.json(); })
+                .then(function(res){
+                    if(res.status==='ok'){ showStatus('✅ '+res.message,'ok'); loadUsers(); }
+                    else showStatus('❌ '+res.message,'err');
+                });
+        }
+    );
+}
+
+// ══════════════════════════════════════════════════════════
+// LOAD DATA SCAN
+// ══════════════════════════════════════════════════════════
+var _scanData = [];
+function loadData(){
+    document.getElementById('dataList').innerHTML = '<div class="empty-state"><span class="loader"></span> Memuat data scan...</div>';
+    fetch(APPS_SCRIPT_URL + '?action=all&t=' + Date.now())
+        .then(function(r){ return r.json(); })
+        .then(function(res){
+            if(res.status !== 'ok'){ showStatus('❌ Gagal memuat data','err'); return; }
+            _scanData = res.data || [];
+            document.getElementById('statTotal').textContent = _scanData.length;
+            renderData(_scanData);
+        })
+        .catch(function(e){ showStatus('❌ Gagal memuat data','err'); });
+}
+
+function renderData(data){
+    if(data.length === 0){
+        document.getElementById('dataList').innerHTML = '<div class="empty-state">Belum ada data scan</div>';
+        return;
+    }
+    // Tampilkan 100 terbaru
+    var slice = data.slice(-100).reverse();
+    var html = '<table class="data-table"><tr>';
+    html += '<th>No</th><th>Tanggal</th><th>NRP</th><th>Mesin</th><th>Part</th><th>Kereta</th><th>Dies</th><th>Lot</th>';
+    html += '</tr>';
+    slice.forEach(function(r, i){
+        var shortDate = (r.tanggal||'').toString().substring(0,16);
+        html += '<tr>';
+        html += '<td style="color:var(--muted)">'+(i+1)+'</td>';
+        html += '<td style="color:var(--muted);font-size:10px;">'+shortDate+'</td>';
+        html += '<td style="color:var(--purple);">'+( r.nrp||'-')+'</td>';
+        html += '<td>'+(r.mesin||'-')+'</td>';
+        html += '<td style="color:var(--blue);">'+(r.namaPart||'-')+'</td>';
+        html += '<td style="color:var(--accent);">'+(r.kereta||'-')+'</td>';
+        html += '<td style="color:var(--warn);">'+(r.dies||'-')+'</td>';
+        html += '<td style="color:var(--accent);">'+(r.lot||'-')+'</td>';
+        html += '</tr>';
+    });
+    html += '</table>';
+    if(data.length > 100){
+        html += '<div style="text-align:center;padding:10px;font-family:var(--mono);font-size:10px;color:var(--muted);">Menampilkan 100 data terbaru dari '+data.length+' total — Export CSV untuk data lengkap</div>';
+    }
+    document.getElementById('dataList').innerHTML = html;
+}
+
+// ══════════════════════════════════════════════════════════
+// EXPORT CSV
+// ══════════════════════════════════════════════════════════
+function exportCSV(){
+    if(_scanData.length === 0){ showStatus('⚠️ Muat data dulu sebelum export','err'); return; }
+    var headers = ['No','Tanggal','NRP','Mesin','Kondisi','Nama Part','Kereta','Dies','Lot'];
+    var rows = [headers.join(',')];
+    _scanData.forEach(function(r){
+        rows.push([
+            r.no, '"'+(r.tanggal||'')+'"', r.nrp, '"'+(r.mesin||'')+'"',
+            '"'+(r.kondisi||'')+'"', '"'+(r.namaPart||'')+'"',
+            r.kereta, r.dies, r.lot
+        ].join(','));
+    });
+    var blob = new Blob([rows.join('\n')], {type:'text/csv;charset=utf-8;'});
+    var url  = URL.createObjectURL(blob);
+    var a    = document.createElement('a');
+    a.href   = url;
+    a.download = 'data-scan-' + new Date().toISOString().slice(0,10) + '.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+    showStatus('✅ CSV berhasil diexport','ok');
+}
+
+// ── INIT ──────────────────────────────────────────────────
+loadUsers();
+// Load stats total scan
+fetch(APPS_SCRIPT_URL + '?action=all&t=' + Date.now())
+    .then(function(r){ return r.json(); })
+    .then(function(res){
+        if(res.status==='ok') document.getElementById('statTotal').textContent = (res.data||[]).length;
+    });
+</script>
+</body>
+</html>
