@@ -587,39 +587,55 @@ function searchByPart(data){
         setStatus('⚠️ Isi minimal satu filter pencarian','empty'); return;
     }
 
-    var filtered = data.filter(function(r){
+    // ══ LANGKAH 1: TENTUKAN KERETA AKTIF DARI SEMUA DATA ══════════════════
+    // Cari tanggal terbaru GLOBAL dari seluruh data
+    var globalLatest = null;
+    data.forEach(function(r){
+        var d = parseDate(r.tanggal);
+        if(d && (!globalLatest || d > globalLatest)) globalLatest = d;
+    });
+
+    // Tentukan kereta aktif: kereta yang punya data dalam ±1 hari dari tanggal terbaru global
+    var MS_DAY    = 24*60*60*1000;
+    var TOLERANSI = 1;
+    var activeKereta = {};
+    data.forEach(function(r){
+        var k = String(r.kereta||'').toUpperCase();
+        var d = parseDate(r.tanggal);
+        if(!d || !globalLatest) return;
+        if((globalLatest - d) / MS_DAY <= TOLERANSI){
+            activeKereta[k] = true;
+        }
+    });
+
+    // ══ LANGKAH 2: FILTER DATA DARI KERETA AKTIF + TANGGAL AKTIF ═════
+    // Kereta aktif = kereta yang scan dalam ±1 hari dari tanggal terbaru global
+    // Data aktif  = row yang tanggalnya juga dalam ±1 hari (bukan row lama di kereta aktif)
+    var dataAktif = data.filter(function(r){
+        var k = String(r.kereta||'').toUpperCase();
+        if(!activeKereta[k]) return false; // kereta tidak aktif
+        var d = parseDate(r.tanggal);
+        if(!d || !globalLatest) return false;
+        return (globalLatest - d) / MS_DAY <= TOLERANSI; // row harus tanggal aktif juga
+    });
+
+    // ══ LANGKAH 3: FILTER BY PART/DIES/LOT DARI DATA AKTIF SAJA ═══════
+    var filtered = dataAktif.filter(function(r){
         var matchDies = !qDies || String(r.dies||'').toUpperCase().indexOf(qDies) !== -1;
         var matchLot  = !qLot  || String(r.lot||'').toUpperCase().indexOf(qLot)   !== -1;
         var matchPart = !qPart || String(r.namaPart||'').toUpperCase().indexOf(qPart) !== -1;
         return matchDies && matchLot && matchPart;
     });
 
+    var skippedPart = 0; // tidak perlu hitung, sudah di-filter dari awal
+
     if(filtered.length === 0){
-        var qStr = [qDies&&'Dies:'+qDies, qLot&&'Lot:'+qLot, qPart&&'Part:'+qPart].filter(Boolean).join(' + ');
-        setStatus('Tidak ditemukan data untuk: '+qStr,'empty');
+        var qStr2 = [qDies&&'Dies:'+qDies, qLot&&'Lot:'+qLot, qPart&&'Part:'+qPart].filter(Boolean).join(' + ');
+        setStatus('Tidak ditemukan di kereta aktif: '+qStr2,'empty');
         document.getElementById('results').innerHTML =
-            '<div class="empty-box"><div class="ei">🔍</div>Tidak ada data yang cocok dengan filter</div>';
+            '<div class="empty-box"><div class="ei">🔍</div>Part ini tidak ada di kereta aktif saat ini</div>';
         return;
     }
-
-    // ── FILTER TANGGAL TERBARU PER KERETA (±1 hari) ────────
-    var latestDatePart = {};
-    filtered.forEach(function(r){
-        var k = String(r.kereta||'').toUpperCase();
-        var d = parseDate(r.tanggal);
-        if(!d) return;
-        if(!latestDatePart[k] || d > latestDatePart[k]) latestDatePart[k] = d;
-    });
-    var MS_DAY = 24*60*60*1000;
-    var TOLERANSI_PART = 1;
-    var totalSebelum = filtered.length;
-    filtered = filtered.filter(function(r){
-        var k = String(r.kereta||'').toUpperCase();
-        var d = parseDate(r.tanggal);
-        if(!d || !latestDatePart[k]) return false;
-        return (latestDatePart[k] - d) / MS_DAY <= TOLERANSI_PART;
-    });
-    var skippedPart = totalSebelum - filtered.length;
 
     // Urutkan by kereta
     filtered.sort(function(a,b){
