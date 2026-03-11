@@ -332,6 +332,30 @@ var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwnc4WIVdwMQO9r5Y
 var currentMode = 1;
 var allData     = [];   // cache semua data
 var isLoaded    = false;
+var partsMap    = {};   // {namaPart: maxQty} — acuan gap per part
+var partsLoaded = false;
+
+// Load daftar part + maxQty dari Google Sheet
+function loadParts(cb){
+    if(partsLoaded){ if(cb) cb(); return; }
+    fetch(APPS_SCRIPT_URL + '?action=getParts&t=' + Date.now())
+        .then(function(r){ return r.json(); })
+        .then(function(res){
+            partsMap = {};
+            (res.parts||[]).forEach(function(p){
+                partsMap[p.nama.toUpperCase()] = p.maxQty || 20;
+            });
+            partsLoaded = true;
+            if(cb) cb();
+        })
+        .catch(function(){ if(cb) cb(); }); // gagal = tetap lanjut pakai default
+}
+
+// Ambil maxQty untuk nama part tertentu (default 20 jika tidak ada di daftar)
+function getMaxQty(namaPart){
+    var key = String(namaPart||'').toUpperCase();
+    return partsMap[key] || 20;
+}
 
 // ── MODE SWITCH ───────────────────────────
 function setMode(m){
@@ -400,9 +424,11 @@ function onInput1(){
 
 // ── MAIN SEARCH ───────────────────────────
 function doSearch(){
-    loadAll(function(data){
-        if(currentMode === 1) searchByKereta(data);
-        else                  searchByPart(data);
+    loadParts(function(){
+        loadAll(function(data){
+            if(currentMode === 1) searchByKereta(data);
+            else                  searchByPart(data);
+        });
     });
 }
 
@@ -425,7 +451,50 @@ function searchByKereta(data){
         return;
     }
 
-    setStatus('✅ Ditemukan '+filtered.length+' record untuk Kereta: '+q,'ok');
+    // ── FILTER HANYA DATA TERBARU PER KERETA ─────────────────
+    // Logika: gunakan maxQty per namaPart dari sheet "Parts" sebagai acuan gap.
+    // Jika kereta yang sama muncul lagi setelah gap > maxQty row,
+    // dianggap sesi baru → data lama disembunyikan.
+    filtered.sort(function(a,b){ return (a.no||0)-(b.no||0); });
+
+    // Hitung gap maksimal untuk kereta ini
+    // Ambil maxQty terbesar dari semua part yang ada di kereta tsb
+    // (karena 1 kereta bisa berisi beberapa jenis part)
+    var maxGap = 20; // default jika part tidak ada di daftar
+    filtered.forEach(function(r){
+        var q = getMaxQty(r.namaPart);
+        if(q > maxGap) maxGap = q;
+    });
+
+    // Cari blok terbaru per kereta berdasarkan gap dinamis
+    var latestBlocks = {};
+    for(var i = filtered.length-1; i >= 0; i--){
+        var r = filtered[i];
+        var k = String(r.kereta||'').toUpperCase();
+        if(!latestBlocks[k]){
+            latestBlocks[k] = { maxNo: r.no||0, rows:[] };
+        }
+        var blk = latestBlocks[k];
+        // Gap acuan: maxQty part ini atau maxGap keseluruhan
+        var partGap = getMaxQty(r.namaPart);
+        if((blk.maxNo - (r.no||0)) <= partGap){
+            blk.rows.push(r);
+        }
+        // Jika gap > maxQty part → sesi lama, skip
+    }
+
+    // Gabungkan semua row dari blok terbaru
+    var recentData = [];
+    Object.keys(latestBlocks).forEach(function(k){
+        latestBlocks[k].rows.forEach(function(r){ recentData.push(r); });
+    });
+
+    var skipped = filtered.length - recentData.length;
+    filtered = recentData;
+
+    setStatus('✅ Ditemukan '+filtered.length+' record terbaru untuk Kereta: '+q+
+        (skipped>0?' &nbsp;·&nbsp; <span style="color:var(--muted)">'+skipped+' data lama disembunyikan</span>':'')+
+        ' &nbsp;·&nbsp; <span style="color:var(--muted);font-size:10px;">gap acuan: '+maxGap+' pcs</span>','ok');
 
     // Group by kereta → namaPart → group by dies+lot → hitung jumlah
     var keretaMap = {};
