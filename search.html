@@ -452,49 +452,63 @@ function searchByKereta(data){
     }
 
     // ── FILTER HANYA DATA TERBARU PER KERETA ─────────────────
-    // Logika: gunakan maxQty per namaPart dari sheet "Parts" sebagai acuan gap.
-    // Jika kereta yang sama muncul lagi setelah gap > maxQty row,
-    // dianggap sesi baru → data lama disembunyikan.
-    filtered.sort(function(a,b){ return (a.no||0)-(b.no||0); });
+    // Logika: cari tanggal TERBARU per kereta, lalu ambil semua
+    // data dalam rentang ±1 hari dari tanggal terbaru tersebut.
+    // Toleransi ±1 hari untuk menangani shift malam yang ganti tanggal.
 
-    // Hitung gap maksimal untuk kereta ini
-    // Ambil maxQty terbesar dari semua part yang ada di kereta tsb
-    // (karena 1 kereta bisa berisi beberapa jenis part)
-    var maxGap = 20; // default jika part tidak ada di daftar
-    filtered.forEach(function(r){
-        var q = getMaxQty(r.namaPart);
-        if(q > maxGap) maxGap = q;
-    });
-
-    // Cari blok terbaru per kereta berdasarkan gap dinamis
-    var latestBlocks = {};
-    for(var i = filtered.length-1; i >= 0; i--){
-        var r = filtered[i];
-        var k = String(r.kereta||'').toUpperCase();
-        if(!latestBlocks[k]){
-            latestBlocks[k] = { maxNo: r.no||0, rows:[] };
+    // Helper: parse tanggal dari string format "6/3/2026, 08.22.26" atau sejenisnya
+    function parseDate(str){
+        if(!str) return null;
+        var s = String(str).trim();
+        // Coba parse langsung
+        var d = new Date(s);
+        if(!isNaN(d)) return d;
+        // Format DD/MM/YYYY atau D/M/YYYY dengan pemisah titik/koma
+        // Contoh: "6/3/2026, 08.22.26"
+        var m = s.match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
+        if(m){
+            // Coba DD/MM/YYYY dulu (format Indonesia)
+            var d1 = new Date(m[3], m[2]-1, m[1]);
+            if(!isNaN(d1)) return d1;
         }
-        var blk = latestBlocks[k];
-        // Gap acuan: maxQty part ini atau maxGap keseluruhan
-        var partGap = getMaxQty(r.namaPart);
-        if((blk.maxNo - (r.no||0)) <= partGap){
-            blk.rows.push(r);
-        }
-        // Jika gap > maxQty part → sesi lama, skip
+        return null;
     }
 
-    // Gabungkan semua row dari blok terbaru
-    var recentData = [];
-    Object.keys(latestBlocks).forEach(function(k){
-        latestBlocks[k].rows.forEach(function(r){ recentData.push(r); });
+    // 1. Cari tanggal terbaru per kereta
+    var latestDate = {}; // {kereta: Date}
+    filtered.forEach(function(r){
+        var k = String(r.kereta||'').toUpperCase();
+        var d = parseDate(r.tanggal);
+        if(!d) return;
+        if(!latestDate[k] || d > latestDate[k]) latestDate[k] = d;
+    });
+
+    // 2. Filter: hanya ambil data dalam rentang ±1 hari dari tanggal terbaru
+    var MS_PER_DAY = 24 * 60 * 60 * 1000;
+    var TOLERANSI  = 1; // hari — bisa diubah jika perlu
+
+    var recentData = filtered.filter(function(r){
+        var k = String(r.kereta||'').toUpperCase();
+        var d = parseDate(r.tanggal);
+        if(!d || !latestDate[k]) return false;
+        var selisihHari = (latestDate[k] - d) / MS_PER_DAY;
+        return selisihHari <= TOLERANSI; // tanggal dalam rentang terbaru
     });
 
     var skipped = filtered.length - recentData.length;
     filtered = recentData;
 
+    // Tampilkan info tanggal acuan
+    var tglAcuan = '';
+    if(latestDate[q]){
+        tglAcuan = ' &nbsp;·&nbsp; <span style="color:var(--muted);font-size:10px;">acuan: '
+            + latestDate[q].toLocaleDateString('id-ID')
+            + ' ±'+TOLERANSI+' hari</span>';
+    }
+
     setStatus('✅ Ditemukan '+filtered.length+' record terbaru untuk Kereta: '+q+
         (skipped>0?' &nbsp;·&nbsp; <span style="color:var(--muted)">'+skipped+' data lama disembunyikan</span>':'')+
-        ' &nbsp;·&nbsp; <span style="color:var(--muted);font-size:10px;">gap acuan: '+maxGap+' pcs</span>','ok');
+        tglAcuan, 'ok');
 
     // Group by kereta → namaPart → group by dies+lot → hitung jumlah
     var keretaMap = {};
