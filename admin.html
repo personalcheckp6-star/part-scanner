@@ -565,15 +565,35 @@ function renderData(){
 
 function exportCSV(){
     if(!_scanData.length){ showMsg('⚠️ Muat data dulu','err'); return; }
+
+    // Fungsi paksa plain text — tambah tab di depan agar Excel tidak auto-format
+    function txt(v){ return '="'+String(v||'')+'"'; }
+    // Fungsi string biasa dengan quote
+    function str(v){ return '"'+String(v||'').replace(/"/g,'""')+'"'; }
+
     var rows = [['No','Tanggal','NRP','Mesin','Kondisi','Nama Part','Kereta','Dies','Lot'].join(',')];
     _scanData.forEach(function(r){
-        rows.push([r.no,'"'+(r.tanggal||'')+'"',r.nrp,'"'+(r.mesin||'')+'"',
-            '"'+(r.kondisi||'')+'"','"'+(r.namaPart||'')+'"',r.kereta,r.dies,r.lot].join(','));
+        rows.push([
+            r.no,
+            str(r.tanggal),
+            str(r.nrp),
+            str(r.mesin),
+            str(r.kondisi),
+            str(r.namaPart),
+            str(r.kereta),
+            txt(r.dies),   // ← Dies: paksa plain text
+            txt(r.lot)     // ← Lot: paksa plain text
+        ].join(','));
     });
-    var a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob([rows.join('\n')],{type:'text/csv'}));
+
+    // BOM (\uFEFF) agar Excel baca UTF-8 dengan benar
+    var bom  = '\uFEFF';
+    var blob = new Blob([bom + rows.join('\n')], {type:'text/csv;charset=utf-8;'});
+    var a    = document.createElement('a');
+    a.href   = URL.createObjectURL(blob);
     a.download = 'data-scan-'+new Date().toISOString().slice(0,10)+'.csv';
     a.click();
+    URL.revokeObjectURL(a.href);
     showMsg('✅ CSV berhasil diexport','ok');
 }
 
