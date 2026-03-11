@@ -16,9 +16,7 @@
         body{font-family:var(--sans);background:var(--bg);color:var(--text);
             min-height:100vh;padding:12px 12px 60px;
             display:flex;flex-direction:column;align-items:center;}
-
-        /* NAV */
-        .nav-bar{width:100%;max-width:700px;display:flex;gap:6px;margin-bottom:10px;}
+        .nav-bar{width:100%;max-width:720px;display:flex;gap:6px;margin-bottom:10px;}
         .nav-btn{flex:1;padding:9px 6px;border-radius:8px;border:1px solid var(--border);
             background:var(--card);font-family:var(--mono);font-size:10px;letter-spacing:1px;
             text-transform:uppercase;color:var(--muted);text-align:center;
@@ -26,56 +24,43 @@
             transition:all .2s;}
         .nav-btn.active{border-color:var(--danger);color:var(--danger);background:rgba(248,81,73,.08);}
         .nav-btn:hover:not(.active){border-color:var(--accent);color:var(--accent);}
-
-        /* USER BAR */
-        .user-bar{width:100%;max-width:700px;display:flex;align-items:center;
+        .user-bar{width:100%;max-width:720px;display:flex;align-items:center;
             justify-content:space-between;padding:8px 12px;
             background:rgba(248,81,73,.06);border:1px solid rgba(248,81,73,.2);
-            border-radius:8px;margin-bottom:10px;font-family:var(--mono);font-size:10px;}
-        .user-bar-left{color:var(--danger);}
-        .btn-logout{padding:4px 12px;border:1px solid rgba(248,81,73,.3);
-            border-radius:6px;background:transparent;color:var(--danger);
-            font-family:var(--mono);font-size:9px;cursor:pointer;transition:all .2s;}
-        .btn-logout:hover{background:rgba(248,81,73,.1);}
-
-        /* STATS ROW */
-        .stats-row{width:100%;max-width:700px;display:grid;
+            border-radius:8px;margin-bottom:10px;font-family:var(--mono);font-size:11px;}
+        .btn-logout{padding:4px 12px;border:1px solid rgba(248,81,73,.3);border-radius:6px;
+            background:transparent;color:var(--danger);font-family:var(--mono);
+            font-size:9px;cursor:pointer;}
+        .stats-row{width:100%;max-width:720px;display:grid;
             grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px;}
         .stat-card{background:var(--card);border:1px solid var(--border);
             border-radius:10px;padding:14px;text-align:center;}
         .stat-num{font-family:var(--mono);font-size:28px;font-weight:700;margin-bottom:4px;}
         .stat-lbl{font-family:var(--mono);font-size:9px;color:var(--muted);
             letter-spacing:1.5px;text-transform:uppercase;}
-
-        /* CARD */
-        .card{background:var(--card);border:1px solid var(--border);border-radius:12px;
-            padding:16px;width:100%;max-width:700px;margin-bottom:12px;}
-        .card-title{font-size:10px;font-family:var(--mono);color:var(--muted);
-            letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;
-            display:flex;align-items:center;justify-content:space-between;}
-
-        /* TABS */
-        .tabs{width:100%;max-width:700px;display:flex;gap:6px;margin-bottom:10px;}
+        .tabs{width:100%;max-width:720px;display:flex;gap:6px;margin-bottom:10px;}
         .tab-btn{flex:1;padding:10px;border-radius:8px;border:1px solid var(--border);
             background:var(--card);font-family:var(--mono);font-size:10px;letter-spacing:1px;
             text-transform:uppercase;color:var(--muted);cursor:pointer;transition:all .2s;}
-        .tab-btn.active-users{border-color:var(--purple);color:var(--purple);background:rgba(191,151,255,.08);}
-        .tab-btn.active-data{border-color:var(--blue);color:var(--blue);background:rgba(88,166,255,.08);}
-        .tab-panel{display:none;width:100%;max-width:700px;}
+        .tab-btn.act-users{border-color:var(--purple);color:var(--purple);background:rgba(191,151,255,.08);}
+        .tab-btn.act-part {border-color:var(--accent);color:var(--accent);background:rgba(0,229,160,.08);}
+        .tab-btn.act-data {border-color:var(--blue);color:var(--blue);background:rgba(88,166,255,.08);}
+        .tab-panel{display:none;width:100%;max-width:720px;}
         .tab-panel.show{display:block;}
-
-        /* FORM */
+        .card{background:var(--card);border:1px solid var(--border);border-radius:12px;
+            padding:16px;width:100%;margin-bottom:12px;}
+        .card-title{font-size:10px;font-family:var(--mono);color:var(--muted);
+            letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;
+            display:flex;align-items:center;justify-content:space-between;}
         .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
         .form-group{display:flex;flex-direction:column;gap:4px;}
         .form-group label{font-family:var(--mono);font-size:9px;color:var(--muted);
             letter-spacing:1.5px;text-transform:uppercase;}
-        .form-group input, .form-group select{padding:10px 12px;background:var(--bg);
+        .form-group input,.form-group select{padding:10px 12px;background:var(--bg);
             border:1.5px solid var(--border);border-radius:6px;color:var(--text);
-            font-family:var(--mono);font-size:13px;outline:none;transition:border-color .2s;}
-        .form-group input:focus, .form-group select:focus{border-color:var(--purple);}
+            font-family:var(--mono);font-size:13px;outline:none;}
+        .form-group input:focus,.form-group select:focus{border-color:var(--purple);}
         .form-group select option{background:var(--card);}
-
-        /* BUTTONS */
         .btn{padding:10px 18px;border:none;border-radius:8px;font-family:var(--sans);
             font-weight:700;font-size:13px;cursor:pointer;transition:all .2s;}
         .btn-purple{background:var(--purple);color:#0d1117;}
@@ -85,69 +70,44 @@
         .btn-muted{background:transparent;border:1px solid var(--border);color:var(--muted);}
         .btn:hover{filter:brightness(1.1);}
         .btn:disabled{opacity:.4;cursor:not-allowed;filter:none;}
-        .btn-sm{padding:5px 12px;font-size:11px;border-radius:6px;}
-
-        /* USER TABLE */
-        .user-table{width:100%;border-collapse:collapse;font-size:12px;}
-        .user-table th{font-family:var(--mono);font-size:9px;letter-spacing:1px;
-            text-transform:uppercase;color:var(--muted);padding:8px 10px;
-            border-bottom:1px solid var(--border);text-align:left;}
-        .user-table td{padding:10px 10px;border-bottom:1px solid rgba(48,54,61,.5);
-            font-family:var(--mono);font-size:12px;}
-        .user-table tr:last-child td{border-bottom:none;}
-        .user-table tr:hover td{background:rgba(255,255,255,.02);}
-
-        /* BADGES */
+        .btn-sm{padding:5px 10px;font-size:11px;border-radius:6px;}
+        .tbl{width:100%;border-collapse:collapse;font-size:12px;}
+        .tbl th{font-family:var(--mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;
+            color:var(--muted);padding:8px 10px;border-bottom:1px solid var(--border);text-align:left;}
+        .tbl td{padding:9px 10px;border-bottom:1px solid rgba(48,54,61,.5);font-family:var(--mono);}
+        .tbl tr:last-child td{border-bottom:none;}
+        .tbl tr:hover td{background:rgba(255,255,255,.02);}
         .badge{display:inline-block;padding:2px 8px;border-radius:6px;
             font-family:var(--mono);font-size:10px;font-weight:700;}
-        .badge-admin{background:rgba(248,81,73,.15);color:var(--danger);border:1px solid rgba(248,81,73,.3);}
-        .badge-operator{background:rgba(88,166,255,.12);color:var(--blue);border:1px solid rgba(88,166,255,.25);}
-        .badge-aktif{background:rgba(0,229,160,.1);color:var(--accent);border:1px solid rgba(0,229,160,.25);}
-        .badge-nonaktif{background:rgba(248,81,73,.1);color:var(--danger);border:1px solid rgba(248,81,73,.25);}
-
-        /* DATA TABLE */
-        .data-table{width:100%;border-collapse:collapse;font-size:11px;}
-        .data-table th{font-family:var(--mono);font-size:9px;letter-spacing:1px;
-            text-transform:uppercase;color:var(--muted);padding:6px 8px;
-            border-bottom:1px solid var(--border);text-align:left;}
-        .data-table td{padding:7px 8px;border-bottom:1px solid rgba(48,54,61,.4);
-            font-family:var(--mono);font-size:11px;color:var(--text);}
-        .data-table tr:last-child td{border-bottom:none;}
-        .data-table tr:hover td{background:rgba(255,255,255,.02);}
-
-        /* STATUS */
-        .status-bar{padding:8px 12px;border-radius:6px;font-family:var(--mono);
-            font-size:11px;margin-bottom:10px;display:none;}
-        .status-bar.show{display:block;}
-        .status-bar.ok{background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.2);color:var(--accent);}
-        .status-bar.err{background:rgba(248,81,73,.08);border:1px solid rgba(248,81,73,.2);color:var(--danger);}
-        .status-bar.info{background:rgba(88,166,255,.08);border:1px solid rgba(88,166,255,.2);color:var(--blue);}
-
-        /* LOADER */
+        .b-admin   {background:rgba(248,81,73,.15);color:var(--danger);border:1px solid rgba(248,81,73,.3);}
+        .b-operator{background:rgba(88,166,255,.12);color:var(--blue);border:1px solid rgba(88,166,255,.25);}
+        .b-aktif   {background:rgba(0,229,160,.1);color:var(--accent);border:1px solid rgba(0,229,160,.25);}
+        .b-nonaktif{background:rgba(248,81,73,.1);color:var(--danger);border:1px solid rgba(248,81,73,.25);}
+        .status-msg{padding:8px 12px;border-radius:6px;font-family:var(--mono);
+            font-size:11px;margin-bottom:10px;display:none;width:100%;max-width:720px;}
+        .status-msg.show{display:block;}
+        .status-msg.ok  {background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.2);color:var(--accent);}
+        .status-msg.err {background:rgba(248,81,73,.08);border:1px solid rgba(248,81,73,.2);color:var(--danger);}
+        .status-msg.info{background:rgba(88,166,255,.08);border:1px solid rgba(88,166,255,.2);color:var(--blue);}
         .loader{display:inline-block;width:14px;height:14px;border:2px solid var(--border);
             border-top-color:var(--blue);border-radius:50%;
             animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px;}
         @keyframes spin{to{transform:rotate(360deg)}}
-
-        /* MODAL */
+        .empty{text-align:center;padding:32px;color:var(--muted);font-family:var(--mono);font-size:12px;}
         .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);
             z-index:100;align-items:center;justify-content:center;padding:20px;}
         .modal-overlay.show{display:flex;}
         .modal{background:var(--card);border:1px solid var(--border);border-radius:14px;
-            padding:24px;width:100%;max-width:400px;}
+            padding:24px;width:100%;max-width:380px;}
         .modal-title{font-family:var(--mono);font-size:12px;color:var(--warn);
-            letter-spacing:2px;text-transform:uppercase;margin-bottom:16px;}
+            letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;}
         .modal-btns{display:flex;gap:8px;margin-top:16px;}
-
-        @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-        .fade-in{animation:fadeIn .2s ease-out;}
-
-        .empty-state{text-align:center;padding:32px;color:var(--muted);
-            font-family:var(--mono);font-size:12px;}
+        .td-actions{display:flex;gap:4px;flex-wrap:wrap;}
     </style>
 </head>
 <body>
 
+<!-- NAV -->
 <div class="nav-bar">
     <a class="nav-btn" href="index.html">🏠 Menu</a>
     <a class="nav-btn" href="scanner.html">📷 Scanner</a>
@@ -155,58 +115,49 @@
     <span class="nav-btn active">🛡️ Admin</span>
 </div>
 
+<!-- USER BAR -->
 <div class="user-bar">
-    <span class="user-bar-left">🛡️ Admin: <span id="userNama">—</span> &nbsp;|&nbsp; <span id="userNrp" style="color:var(--muted)">—</span></span>
+    <span style="color:var(--danger);">🛡️ <span id="spNama">—</span> &nbsp;|&nbsp; <span id="spNrp" style="color:var(--muted)">—</span></span>
     <button class="btn-logout" onclick="doLogout()">⏏ Logout</button>
 </div>
 
 <!-- STATS -->
-<div class="stats-row" id="statsRow">
-    <div class="stat-card">
-        <div class="stat-num" id="statTotal" style="color:var(--blue)">—</div>
-        <div class="stat-lbl">Total Scan</div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-num" id="statUsers" style="color:var(--purple)">—</div>
-        <div class="stat-lbl">Total User</div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-num" id="statAktif" style="color:var(--accent)">—</div>
-        <div class="stat-lbl">User Aktif</div>
-    </div>
+<div class="stats-row">
+    <div class="stat-card"><div class="stat-num" id="sTotalScan" style="color:var(--blue)">—</div><div class="stat-lbl">Total Scan</div></div>
+    <div class="stat-card"><div class="stat-num" id="sTotalUser" style="color:var(--purple)">—</div><div class="stat-lbl">Total User</div></div>
+    <div class="stat-card"><div class="stat-num" id="sAktif"     style="color:var(--accent)">—</div><div class="stat-lbl">User Aktif</div></div>
 </div>
 
 <!-- TABS -->
 <div class="tabs">
-    <button class="tab-btn active-users" id="tabUsers" onclick="switchTab('users')">👥 Kelola User</button>
-    <button class="tab-btn" id="tabData"  onclick="switchTab('data')">📊 Data Scan</button>
+    <button class="tab-btn act-users" id="tUsers" onclick="switchTab('users')">👥 Kelola User</button>
+    <button class="tab-btn"           id="tPart"  onclick="switchTab('part')">📦 Kelola Part</button>
+    <button class="tab-btn"           id="tData"  onclick="switchTab('data')">📊 Data Scan</button>
 </div>
 
-<!-- STATUS BAR -->
-<div class="status-bar" id="statusBar"></div>
+<!-- STATUS MSG -->
+<div class="status-msg" id="statusMsg"></div>
 
-<!-- ══ TAB: USERS ══ -->
-<div class="tab-panel show" id="panelUsers">
-
-    <!-- FORM TAMBAH USER -->
+<!-- ══ TAB USERS ══ -->
+<div class="tab-panel show" id="pUsers">
     <div class="card">
         <div class="card-title">
-            <span>➕ Tambah / Edit User</span>
-            <button class="btn btn-muted btn-sm" onclick="clearForm()">✕ Bersihkan</button>
+            ➕ Tambah / Edit User
+            <button class="btn btn-muted btn-sm" onclick="clearUserForm()">✕ Bersihkan</button>
         </div>
         <div class="form-grid">
             <div class="form-group">
                 <label>NRP</label>
-                <input type="text" id="fNrp" placeholder="Contoh: 12345" style="text-transform:uppercase"
+                <input id="fNrp" type="text" placeholder="Contoh: 12345"
                        oninput="this.value=this.value.toUpperCase()">
             </div>
             <div class="form-group">
                 <label>PIN (4-6 digit)</label>
-                <input type="text" id="fPin" placeholder="Contoh: 1234" maxlength="6" inputmode="numeric">
+                <input id="fPin" type="text" placeholder="Contoh: 1234" maxlength="6" inputmode="numeric">
             </div>
             <div class="form-group">
                 <label>Nama Lengkap</label>
-                <input type="text" id="fNama" placeholder="Contoh: Budi Santoso">
+                <input id="fNama" type="text" placeholder="Contoh: Budi Santoso">
             </div>
             <div class="form-group">
                 <label>Role</label>
@@ -216,362 +167,424 @@
                 </select>
             </div>
         </div>
-        <div style="display:flex;gap:8px;">
-            <button class="btn btn-purple" id="btnSaveUser" onclick="saveUser()">💾 Simpan User</button>
-            <input type="hidden" id="fEditNrp"> <!-- NRP asli saat edit -->
-        </div>
+        <input type="hidden" id="fEditNrp">
+        <button class="btn btn-purple" id="btnSaveUser" onclick="saveUser()">💾 Simpan User</button>
     </div>
-
-    <!-- DAFTAR USER -->
     <div class="card">
         <div class="card-title">
-            <span>👥 Daftar User</span>
+            👥 Daftar User
             <button class="btn btn-muted btn-sm" onclick="loadUsers()">🔄 Refresh</button>
         </div>
-        <div id="userList"><div class="empty-state"><span class="loader"></span> Memuat...</div></div>
+        <div id="userList"><div class="empty"><span class="loader"></span> Memuat...</div></div>
     </div>
 </div>
 
-<!-- ══ TAB: DATA SCAN ══ -->
-<div class="tab-panel" id="panelData">
+<!-- ══ TAB PART ══ -->
+<div class="tab-panel" id="pPart">
     <div class="card">
-        <div class="card-title">
-            <span>📊 Data Scan Terbaru</span>
-            <div style="display:flex;gap:6px;">
-                <button class="btn btn-muted btn-sm" onclick="loadData()">🔄 Refresh</button>
-                <button class="btn btn-blue btn-sm" onclick="exportCSV()">⬇️ Export CSV</button>
+        <div class="card-title">➕ Tambah / Update Part</div>
+        <div style="font-size:11px;color:var(--muted);font-family:var(--mono);margin-bottom:10px;
+            padding:8px;background:rgba(191,151,255,.06);border:1px solid rgba(191,151,255,.2);border-radius:6px;">
+            💡 Max Qty digunakan sebagai acuan fitur Search untuk membedakan sesi kereta lama vs baru.
+        </div>
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Nama Part</label>
+                <input id="pNama" type="text" placeholder="Contoh: Crank Case">
+            </div>
+            <div class="form-group">
+                <label>Max Qty Per Kereta</label>
+                <input id="pQty" type="number" placeholder="Contoh: 24" min="1">
             </div>
         </div>
-        <div id="dataList"><div class="empty-state">Pilih tab Data Scan untuk memuat</div></div>
+        <button class="btn btn-purple" id="btnSavePart" onclick="savePart()">💾 Simpan Part</button>
+    </div>
+    <div class="card">
+        <div class="card-title">
+            📦 Daftar Part
+            <button class="btn btn-muted btn-sm" onclick="loadParts()">🔄 Refresh</button>
+        </div>
+        <div id="partList"><div class="empty"><span class="loader"></span> Memuat...</div></div>
     </div>
 </div>
 
-<!-- MODAL KONFIRMASI -->
+<!-- ══ TAB DATA ══ -->
+<div class="tab-panel" id="pData">
+    <div class="card">
+        <div class="card-title">
+            📊 Data Scan Terbaru
+            <div style="display:flex;gap:6px;">
+                <button class="btn btn-muted btn-sm" onclick="loadData()">🔄 Refresh</button>
+                <button class="btn btn-blue  btn-sm" onclick="exportCSV()">⬇️ Export CSV</button>
+            </div>
+        </div>
+        <div id="dataList"><div class="empty">Klik tab Data Scan untuk memuat</div></div>
+    </div>
+</div>
+
+<!-- MODAL -->
 <div class="modal-overlay" id="modalOverlay">
     <div class="modal">
         <div class="modal-title" id="modalTitle">Konfirmasi</div>
         <div id="modalBody" style="font-size:13px;color:var(--text);line-height:1.6;"></div>
         <div class="modal-btns">
-            <button class="btn btn-danger" id="modalConfirm">Ya, Lanjutkan</button>
-            <button class="btn btn-muted" onclick="closeModal()">Batal</button>
+            <button class="btn btn-danger" id="modalOk">Ya, Lanjutkan</button>
+            <button class="btn btn-muted"  onclick="closeModal()">Batal</button>
         </div>
     </div>
 </div>
 
 <script>
-// ============================================================
+// ══════════════════════════════════════════════════════════
 // ⚠️ GANTI DENGAN URL APPS SCRIPT ANDA
-// ============================================================
-var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby1wR29raybZxS-9p6S-FanlnYxGIKNs0W23smMtdmjx_RH-RJvzzn9z_n-JCrgqoGU5A/exec';
+// ══════════════════════════════════════════════════════════
+var GAS_URL = 'https://script.google.com/macros/s/AKfycby1wR29raybZxS-9p6S-FanlnYxGIKNs0W23smMtdmjx_RH-RJvzzn9z_n-JCrgqoGU5A/exec';
 
 // ── SESSION ───────────────────────────────────────────────
-var SESSION_HOURS = 12;
 function getSession(){
     try{
-        var raw=sessionStorage.getItem('partScannerUser');
+        var raw = sessionStorage.getItem('partScannerUser');
         if(!raw) return null;
-        var s=JSON.parse(raw);
-        if(Date.now()-s.loginAt>SESSION_HOURS*3600*1000){
-            sessionStorage.removeItem('partScannerUser'); return null;
+        var s = JSON.parse(raw);
+        if(Date.now() - s.loginAt > 12*3600*1000){
+            sessionStorage.removeItem('partScannerUser');
+            return null;
         }
         return s;
     } catch(e){ return null; }
 }
 function doLogout(){
-    if(!confirm('Yakin ingin logout?')) return;
+    if(!confirm('Yakin logout?')) return;
     sessionStorage.removeItem('partScannerUser');
-    window.location.href='login.html';
+    location.href = 'login.html';
 }
 
-// Cek login + cek role admin
-var _session = getSession();
-if(!_session || !_session.nrp){
+var _me = getSession();
+if(!_me){
     sessionStorage.setItem('loginRedirect','admin.html');
-    window.location.href='login.html';
-} else if(_session.role !== 'admin'){
-    alert('⛔ Akses ditolak! Halaman ini hanya untuk Admin.');
-    window.location.href='index.html';
+    location.href = 'login.html';
+} else if(_me.role !== 'admin'){
+    alert('⛔ Akses ditolak! Hanya untuk Admin.');
+    location.href = 'index.html';
 } else {
-    document.getElementById('userNama').textContent = _session.nama || _session.nrp;
-    document.getElementById('userNrp').textContent  = _session.nrp;
+    document.getElementById('spNama').textContent = _me.nama || _me.nrp;
+    document.getElementById('spNrp').textContent  = _me.nrp;
+}
+
+// ── HELPER ────────────────────────────────────────────────
+function showMsg(msg, type){
+    var el = document.getElementById('statusMsg');
+    el.innerHTML = msg;
+    el.className = 'status-msg show ' + type;
+    if(type === 'ok') setTimeout(function(){ el.className = 'status-msg'; }, 3000);
+}
+
+function gasGet(params, cb){
+    var url = GAS_URL + '?' + params + '&t=' + Date.now();
+    fetch(url)
+        .then(function(r){ return r.text(); })
+        .then(function(txt){
+            try{ cb(null, JSON.parse(txt)); }
+            catch(e){ cb('Response tidak valid: ' + txt.substring(0,80)); }
+        })
+        .catch(function(e){ cb(e.message); });
 }
 
 // ── TABS ──────────────────────────────────────────────────
-var currentTab = 'users';
-function switchTab(tab){
-    currentTab = tab;
-    document.getElementById('panelUsers').className = 'tab-panel' + (tab==='users'?' show':'');
-    document.getElementById('panelData').className  = 'tab-panel' + (tab==='data' ?' show':'');
-    document.getElementById('tabUsers').className   = 'tab-btn'   + (tab==='users'?' active-users':'');
-    document.getElementById('tabData').className    = 'tab-btn'   + (tab==='data' ?' active-data':'');
-    if(tab==='data') loadData();
+var _tab = 'users';
+function switchTab(t){
+    _tab = t;
+    ['users','part','data'].forEach(function(x){
+        document.getElementById('p'+cap(x)).className = 'tab-panel' + (t===x?' show':'');
+        document.getElementById('t'+cap(x)).className = 'tab-btn'   + (t===x?' act-'+x:'');
+    });
+    if(t==='part') loadParts();
+    if(t==='data') loadData();
 }
-
-// ── STATUS ────────────────────────────────────────────────
-function showStatus(msg, type){
-    var el = document.getElementById('statusBar');
-    el.innerHTML = msg;
-    el.className = 'status-bar show ' + type;
-    if(type==='ok') setTimeout(function(){ el.className='status-bar'; }, 3000);
-}
+function cap(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
 
 // ── MODAL ─────────────────────────────────────────────────
-var _modalCb = null;
+var _cb = null;
 function showModal(title, body, cb){
     document.getElementById('modalTitle').textContent = title;
     document.getElementById('modalBody').innerHTML    = body;
     document.getElementById('modalOverlay').className = 'modal-overlay show';
-    _modalCb = cb;
-    document.getElementById('modalConfirm').onclick = function(){
-        closeModal(); if(_modalCb) _modalCb();
-    };
+    _cb = cb;
+    document.getElementById('modalOk').onclick = function(){ closeModal(); if(_cb) _cb(); };
 }
-function closeModal(){
-    document.getElementById('modalOverlay').className = 'modal-overlay';
-}
+function closeModal(){ document.getElementById('modalOverlay').className = 'modal-overlay'; }
 
 // ══════════════════════════════════════════════════════════
-// LOAD USERS
+// USERS
 // ══════════════════════════════════════════════════════════
 var _users = [];
+
 function loadUsers(){
-    document.getElementById('userList').innerHTML = '<div class="empty-state"><span class="loader"></span> Memuat data user...</div>';
-    fetch(APPS_SCRIPT_URL + '?action=getUsers&t=' + Date.now())
-        .then(function(r){ return r.json(); })
-        .then(function(res){
-            if(res.status !== 'ok'){ showStatus('❌ '+res.message,'err'); return; }
-            _users = res.users || [];
-            renderUsers(_users);
-            document.getElementById('statUsers').textContent = _users.length;
-            document.getElementById('statAktif').textContent = _users.filter(function(u){ return u.status==='aktif'; }).length;
-        })
-        .catch(function(e){ showStatus('❌ Gagal memuat user','err'); console.error(e); });
+    document.getElementById('userList').innerHTML = '<div class="empty"><span class="loader"></span> Memuat...</div>';
+    gasGet('action=getUsers', function(err, res){
+        if(err){
+            document.getElementById('userList').innerHTML = '<div class="empty">❌ '+err+'</div>';
+            showMsg('❌ Gagal: '+err, 'err');
+            return;
+        }
+        if(res.status !== 'ok'){
+            document.getElementById('userList').innerHTML = '<div class="empty">❌ '+(res.message||'Error')+'</div>';
+            return;
+        }
+        _users = res.users || [];
+        renderUsers();
+        document.getElementById('sTotalUser').textContent = _users.length;
+        document.getElementById('sAktif').textContent     = _users.filter(function(u){ return u.status==='aktif'; }).length;
+    });
 }
 
-function renderUsers(users){
-    if(users.length === 0){
-        document.getElementById('userList').innerHTML = '<div class="empty-state">Belum ada user terdaftar</div>';
+function renderUsers(){
+    if(!_users.length){
+        document.getElementById('userList').innerHTML = '<div class="empty">Belum ada user</div>';
         return;
     }
-    var html = '<table class="user-table"><tr>';
-    html += '<th>NRP</th><th>Nama</th><th>Role</th><th>Status</th><th>Aksi</th>';
-    html += '</tr>';
-    users.forEach(function(u){
-        var roleBadge   = u.role==='admin'
-            ? '<span class="badge badge-admin">👑 Admin</span>'
-            : '<span class="badge badge-operator">👷 Operator</span>';
-        var statusBadge = u.status==='aktif'
-            ? '<span class="badge badge-aktif">✅ Aktif</span>'
-            : '<span class="badge badge-nonaktif">🔴 Nonaktif</span>';
-        var toggleLabel = u.status==='aktif' ? '🔴 Nonaktifkan' : '✅ Aktifkan';
-        var isSelf      = u.nrp === (_session && _session.nrp);
-
-        html += '<tr class="fade-in">';
-        html += '<td style="color:var(--accent);font-weight:700;">'+u.nrp+'</td>';
-        html += '<td>'+u.nama+'</td>';
-        html += '<td>'+roleBadge+'</td>';
-        html += '<td>'+statusBadge+'</td>';
-        html += '<td style="display:flex;gap:5px;flex-wrap:wrap;">';
-        html += '<button class="btn btn-warn btn-sm" onclick="editUser(\''+u.nrp+'\')">✏️ Edit</button>';
+    var h = '<table class="tbl"><tr><th>NRP</th><th>Nama</th><th>Role</th><th>Status</th><th>Aksi</th></tr>';
+    _users.forEach(function(u, i){
+        var isSelf = (u.nrp === _me.nrp);
+        h += '<tr>';
+        h += '<td style="color:var(--accent)">'  + u.nrp  + '</td>';
+        h += '<td>' + u.nama + '</td>';
+        h += '<td><span class="badge '+(u.role==='admin'?'b-admin':'b-operator')+'">'+(u.role==='admin'?'👑 Admin':'👷 Operator')+'</span></td>';
+        h += '<td><span class="badge '+(u.status==='aktif'?'b-aktif':'b-nonaktif')+'">'+(u.status==='aktif'?'✅ Aktif':'🔴 Nonaktif')+'</span></td>';
+        h += '<td><div class="td-actions">';
+        h += '<button class="btn btn-warn btn-sm"   onclick="editUser('+i+')">✏️</button>';
         if(!isSelf){
-            html += '<button class="btn btn-muted btn-sm" onclick="toggleStatus(\''+u.nrp+'\',\''+u.status+'\')">'+toggleLabel+'</button>';
-            html += '<button class="btn btn-danger btn-sm" onclick="deleteUser(\''+u.nrp+'\',\''+u.nama+'\')">🗑️</button>';
-        } else {
-            html += '<span style="font-size:10px;color:var(--muted);padding:5px;">(akun Anda)</span>';
+            h += '<button class="btn btn-muted btn-sm" onclick="toggleUser('+i+')">'+(u.status==='aktif'?'🔴':'✅')+'</button>';
+            h += '<button class="btn btn-danger btn-sm" onclick="deleteUser('+i+')">🗑️</button>';
         }
-        html += '</td></tr>';
+        h += '</div></td></tr>';
     });
-    html += '</table>';
-    document.getElementById('userList').innerHTML = html;
+    h += '</table>';
+    document.getElementById('userList').innerHTML = h;
 }
 
-// ══════════════════════════════════════════════════════════
-// SAVE USER (tambah / edit)
-// ══════════════════════════════════════════════════════════
-function saveUser(){
-    var nrp      = document.getElementById('fNrp').value.trim().toUpperCase();
-    var pin      = document.getElementById('fPin').value.trim();
-    var nama     = document.getElementById('fNama').value.trim();
-    var role     = document.getElementById('fRole').value;
-    var editNrp  = document.getElementById('fEditNrp').value; // kosong = tambah baru
-
-    if(!nrp)  { showStatus('⚠️ NRP wajib diisi','err'); return; }
-    if(!pin && !editNrp)  { showStatus('⚠️ PIN wajib diisi untuk user baru','err'); return; }
-    if(pin && (pin.length < 4)) { showStatus('⚠️ PIN minimal 4 digit','err'); return; }
-    if(!nama) { showStatus('⚠️ Nama wajib diisi','err'); return; }
-
-    var btn = document.getElementById('btnSaveUser');
-    btn.disabled = true;
-    btn.textContent = '⏳ Menyimpan...';
-    showStatus('<span class="loader"></span>Menyimpan...','info');
-
-    var params = '?action=saveUser'
-        + '&nrp='    + encodeURIComponent(nrp)
-        + '&pin='    + encodeURIComponent(pin)
-        + '&nama='   + encodeURIComponent(nama)
-        + '&role='   + encodeURIComponent(role)
-        + '&editNrp='+ encodeURIComponent(editNrp);
-
-    fetch(APPS_SCRIPT_URL + params)
-        .then(function(r){ return r.json(); })
-        .then(function(res){
-            btn.disabled = false;
-            btn.textContent = '💾 Simpan User';
-            if(res.status === 'ok'){
-                showStatus('✅ ' + res.message, 'ok');
-                clearForm();
-                loadUsers();
-            } else {
-                showStatus('❌ ' + res.message, 'err');
-            }
-        })
-        .catch(function(e){
-            btn.disabled = false;
-            btn.textContent = '💾 Simpan User';
-            showStatus('❌ Gagal terhubung ke server','err');
-        });
-}
-
-function editUser(nrp){
-    var u = _users.find(function(x){ return x.nrp === nrp; });
-    if(!u) return;
-    document.getElementById('fNrp').value     = u.nrp;
-    document.getElementById('fNrp').disabled  = true; // NRP tidak boleh diubah saat edit
-    document.getElementById('fPin').value     = '';
-    document.getElementById('fPin').placeholder = 'Kosongkan jika tidak ingin ganti PIN';
-    document.getElementById('fNama').value    = u.nama;
-    document.getElementById('fRole').value    = u.role;
-    document.getElementById('fEditNrp').value = u.nrp;
+function editUser(i){
+    var u = _users[i];
+    document.getElementById('fNrp').value      = u.nrp;
+    document.getElementById('fNrp').disabled   = true;
+    document.getElementById('fPin').value      = '';
+    document.getElementById('fPin').placeholder= 'Kosong = tidak ganti PIN';
+    document.getElementById('fNama').value     = u.nama;
+    document.getElementById('fRole').value     = u.role;
+    document.getElementById('fEditNrp').value  = u.nrp;
     document.getElementById('btnSaveUser').textContent = '💾 Update User';
-    showStatus('✏️ Mode edit: '+u.nama+' ('+u.nrp+')','info');
+    showMsg('✏️ Mode edit: '+u.nama, 'info');
     window.scrollTo({top:0,behavior:'smooth'});
 }
 
-function clearForm(){
-    document.getElementById('fNrp').value       = '';
-    document.getElementById('fNrp').disabled    = false;
-    document.getElementById('fPin').value       = '';
-    document.getElementById('fPin').placeholder = 'Contoh: 1234';
-    document.getElementById('fNama').value      = '';
-    document.getElementById('fRole').value      = 'operator';
-    document.getElementById('fEditNrp').value   = '';
+function clearUserForm(){
+    ['fNrp','fPin','fNama','fEditNrp'].forEach(function(id){ document.getElementById(id).value=''; });
+    document.getElementById('fNrp').disabled   = false;
+    document.getElementById('fPin').placeholder= 'Contoh: 1234';
+    document.getElementById('fRole').value     = 'operator';
     document.getElementById('btnSaveUser').textContent = '💾 Simpan User';
-    document.getElementById('statusBar').className = 'status-bar';
+    document.getElementById('statusMsg').className = 'status-msg';
 }
 
-function toggleStatus(nrp, currentStatus){
-    var newStatus = currentStatus === 'aktif' ? 'nonaktif' : 'aktif';
-    var label     = newStatus === 'aktif' ? 'mengaktifkan' : 'menonaktifkan';
-    showModal(
-        '⚠️ Konfirmasi',
-        'Yakin ingin <b>'+label+'</b> akun <b>'+nrp+'</b>?',
-        function(){
-            fetch(APPS_SCRIPT_URL + '?action=toggleStatus&nrp='+encodeURIComponent(nrp)+'&status='+newStatus)
-                .then(function(r){ return r.json(); })
-                .then(function(res){
-                    if(res.status==='ok'){ showStatus('✅ '+res.message,'ok'); loadUsers(); }
-                    else showStatus('❌ '+res.message,'err');
-                });
-        }
-    );
+function saveUser(){
+    var nrp    = document.getElementById('fNrp').value.trim().toUpperCase();
+    var pin    = document.getElementById('fPin').value.trim();
+    var nama   = document.getElementById('fNama').value.trim();
+    var role   = document.getElementById('fRole').value;
+    var editNrp= document.getElementById('fEditNrp').value.trim();
+    if(!nrp)            { showMsg('⚠️ NRP wajib diisi','err'); return; }
+    if(!editNrp && !pin){ showMsg('⚠️ PIN wajib untuk user baru','err'); return; }
+    if(pin && pin.length<4){ showMsg('⚠️ PIN minimal 4 digit','err'); return; }
+    if(!nama)           { showMsg('⚠️ Nama wajib diisi','err'); return; }
+
+    var btn = document.getElementById('btnSaveUser');
+    btn.disabled = true; btn.textContent = '⏳ Menyimpan...';
+    showMsg('<span class="loader"></span>Menyimpan...','info');
+
+    var q = 'action=saveUser&nrp='+encodeURIComponent(nrp)
+          + '&pin='+encodeURIComponent(pin)
+          + '&nama='+encodeURIComponent(nama)
+          + '&role='+encodeURIComponent(role)
+          + '&editNrp='+encodeURIComponent(editNrp);
+
+    gasGet(q, function(err, res){
+        btn.disabled = false;
+        btn.textContent = '💾 Simpan User';
+        if(err){ showMsg('❌ '+err,'err'); return; }
+        if(res.status==='ok'){ showMsg('✅ '+res.message,'ok'); clearUserForm(); loadUsers(); }
+        else showMsg('❌ '+(res.message||'Gagal'),'err');
+    });
 }
 
-function deleteUser(nrp, nama){
-    showModal(
-        '🗑️ Hapus User',
-        'Yakin ingin <b>menghapus permanen</b> akun:<br><br>'+
-        '<b style="color:var(--danger)">'+nama+' ('+nrp+')</b><br><br>'+
-        'Data scan yang sudah tersimpan <b>tidak akan terhapus</b>.',
+function toggleUser(i){
+    var u = _users[i];
+    var ns = u.status==='aktif' ? 'nonaktif' : 'aktif';
+    showModal('⚠️ Konfirmasi',
+        'Ubah status <b>'+u.nama+'</b> menjadi <b>'+ns+'</b>?',
         function(){
-            fetch(APPS_SCRIPT_URL + '?action=deleteUser&nrp='+encodeURIComponent(nrp))
-                .then(function(r){ return r.json(); })
-                .then(function(res){
-                    if(res.status==='ok'){ showStatus('✅ '+res.message,'ok'); loadUsers(); }
-                    else showStatus('❌ '+res.message,'err');
+            gasGet('action=toggleStatus&nrp='+encodeURIComponent(u.nrp)+'&status='+ns,
+                function(err,res){
+                    if(err){ showMsg('❌ '+err,'err'); return; }
+                    if(res.status==='ok'){ showMsg('✅ '+res.message,'ok'); loadUsers(); }
+                    else showMsg('❌ '+(res.message||'Gagal'),'err');
                 });
-        }
-    );
+        });
+}
+
+function deleteUser(i){
+    var u = _users[i];
+    showModal('🗑️ Hapus User',
+        'Hapus permanen akun <b style="color:var(--danger)">'+u.nama+' ('+u.nrp+')</b>?',
+        function(){
+            gasGet('action=deleteUser&nrp='+encodeURIComponent(u.nrp),
+                function(err,res){
+                    if(err){ showMsg('❌ '+err,'err'); return; }
+                    if(res.status==='ok'){ showMsg('✅ '+res.message,'ok'); loadUsers(); }
+                    else showMsg('❌ '+(res.message||'Gagal'),'err');
+                });
+        });
 }
 
 // ══════════════════════════════════════════════════════════
-// LOAD DATA SCAN
+// PARTS
 // ══════════════════════════════════════════════════════════
-var _scanData = [];
-function loadData(){
-    document.getElementById('dataList').innerHTML = '<div class="empty-state"><span class="loader"></span> Memuat data scan...</div>';
-    fetch(APPS_SCRIPT_URL + '?action=all&t=' + Date.now())
-        .then(function(r){ return r.json(); })
-        .then(function(res){
-            if(res.status !== 'ok'){ showStatus('❌ Gagal memuat data','err'); return; }
-            _scanData = res.data || [];
-            document.getElementById('statTotal').textContent = _scanData.length;
-            renderData(_scanData);
-        })
-        .catch(function(e){ showStatus('❌ Gagal memuat data','err'); });
+var _parts = [];
+
+function loadParts(){
+    document.getElementById('partList').innerHTML = '<div class="empty"><span class="loader"></span> Memuat...</div>';
+    gasGet('action=getParts', function(err, res){
+        if(err){ document.getElementById('partList').innerHTML='<div class="empty">❌ '+err+'</div>'; return; }
+        _parts = res.parts || [];
+        renderParts();
+    });
 }
 
-function renderData(data){
-    if(data.length === 0){
-        document.getElementById('dataList').innerHTML = '<div class="empty-state">Belum ada data scan</div>';
+function renderParts(){
+    if(!_parts.length){
+        document.getElementById('partList').innerHTML = '<div class="empty">Belum ada part</div>';
         return;
     }
-    // Tampilkan 100 terbaru
-    var slice = data.slice(-100).reverse();
-    var html = '<table class="data-table"><tr>';
-    html += '<th>No</th><th>Tanggal</th><th>NRP</th><th>Mesin</th><th>Part</th><th>Kereta</th><th>Dies</th><th>Lot</th>';
-    html += '</tr>';
-    slice.forEach(function(r, i){
-        var shortDate = (r.tanggal||'').toString().substring(0,16);
-        html += '<tr>';
-        html += '<td style="color:var(--muted)">'+(i+1)+'</td>';
-        html += '<td style="color:var(--muted);font-size:10px;">'+shortDate+'</td>';
-        html += '<td style="color:var(--purple);">'+( r.nrp||'-')+'</td>';
-        html += '<td>'+(r.mesin||'-')+'</td>';
-        html += '<td style="color:var(--blue);">'+(r.namaPart||'-')+'</td>';
-        html += '<td style="color:var(--accent);">'+(r.kereta||'-')+'</td>';
-        html += '<td style="color:var(--warn);">'+(r.dies||'-')+'</td>';
-        html += '<td style="color:var(--accent);">'+(r.lot||'-')+'</td>';
-        html += '</tr>';
+    var h = '<table class="tbl"><tr><th>No</th><th>Nama Part</th><th>Max Qty/Kereta</th><th>Aksi</th></tr>';
+    _parts.forEach(function(p,i){
+        h += '<tr>';
+        h += '<td style="color:var(--muted)">'+(i+1)+'</td>';
+        h += '<td style="color:var(--purple);font-weight:700;">'+p.nama+'</td>';
+        h += '<td><span class="badge" style="background:rgba(191,151,255,.15);color:var(--purple);border:1px solid rgba(191,151,255,.3);">'+p.maxQty+' pcs</span></td>';
+        h += '<td><div class="td-actions">';
+        h += '<button class="btn btn-warn btn-sm"   onclick="editPart('+i+')">✏️ Edit</button>';
+        h += '<button class="btn btn-danger btn-sm" onclick="deletePart('+i+')">🗑️</button>';
+        h += '</div></td></tr>';
     });
-    html += '</table>';
-    if(data.length > 100){
-        html += '<div style="text-align:center;padding:10px;font-family:var(--mono);font-size:10px;color:var(--muted);">Menampilkan 100 data terbaru dari '+data.length+' total — Export CSV untuk data lengkap</div>';
-    }
-    document.getElementById('dataList').innerHTML = html;
+    h += '</table>';
+    document.getElementById('partList').innerHTML = h;
+}
+
+function editPart(i){
+    var p = _parts[i];
+    document.getElementById('pNama').value = p.nama;
+    document.getElementById('pQty').value  = p.maxQty;
+    document.getElementById('btnSavePart').textContent = '💾 Update Part';
+    showMsg('✏️ Edit: '+p.nama,'info');
+    window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function savePart(){
+    var nama = document.getElementById('pNama').value.trim();
+    var qty  = parseInt(document.getElementById('pQty').value||'0',10);
+    if(!nama)  { showMsg('⚠️ Nama part wajib diisi','err'); return; }
+    if(qty < 1){ showMsg('⚠️ Max qty minimal 1','err'); return; }
+
+    var btn = document.getElementById('btnSavePart');
+    btn.disabled=true; btn.textContent='⏳ Menyimpan...';
+    gasGet('action=savePart&nama='+encodeURIComponent(nama)+'&maxQty='+qty,
+        function(err,res){
+            btn.disabled=false; btn.textContent='💾 Simpan Part';
+            if(err){ showMsg('❌ '+err,'err'); return; }
+            if(res.status==='ok'){
+                showMsg('✅ '+res.message,'ok');
+                document.getElementById('pNama').value='';
+                document.getElementById('pQty').value='';
+                loadParts();
+            } else showMsg('❌ '+(res.message||'Gagal'),'err');
+        });
+}
+
+function deletePart(i){
+    var p = _parts[i];
+    showModal('🗑️ Hapus Part','Hapus <b style="color:var(--danger)">'+p.nama+'</b>?',
+        function(){
+            gasGet('action=deletePart&nama='+encodeURIComponent(p.nama),
+                function(err,res){
+                    if(err){ showMsg('❌ '+err,'err'); return; }
+                    if(res.status==='ok'){ showMsg('✅ '+res.message,'ok'); loadParts(); }
+                    else showMsg('❌ '+(res.message||'Gagal'),'err');
+                });
+        });
 }
 
 // ══════════════════════════════════════════════════════════
-// EXPORT CSV
+// DATA SCAN
 // ══════════════════════════════════════════════════════════
-function exportCSV(){
-    if(_scanData.length === 0){ showStatus('⚠️ Muat data dulu sebelum export','err'); return; }
-    var headers = ['No','Tanggal','NRP','Mesin','Kondisi','Nama Part','Kereta','Dies','Lot'];
-    var rows = [headers.join(',')];
-    _scanData.forEach(function(r){
-        rows.push([
-            r.no, '"'+(r.tanggal||'')+'"', r.nrp, '"'+(r.mesin||'')+'"',
-            '"'+(r.kondisi||'')+'"', '"'+(r.namaPart||'')+'"',
-            r.kereta, r.dies, r.lot
-        ].join(','));
+var _scanData = [];
+
+function loadData(){
+    document.getElementById('dataList').innerHTML = '<div class="empty"><span class="loader"></span> Memuat...</div>';
+    gasGet('action=all', function(err, res){
+        if(err){ document.getElementById('dataList').innerHTML='<div class="empty">❌ '+err+'</div>'; return; }
+        _scanData = res.data || [];
+        document.getElementById('sTotalScan').textContent = _scanData.length;
+        renderData();
     });
-    var blob = new Blob([rows.join('\n')], {type:'text/csv;charset=utf-8;'});
-    var url  = URL.createObjectURL(blob);
-    var a    = document.createElement('a');
-    a.href   = url;
-    a.download = 'data-scan-' + new Date().toISOString().slice(0,10) + '.csv';
+}
+
+function renderData(){
+    if(!_scanData.length){
+        document.getElementById('dataList').innerHTML = '<div class="empty">Belum ada data scan</div>';
+        return;
+    }
+    var slice = _scanData.slice(-100).reverse();
+    var h = '<table class="tbl"><tr><th>No</th><th>Tanggal</th><th>NRP</th><th>Mesin</th><th>Part</th><th>Kereta</th><th>Dies</th><th>Lot</th></tr>';
+    slice.forEach(function(r,i){
+        h += '<tr>';
+        h += '<td style="color:var(--muted)">'+(i+1)+'</td>';
+        h += '<td style="color:var(--muted);font-size:10px;">'+(String(r.tanggal||'').substring(0,16))+'</td>';
+        h += '<td style="color:var(--purple);">'+(r.nrp||'-')+'</td>';
+        h += '<td>'+(r.mesin||'-')+'</td>';
+        h += '<td style="color:var(--blue);">'+(r.namaPart||'-')+'</td>';
+        h += '<td style="color:var(--accent);">'+(r.kereta||'-')+'</td>';
+        h += '<td style="color:var(--warn);">'+(r.dies||'-')+'</td>';
+        h += '<td>'+(r.lot||'-')+'</td>';
+        h += '</tr>';
+    });
+    h += '</table>';
+    if(_scanData.length>100){
+        h += '<div style="text-align:center;padding:10px;font-family:var(--mono);font-size:10px;color:var(--muted);">Menampilkan 100 terbaru dari '+_scanData.length+' total</div>';
+    }
+    document.getElementById('dataList').innerHTML = h;
+}
+
+function exportCSV(){
+    if(!_scanData.length){ showMsg('⚠️ Muat data dulu','err'); return; }
+    var rows = [['No','Tanggal','NRP','Mesin','Kondisi','Nama Part','Kereta','Dies','Lot'].join(',')];
+    _scanData.forEach(function(r){
+        rows.push([r.no,'"'+(r.tanggal||'')+'"',r.nrp,'"'+(r.mesin||'')+'"',
+            '"'+(r.kondisi||'')+'"','"'+(r.namaPart||'')+'"',r.kereta,r.dies,r.lot].join(','));
+    });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([rows.join('\n')],{type:'text/csv'}));
+    a.download = 'data-scan-'+new Date().toISOString().slice(0,10)+'.csv';
     a.click();
-    URL.revokeObjectURL(url);
-    showStatus('✅ CSV berhasil diexport','ok');
+    showMsg('✅ CSV berhasil diexport','ok');
 }
 
 // ── INIT ──────────────────────────────────────────────────
-loadUsers();
-// Load stats total scan
-fetch(APPS_SCRIPT_URL + '?action=all&t=' + Date.now())
-    .then(function(r){ return r.json(); })
-    .then(function(res){
-        if(res.status==='ok') document.getElementById('statTotal').textContent = (res.data||[]).length;
+if(_me && _me.role === 'admin'){
+    loadUsers();
+    gasGet('action=all', function(err, res){
+        if(!err && res.status==='ok')
+            document.getElementById('sTotalScan').textContent = (res.data||[]).length;
     });
+}
 </script>
 </body>
 </html>
