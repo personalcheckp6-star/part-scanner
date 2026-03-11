@@ -188,6 +188,14 @@
 
 <!-- STATUS BAR -->
 <div class="status-bar" id="statusBar"></div>
+<div id="connTest" style="display:none;width:100%;max-width:700px;padding:8px 12px;
+    background:rgba(248,81,73,.08);border:1px solid rgba(248,81,73,.2);border-radius:8px;
+    margin-bottom:8px;font-family:var(--mono);font-size:11px;color:var(--danger);">
+    ⚠️ Koneksi ke server gagal. <button onclick="retryConn()" 
+    style="margin-left:8px;padding:2px 10px;border:1px solid var(--danger);border-radius:4px;
+    background:transparent;color:var(--danger);cursor:pointer;font-family:var(--mono);font-size:10px;">
+    🔄 Coba Lagi</button>
+</div>
 
 <!-- ══ TAB: USERS ══ -->
 <div class="tab-panel show" id="panelUsers">
@@ -403,15 +411,27 @@ var _users = [];
 function loadUsers(){
     document.getElementById('userList').innerHTML = '<div class="empty-state"><span class="loader"></span> Memuat data user...</div>';
     fetch(APPS_SCRIPT_URL + '?action=getUsers&t=' + Date.now())
-        .then(function(r){ return r.json(); })
+        .then(function(r){
+            if(!r.ok) throw new Error('HTTP ' + r.status);
+            return r.json();
+        })
         .then(function(res){
-            if(res.status !== 'ok'){ showStatus('❌ '+res.message,'err'); return; }
+            if(res.status !== 'ok'){
+                document.getElementById('userList').innerHTML = '<div class="empty-state">❌ ' + (res.message||'Gagal memuat') + '</div>';
+                showStatus('❌ '+(res.message||'Gagal memuat user'),'err');
+                return;
+            }
             _users = res.users || [];
             renderUsers(_users);
             document.getElementById('statUsers').textContent = _users.length;
             document.getElementById('statAktif').textContent = _users.filter(function(u){ return u.status==='aktif'; }).length;
         })
-        .catch(function(e){ showStatus('❌ Gagal memuat user','err'); console.error(e); });
+        .catch(function(e){
+            document.getElementById('userList').innerHTML = '<div class="empty-state">❌ Gagal terhubung ke server.<br><span style="font-size:10px;color:var(--muted)">'+e.message+'</span></div>';
+            document.getElementById('connTest').style.display='block';
+            showStatus('❌ Gagal memuat user: ' + e.message,'err');
+            console.error('loadUsers error:', e);
+        });
 }
 
 function renderUsers(users){
@@ -667,6 +687,16 @@ function renderPart(list){
     document.getElementById('partList').innerHTML = html;
 }
 
+function editPartIdx(idx){
+    var p = _partList[idx];
+    if(!p) return;
+    editPart(p.nama, p.maxQty);
+}
+function deletePartIdx(idx){
+    var p = _partList[idx];
+    if(!p) return;
+    deletePart(p.nama);
+}
 function editPart(nama, maxQty){
     document.getElementById('pNama').value   = nama;
     document.getElementById('pMaxQty').value = maxQty;
@@ -780,6 +810,11 @@ function saveMesin(){
         });
 }
 
+function deleteMesinIdx(idx){
+    var m = _mesinList[idx];
+    if(!m) return;
+    deleteMesin(m.nama);
+}
 function deleteMesin(nama){
     showModal(
         '🗑️ Hapus Mesin',
@@ -796,13 +831,22 @@ function deleteMesin(nama){
 }
 
 // ── INIT ──────────────────────────────────────────────────
-loadUsers();
-// Load stats total scan
-fetch(APPS_SCRIPT_URL + '?action=all&t=' + Date.now())
-    .then(function(r){ return r.json(); })
-    .then(function(res){
-        if(res.status==='ok') document.getElementById('statTotal').textContent = (res.data||[]).length;
-    });
+function retryConn(){
+    document.getElementById('connTest').style.display='none';
+    loadUsers();
+}
+
+// Hanya jalankan jika session valid dan role admin
+if(_session && _session.role === 'admin'){
+    loadUsers();
+    // Load stats total scan
+    fetch(APPS_SCRIPT_URL + '?action=all&t=' + Date.now())
+        .then(function(r){ return r.json(); })
+        .then(function(res){
+            if(res.status==='ok') document.getElementById('statTotal').textContent = (res.data||[]).length;
+        })
+        .catch(function(e){ console.error('Stats error:', e); });
+}
 </script>
 </body>
 </html>
