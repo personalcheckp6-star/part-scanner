@@ -61,8 +61,6 @@
             text-transform:uppercase;color:var(--muted);cursor:pointer;transition:all .2s;}
         .tab-btn.active-users{border-color:var(--purple);color:var(--purple);background:rgba(191,151,255,.08);}
         .tab-btn.active-data{border-color:var(--blue);color:var(--blue);background:rgba(88,166,255,.08);}
-        .tab-btn.active-mesin{border-color:var(--accent);color:var(--accent);background:rgba(0,229,160,.08);}
-        .tab-btn.active-part{border-color:var(--purple);color:var(--purple);background:rgba(191,151,255,.08);}
         .tab-panel{display:none;width:100%;max-width:700px;}
         .tab-panel.show{display:block;}
 
@@ -181,21 +179,11 @@
 <!-- TABS -->
 <div class="tabs">
     <button class="tab-btn active-users" id="tabUsers" onclick="switchTab('users')">👥 Kelola User</button>
-    <button class="tab-btn" id="tabMesin" onclick="switchTab('mesin')">🏭 Kelola Mesin</button>
-    <button class="tab-btn" id="tabPart"  onclick="switchTab('part')">📦 Kelola Part</button>
     <button class="tab-btn" id="tabData"  onclick="switchTab('data')">📊 Data Scan</button>
 </div>
 
 <!-- STATUS BAR -->
 <div class="status-bar" id="statusBar"></div>
-<div id="connTest" style="display:none;width:100%;max-width:700px;padding:8px 12px;
-    background:rgba(248,81,73,.08);border:1px solid rgba(248,81,73,.2);border-radius:8px;
-    margin-bottom:8px;font-family:var(--mono);font-size:11px;color:var(--danger);">
-    ⚠️ Koneksi ke server gagal. <button onclick="retryConn()" 
-    style="margin-left:8px;padding:2px 10px;border:1px solid var(--danger);border-radius:4px;
-    background:transparent;color:var(--danger);cursor:pointer;font-family:var(--mono);font-size:10px;">
-    🔄 Coba Lagi</button>
-</div>
 
 <!-- ══ TAB: USERS ══ -->
 <div class="tab-panel show" id="panelUsers">
@@ -241,62 +229,6 @@
             <button class="btn btn-muted btn-sm" onclick="loadUsers()">🔄 Refresh</button>
         </div>
         <div id="userList"><div class="empty-state"><span class="loader"></span> Memuat...</div></div>
-    </div>
-</div>
-
-<!-- ══ TAB: PART ══ -->
-<div class="tab-panel" id="panelPart">
-    <div class="card">
-        <div class="card-title">➕ Tambah / Update Part</div>
-        <div style="font-size:11px;color:var(--muted);font-family:var(--mono);margin-bottom:10px;
-            padding:8px;background:rgba(191,151,255,.06);border:1px solid rgba(191,151,255,.2);border-radius:6px;">
-            💡 Max Qty digunakan sebagai acuan di fitur Search untuk membedakan sesi kereta lama vs baru.
-            Isi sesuai kapasitas maksimal part dalam 1 kereta.
-        </div>
-        <div class="form-grid">
-            <div class="form-group">
-                <label>Nama Part</label>
-                <input type="text" id="pNama" placeholder="Contoh: Crank Case">
-            </div>
-            <div class="form-group">
-                <label>Max Qty Per Kereta</label>
-                <input type="number" id="pMaxQty" placeholder="Contoh: 24" min="1" max="9999">
-            </div>
-        </div>
-        <button class="btn btn-purple" id="btnSavePart" onclick="savePart()">💾 Simpan Part</button>
-    </div>
-    <div class="card">
-        <div class="card-title">
-            <span>📦 Daftar Part & Max Qty</span>
-            <button class="btn btn-muted btn-sm" onclick="loadPartList()">🔄 Refresh</button>
-        </div>
-        <div id="partList"><div class="empty-state"><span class="loader"></span> Memuat...</div></div>
-    </div>
-</div>
-
-<!-- ══ TAB: MESIN ══ -->
-<div class="tab-panel" id="panelMesin">
-    <div class="card">
-        <div class="card-title">➕ Tambah Mesin</div>
-        <div class="form-grid">
-            <div class="form-group">
-                <label>Nama / Nomor Mesin</label>
-                <input type="text" id="mNama" placeholder="Contoh: Mesin Press A1"
-                       oninput="this.value=this.value.toUpperCase()">
-            </div>
-            <div class="form-group">
-                <label>Keterangan (opsional)</label>
-                <input type="text" id="mKet" placeholder="Contoh: Lantai 2 - Line 3">
-            </div>
-        </div>
-        <button class="btn btn-purple" id="btnSaveMesin" onclick="saveMesin()">💾 Tambah Mesin</button>
-    </div>
-    <div class="card">
-        <div class="card-title">
-            <span>🏭 Daftar Mesin</span>
-            <button class="btn btn-muted btn-sm" onclick="loadMesinList()">🔄 Refresh</button>
-        </div>
-        <div id="mesinList"><div class="empty-state"><span class="loader"></span> Memuat...</div></div>
     </div>
 </div>
 
@@ -369,16 +301,10 @@ var currentTab = 'users';
 function switchTab(tab){
     currentTab = tab;
     document.getElementById('panelUsers').className = 'tab-panel' + (tab==='users'?' show':'');
-    document.getElementById('panelPart').className  = 'tab-panel' + (tab==='part' ?' show':'');
-    document.getElementById('panelMesin').className = 'tab-panel' + (tab==='mesin'?' show':'');
     document.getElementById('panelData').className  = 'tab-panel' + (tab==='data' ?' show':'');
     document.getElementById('tabUsers').className   = 'tab-btn'   + (tab==='users'?' active-users':'');
-    document.getElementById('tabPart').className    = 'tab-btn'   + (tab==='part' ?' active-part' :'');
-    document.getElementById('tabMesin').className   = 'tab-btn'   + (tab==='mesin'?' active-mesin':'');
-    document.getElementById('tabData').className    = 'tab-btn'   + (tab==='data' ?' active-data' :'');
-    if(tab==='data')  loadData();
-    if(tab==='part')  loadPartList();
-    if(tab==='mesin') loadMesinList();
+    document.getElementById('tabData').className    = 'tab-btn'   + (tab==='data' ?' active-data':'');
+    if(tab==='data') loadData();
 }
 
 // ── STATUS ────────────────────────────────────────────────
@@ -411,27 +337,15 @@ var _users = [];
 function loadUsers(){
     document.getElementById('userList').innerHTML = '<div class="empty-state"><span class="loader"></span> Memuat data user...</div>';
     fetch(APPS_SCRIPT_URL + '?action=getUsers&t=' + Date.now())
-        .then(function(r){
-            if(!r.ok) throw new Error('HTTP ' + r.status);
-            return r.json();
-        })
+        .then(function(r){ return r.json(); })
         .then(function(res){
-            if(res.status !== 'ok'){
-                document.getElementById('userList').innerHTML = '<div class="empty-state">❌ ' + (res.message||'Gagal memuat') + '</div>';
-                showStatus('❌ '+(res.message||'Gagal memuat user'),'err');
-                return;
-            }
+            if(res.status !== 'ok'){ showStatus('❌ '+res.message,'err'); return; }
             _users = res.users || [];
             renderUsers(_users);
             document.getElementById('statUsers').textContent = _users.length;
             document.getElementById('statAktif').textContent = _users.filter(function(u){ return u.status==='aktif'; }).length;
         })
-        .catch(function(e){
-            document.getElementById('userList').innerHTML = '<div class="empty-state">❌ Gagal terhubung ke server.<br><span style="font-size:10px;color:var(--muted)">'+e.message+'</span></div>';
-            document.getElementById('connTest').style.display='block';
-            showStatus('❌ Gagal memuat user: ' + e.message,'err');
-            console.error('loadUsers error:', e);
-        });
+        .catch(function(e){ showStatus('❌ Gagal memuat user','err'); console.error(e); });
 }
 
 function renderUsers(users){
@@ -650,203 +564,14 @@ function exportCSV(){
     showStatus('✅ CSV berhasil diexport','ok');
 }
 
-// ══════════════════════════════════════════════════════════
-// KELOLA PART
-// ══════════════════════════════════════════════════════════
-var _partList = [];
-
-function loadPartList(){
-    document.getElementById('partList').innerHTML = '<div class="empty-state"><span class="loader"></span> Memuat...</div>';
-    fetch(APPS_SCRIPT_URL + '?action=getParts&t=' + Date.now())
-        .then(function(r){ return r.json(); })
-        .then(function(res){
-            _partList = res.parts || [];
-            renderPart(_partList);
-        })
-        .catch(function(){ showStatus('❌ Gagal memuat part','err'); });
-}
-
-function renderPart(list){
-    if(list.length === 0){
-        document.getElementById('partList').innerHTML = '<div class="empty-state">Belum ada part terdaftar</div>';
-        return;
-    }
-    var html = '<table class="user-table">';
-    html += '<tr><th>No</th><th>Nama Part</th><th>Max Qty / Kereta</th><th>Aksi</th></tr>';
-    list.forEach(function(p, i){
-        html += '<tr class="fade-in">';
-        html += '<td style="color:var(--muted)">'+(i+1)+'</td>';
-        html += '<td style="color:var(--purple);font-weight:700;">'+p.nama+'</td>';
-        html += '<td><span class="badge" style="background:rgba(191,151,255,.15);color:var(--purple);border:1px solid rgba(191,151,255,.3);">'+p.maxQty+' pcs</span></td>';
-        html += '<td style="display:flex;gap:5px;">';
-        html += '<button class="btn btn-warn btn-sm" onclick="editPart(''+p.nama.replace(/'/g,"\'")+'','+p.maxQty+')">✏️ Edit</button>';
-        html += '<button class="btn btn-danger btn-sm" onclick="deletePart(''+p.nama.replace(/'/g,"\'")+'')">🗑️</button>';
-        html += '</td></tr>';
-    });
-    html += '</table>';
-    document.getElementById('partList').innerHTML = html;
-}
-
-function editPartIdx(idx){
-    var p = _partList[idx];
-    if(!p) return;
-    editPart(p.nama, p.maxQty);
-}
-function deletePartIdx(idx){
-    var p = _partList[idx];
-    if(!p) return;
-    deletePart(p.nama);
-}
-function editPart(nama, maxQty){
-    document.getElementById('pNama').value   = nama;
-    document.getElementById('pMaxQty').value = maxQty;
-    document.getElementById('btnSavePart').textContent = '💾 Update Part';
-    showStatus('✏️ Mode edit: '+nama,'info');
-    window.scrollTo({top:0, behavior:'smooth'});
-}
-
-function savePart(){
-    var nama   = document.getElementById('pNama').value.trim();
-    var maxQty = parseInt(document.getElementById('pMaxQty').value||'0', 10);
-    if(!nama)    { showStatus('⚠️ Nama part wajib diisi','err'); return; }
-    if(maxQty<1) { showStatus('⚠️ Max qty harus minimal 1','err'); return; }
-
-    var btn = document.getElementById('btnSavePart');
-    btn.disabled = true; btn.textContent = '⏳ Menyimpan...';
-
-    fetch(APPS_SCRIPT_URL + '?action=savePart&nama='+encodeURIComponent(nama)+'&maxQty='+maxQty)
-        .then(function(r){ return r.json(); })
-        .then(function(res){
-            btn.disabled = false; btn.textContent = '💾 Simpan Part';
-            if(res.status === 'ok'){
-                showStatus('✅ '+res.message,'ok');
-                document.getElementById('pNama').value   = '';
-                document.getElementById('pMaxQty').value = '';
-                loadPartList();
-            } else {
-                showStatus('❌ '+res.message,'err');
-            }
-        })
-        .catch(function(){
-            btn.disabled = false; btn.textContent = '💾 Simpan Part';
-            showStatus('❌ Gagal terhubung ke server','err');
-        });
-}
-
-function deletePart(nama){
-    showModal(
-        '🗑️ Hapus Part',
-        'Yakin ingin menghapus:<br><br><b style="color:var(--danger)">'+nama+'</b><br><br>'+
-        'Fitur Search akan menggunakan gap default (20) untuk part ini.',
-        function(){
-            fetch(APPS_SCRIPT_URL + '?action=deletePart&nama='+encodeURIComponent(nama))
-                .then(function(r){ return r.json(); })
-                .then(function(res){
-                    if(res.status==='ok'){ showStatus('✅ '+res.message,'ok'); loadPartList(); }
-                    else showStatus('❌ '+res.message,'err');
-                });
-        }
-    );
-}
-
-// ══════════════════════════════════════════════════════════
-// KELOLA MESIN
-// ══════════════════════════════════════════════════════════
-var _mesinList = [];
-
-function loadMesinList(){
-    document.getElementById('mesinList').innerHTML = '<div class="empty-state"><span class="loader"></span> Memuat...</div>';
-    fetch(APPS_SCRIPT_URL + '?action=getMesin&t=' + Date.now())
-        .then(function(r){ return r.json(); })
-        .then(function(res){
-            _mesinList = res.mesin || [];
-            renderMesin(_mesinList);
-        })
-        .catch(function(){ showStatus('❌ Gagal memuat mesin','err'); });
-}
-
-function renderMesin(list){
-    if(list.length === 0){
-        document.getElementById('mesinList').innerHTML = '<div class="empty-state">Belum ada mesin terdaftar</div>';
-        return;
-    }
-    var html = '<table class="user-table"><tr><th>No</th><th>Nama Mesin</th><th>Keterangan</th><th>Aksi</th></tr>';
-    list.forEach(function(m, i){
-        html += '<tr class="fade-in">';
-        html += '<td style="color:var(--muted)">'+(i+1)+'</td>';
-        html += '<td style="color:var(--accent);font-weight:700;">'+m.nama+'</td>';
-        html += '<td style="color:var(--muted);">'+(m.keterangan||'—')+'</td>';
-        html += '<td><button class="btn btn-danger btn-sm" onclick="deleteMesin(''+m.nama.replace(/'/g,"\'")+'')" >🗑️ Hapus</button></td>';
-        html += '</tr>';
-    });
-    html += '</table>';
-    document.getElementById('mesinList').innerHTML = html;
-}
-
-function saveMesin(){
-    var nama = document.getElementById('mNama').value.trim().toUpperCase();
-    var ket  = document.getElementById('mKet').value.trim();
-    if(!nama){ showStatus('⚠️ Nama mesin wajib diisi','err'); return; }
-
-    var btn = document.getElementById('btnSaveMesin');
-    btn.disabled = true; btn.textContent = '⏳ Menyimpan...';
-
-    fetch(APPS_SCRIPT_URL + '?action=saveMesin&nama='+encodeURIComponent(nama)+'&keterangan='+encodeURIComponent(ket))
-        .then(function(r){ return r.json(); })
-        .then(function(res){
-            btn.disabled = false; btn.textContent = '💾 Tambah Mesin';
-            if(res.status === 'ok'){
-                showStatus('✅ '+res.message,'ok');
-                document.getElementById('mNama').value = '';
-                document.getElementById('mKet').value  = '';
-                loadMesinList();
-            } else {
-                showStatus('❌ '+res.message,'err');
-            }
-        })
-        .catch(function(){
-            btn.disabled = false; btn.textContent = '💾 Tambah Mesin';
-            showStatus('❌ Gagal terhubung ke server','err');
-        });
-}
-
-function deleteMesinIdx(idx){
-    var m = _mesinList[idx];
-    if(!m) return;
-    deleteMesin(m.nama);
-}
-function deleteMesin(nama){
-    showModal(
-        '🗑️ Hapus Mesin',
-        'Yakin ingin menghapus mesin:<br><br><b style="color:var(--danger)">'+nama+'</b>',
-        function(){
-            fetch(APPS_SCRIPT_URL + '?action=deleteMesin&nama='+encodeURIComponent(nama))
-                .then(function(r){ return r.json(); })
-                .then(function(res){
-                    if(res.status==='ok'){ showStatus('✅ '+res.message,'ok'); loadMesinList(); }
-                    else showStatus('❌ '+res.message,'err');
-                });
-        }
-    );
-}
-
 // ── INIT ──────────────────────────────────────────────────
-function retryConn(){
-    document.getElementById('connTest').style.display='none';
-    loadUsers();
-}
-
-// Hanya jalankan jika session valid dan role admin
-if(_session && _session.role === 'admin'){
-    loadUsers();
-    // Load stats total scan
-    fetch(APPS_SCRIPT_URL + '?action=all&t=' + Date.now())
-        .then(function(r){ return r.json(); })
-        .then(function(res){
-            if(res.status==='ok') document.getElementById('statTotal').textContent = (res.data||[]).length;
-        })
-        .catch(function(e){ console.error('Stats error:', e); });
-}
+loadUsers();
+// Load stats total scan
+fetch(APPS_SCRIPT_URL + '?action=all&t=' + Date.now())
+    .then(function(r){ return r.json(); })
+    .then(function(res){
+        if(res.status==='ok') document.getElementById('statTotal').textContent = (res.data||[]).length;
+    });
 </script>
 </body>
 </html>
