@@ -605,7 +605,26 @@ function searchByPart(data){
         return;
     }
 
-    // Urutkan: kereta unik dulu, lalu per tanggal terbaru
+    // ── FILTER TANGGAL TERBARU PER KERETA (±1 hari) ────────
+    var latestDatePart = {};
+    filtered.forEach(function(r){
+        var k = String(r.kereta||'').toUpperCase();
+        var d = parseDate(r.tanggal);
+        if(!d) return;
+        if(!latestDatePart[k] || d > latestDatePart[k]) latestDatePart[k] = d;
+    });
+    var MS_DAY = 24*60*60*1000;
+    var TOLERANSI_PART = 1;
+    var totalSebelum = filtered.length;
+    filtered = filtered.filter(function(r){
+        var k = String(r.kereta||'').toUpperCase();
+        var d = parseDate(r.tanggal);
+        if(!d || !latestDatePart[k]) return false;
+        return (latestDatePart[k] - d) / MS_DAY <= TOLERANSI_PART;
+    });
+    var skippedPart = totalSebelum - filtered.length;
+
+    // Urutkan by kereta
     filtered.sort(function(a,b){
         if(a.kereta < b.kereta) return -1;
         if(a.kereta > b.kereta) return 1;
@@ -618,8 +637,16 @@ function searchByPart(data){
         if(r.kereta && keretaUnik.indexOf(r.kereta)===-1) keretaUnik.push(r.kereta);
     });
 
+    if(filtered.length === 0){
+        setStatus('Part ini tidak ada di kereta aktif. '+skippedPart+' data lama disembunyikan.','empty');
+        document.getElementById('results').innerHTML =
+            '<div class="empty-box"><div class="ei">🔍</div>Part ini tidak ada di kereta aktif saat ini</div>';
+        return;
+    }
+
     var qStr = [qDies&&'Dies: <b>'+qDies+'</b>', qLot&&'Lot: <b>'+qLot+'</b>', qPart&&'Part: <b>'+qPart+'</b>'].filter(Boolean).join(' · ');
-    setStatus('✅ '+filtered.length+' record di '+keretaUnik.length+' kereta — '+qStr,'ok');
+    setStatus('✅ '+filtered.length+' record di '+keretaUnik.length+' kereta — '+qStr+
+        (skippedPart>0?' &nbsp;·&nbsp; <span style="color:var(--muted)">'+skippedPart+' data lama disembunyikan</span>':''),'ok');
 
     // Group by kereta → hitung qty per kereta
     var keretaGroup = {};
