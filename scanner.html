@@ -251,7 +251,17 @@
     </div>
     <div class="form-group">
         <label>Mesin</label>
-        <input type="text" id="inpMesin" placeholder="Masukkan nama/nomor mesin...">
+        <select id="inpMesin" style="width:100%;padding:11px 12px;background:var(--bg);
+            border:1.5px solid var(--border);border-radius:8px;color:var(--text);
+            font-family:var(--mono);font-size:14px;outline:none;transition:border-color .2s;
+            cursor:pointer;">
+            <option value="">— Pilih Mesin —</option>
+            <!-- ✏️ EDIT DAFTAR MESIN DI SINI -->
+            <option>MESIN A1</option>
+            <option>MESIN A2</option>
+            <option>MESIN B1</option>
+            <option>MESIN B2</option>
+        </select>
     </div>
     <div class="form-group">
         <label>Kondisi Part</label>
@@ -321,7 +331,7 @@
         </div>
         <input type="text" id="inpDies" placeholder="Contoh: 18-0 atau 2A-0"
                oninput="liveValidate('dies')" onblur="commitManual('dies')">
-        <div class="field-hint" id="hintDies">Format: 18-0 &nbsp;/&nbsp; 2A-0 &nbsp;/&nbsp; 3-1</div>
+        <div class="field-hint" id="hintDies">Format: 18-0 &nbsp;/&nbsp; 2A-0 &nbsp;/&nbsp; 1A &nbsp;/&nbsp; 10A</div>
     </div>
 
     <!-- Nomor Lot + PTT -->
@@ -405,6 +415,7 @@ if(_session){
     if(nrpField && !nrpField.value) nrpField.value = _session.nrp;
 }
 
+
 // ============================================
 // ⚠️ GANTI DENGAN URL APPS SCRIPT ANDA
 // ============================================
@@ -417,7 +428,7 @@ var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwnc4WIVdwMQO9r5Y
 // Dies:
 //   \d{1,2}-\d+        → 18-0, 3-1, 19-0
 //   \d{1,2}[A-Z]-\d+   → 2A-0, 11A-1
-var RE_DIES = /^\d{1,2}[A-Z]?-\d+$/i;
+var RE_DIES = /^\d{1,2}[A-Z]?(-\d+)?$/i;
 
 // Lot: tepat 2digit / 2digit
 var RE_LOT  = /^\d{2}\/\d{2}$/;
@@ -499,7 +510,7 @@ function render(){
     document.getElementById('valKereta').textContent = state.kereta||'—';
     document.getElementById('badgeKereta').className = 'badge'+(state.kereta?' purple':'');
     document.getElementById('valDies').textContent   = state.dies||'—';
-    document.getElementById('badgeDies').className   = 'badge'+(state.dies?' warn':'');
+    document.getElementById('badgeDies').className   = 'badge'+(state.dies?' ok':'');
     document.getElementById('lotCount').textContent  = state.lots.length;
     document.getElementById('valLot').textContent    = state.lots.length>0?state.lots[state.lots.length-1]:'—';
     document.getElementById('badgeLot').className    = 'badge'+(state.lots.length>0?' ok':'');
@@ -508,7 +519,7 @@ function render(){
     }).join('');
     // Sync Dies field
     if(document.activeElement!==inpDies){
-        inpDies.value=state.dies; inpDies.className=state.dies?'warn':'';
+        inpDies.value=state.dies; inpDies.className=state.dies?'ok':'';
         if(state.dies){ hintDies.className='field-hint ok'; hintDies.textContent='✅ '+state.dies; }
     }
     // Sync Lot field — tampilkan lot terakhir
@@ -532,9 +543,9 @@ function removeLot(i){ state.lots.splice(i,1); render(); }
 function liveValidate(type){
     if(type==='dies'){
         var v=inpDies.value.trim().toUpperCase();
-        if(!v){inpDies.className='';hintDies.className='field-hint';hintDies.textContent='Format: 18-0 / 2A-0 / 3-1';return;}
-        if(RE_DIES.test(v)){inpDies.className='warn';hintDies.className='field-hint ok';hintDies.textContent='✅ Format valid';}
-        else              {inpDies.className='err'; hintDies.className='field-hint bad';hintDies.textContent='⚠️ Contoh: 18-0 / 2A-0 / 3-1';}
+        if(!v){inpDies.className='';hintDies.className='field-hint';hintDies.textContent='Format: 18-0 / 2A-0 / 1A / 10A';return;}
+        if(RE_DIES.test(v)){inpDies.className='ok';hintDies.className='field-hint ok';hintDies.textContent='✅ Format valid';}
+        else              {inpDies.className='err'; hintDies.className='field-hint bad';hintDies.textContent='⚠️ Contoh: 18-0 / 2A-0 / 1A / 10A';}
     } else {
         var v2=inpLot.value.trim();
         if(!v2){inpLot.className='';hintLot.className='field-hint';hintLot.textContent='Format: 04/03 / 13/12';return;}
@@ -1182,7 +1193,7 @@ document.getElementById('btnReset').addEventListener('click',function(){
     state.kereta=''; state.dies=''; state.lots=[];
     inpDies.value=''; inpDies.className='';
     inpLot.value='';  inpLot.className='';
-    hintDies.textContent='Format: 18-0 / 2A-0 / 3-1'; hintDies.className='field-hint';
+    hintDies.textContent='Format: 18-0 / 2A-0 / 1A / 10A'; hintDies.className='field-hint';
     hintLot.textContent='Format: 04/03 / 13/12';       hintLot.className='field-hint';
     // NRP, Mesin, Kondisi, Nama Part TIDAK direset — tetap terisi
     render(); setStatus('Data scan direset. Data operator tetap ada.','idle');
