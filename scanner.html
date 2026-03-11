@@ -251,25 +251,25 @@
     </div>
     <div class="form-group">
         <label>Mesin</label>
-        <select id="inpMesin" style="width:100%;padding:11px 12px;background:var(--bg);
-            border:1.5px solid var(--border);border-radius:8px;color:var(--text);
-            font-family:var(--mono);font-size:14px;outline:none;transition:border-color .2s;
-            cursor:pointer;">
-            <option value="">— Pilih Mesin —</option>
-            <!-- ✏️ EDIT DAFTAR MESIN DI SINI -->
-            <option>MESIN A1</option>
-            <option>MESIN A2</option>
-            <option>MESIN B1</option>
-            <option>MESIN B2</option>
-        </select>
+        <input type="text" id="inpMesin" placeholder="Contoh: HPDC1 / AD8 / BLASTING...">
     </div>
     <div class="form-group">
         <label>Kondisi Part</label>
-        <input type="text" id="inpKondisi" placeholder="Contoh: OK / NG / Rework...">
+        <input type="text" id="inpKondisi" placeholder="Contoh: BC / FG / Repair...">
     </div>
     <div class="form-group">
         <label>Nama Part</label>
-        <input type="text" id="namaPart" placeholder="Masukkan nama part...">
+            <select id="namaPart" style="width:100%;padding:11px 12px;background:var(--bg);
+            border:1.5px solid var(--border);border-radius:8px;color:var(--text);
+            font-family:var(--mono);font-size:14px;outline:none;transition:border-color .2s;
+            cursor:pointer;">
+            <option value="">— Pilih Part —</option>
+            <!-- ✏️ EDIT NAMA PART DI SINI -->
+            <option>L Cr Case</option>
+            <option>R Cr Case</option>
+            <option>Cyl Comp</option>
+            <option>Cyl Head</option>
+        </select>
     </div>
 </div>
 
